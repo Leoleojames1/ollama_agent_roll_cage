@@ -1,6 +1,6 @@
 # ollama_agent_roll_cage:
 ## About
-  The ollama_agent_roll_cage toolset is an ollama add-on giving the user more control over the agent creation process. The ollama_agent_roll_cage tool set in the next update will also bring the addition of **Text To Speach &amp; Speach To Text** methods for real time audio conversations between the user and the selected model through ollama. 
+ollama_agent_roll_cage is an ollama add-on toolset giving the user more control over the agent creation process. The ollama_agent_roll_cage tool set in the next update will also bring the addition of **Text To Speach &amp; Speach To Text** methods for real time audio conversations between the user and the selected model through ollama. 
   
 <img
 src="Manual_Commands/Rollcage_ICON.jpg"
