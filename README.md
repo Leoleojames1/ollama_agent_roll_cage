@@ -67,7 +67,6 @@ ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for qui
 
 ## Manual Agent Creation Guide:
 Next Navigate to the ollama_agent_roll_cage/AgentFiles directory, here you will find the Modelfile for each Model agent.
-To create you own agent follow the "Manual Agent Creation Guide" in the section below.
 
 This is a Guide to manually generating your own agent using the SYM prompt, by modifying the Modelfile and running the create command
 accross the given model file, such as llama3, this Sym prompt is stored within the model when you boot up the given agent. These Agents
