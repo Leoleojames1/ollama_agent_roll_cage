@@ -13,7 +13,7 @@ Ollama Program Download:
 https://ollama.com/download
 
 Also Please Follow this tutorial if it is more helpful for installing ollama:
-https://www.youtube.com/watch?v=90ozfdsQOKo
+[https://www.youtube.com/watch?v=90ozfdsQOKo](https://www.youtube.com/watch?v=3t_P0tDvRCE&t=127s)
 
 After installing ollama in the users directory at 
 ```
