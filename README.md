@@ -62,8 +62,8 @@ here you will find the following files:
 ```
 ollama_chatbot_class.py - a python class for managing the ollama api communication, TTS/STT Methods, and Conversation Memory.
 ollama_serve_llama3_base_curl.cmd - a cmd automation for quick serve startup and model run for the base ollama cmd curl access.
-ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for quick serve startup and model run with ollama_chatbot_class.py
-integration for STT, TTS, conversation history, and more.
+ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for quick serve startup and model run with
+ollama_chatbot_class.py integration for STT, TTS, conversation history, and more.
 ```
 
 ## Manual Agent Creation Guide:
