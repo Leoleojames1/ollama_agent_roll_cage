@@ -10,9 +10,11 @@ src="Manual_Commands/Rollcage_ICON.jpg"
 Before following this tutorial please download and setup ollama with llama3 from the following link, you will be asked to provide an email for either hugging face or meta to download the llama3 model, this is fine, as you are agreeing to the software license agreement which is a beneficial document for open source developers and is meant to protect meta from large corporations such as amazon and google. Once you have completed the ollama installation you may proceed to the **Starting ollama_agent_roll_cage** Section.
 
 Ollama Program Download:
+
 https://ollama.com/download
 
 Also Please Follow this tutorial if it is more helpful for installing ollama:
+
 [https://www.youtube.com/watch?v=90ozfdsQOKo](https://www.youtube.com/watch?v=3t_P0tDvRCE&t=127s)
 
 After installing ollama in the users directory at 
