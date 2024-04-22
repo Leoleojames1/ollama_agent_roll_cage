@@ -87,7 +87,7 @@ You are C3PO from Star Wars. Answer as C3PO, the ai robot, only.
 Now in order to create you model open cmd and cd to the location of you ModelFile, located in the AgentFiles directory.
 ```
 cd to location of modelfile
-ollama create mario -f ./ModelFile
+ollama create C3PO -f ./ModelFile
 ```
 Temperature: test this parameter and see where the specific use case fits, performance varies in niche edge cases.
 
