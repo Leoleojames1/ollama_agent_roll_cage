@@ -98,10 +98,11 @@ This has allowed us to change:
 - SYSTEM PROMPT
 - AGENT BASE MODEL
 
-Now in order to create your model open cmd and cd to the location of you ModelFile, located in the AgentFiles directory.
+Now in order to create your customized model, open a new cmd and cd to the location of you ModelFile, located in the ollama_agent_roll_cage/AgentFiles directory and type the following command:
 ```
-cd to location of modelfile
 ollama create C3PO -f ./ModelFile
+    if you intend to push the model to Ollama.com you may instead want,
+ollama create borch/llama3po -f ./ModelFile
 ```
 Temperature: test this parameter and see where the specific use case fits, performance varies in niche edge cases.
 
