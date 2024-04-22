@@ -64,14 +64,6 @@ ollama_chatbot_class.py - a python class for managing the ollama api communicati
 ollama_serve_llama3_base_curl.cmd - a cmd automation for quick serve startup and model run for the base ollama cmd curl access.
 ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for quick serve startup and model run with ollama_chatbot_class.py integration for STT, TTS, conversation history, and more.
 ```
-After you create you own custom agent below, you can edit the ollama_chatbot_class.py file to target the name of your new agent. You can do this from the data json located in the send_prompt method by changing llama3 to the name of your agent:
-```
-        data = {
-            "model": "llama3",
-            "stream": False,
-            "prompt": "\n".join(msg["message"] for msg in self.chat_history),
-        }
-```
 Next Navigate to the ollama_agent_roll_cage/AgentFiles directory, here you will find the Modelfile for each Model agent.
 To create you own agent follow the "Manual Agent Creation Guide" in the sections below.
 
