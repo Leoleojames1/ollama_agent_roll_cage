@@ -121,11 +121,11 @@ src="Manual_Commands/CustomModel/C3PO_Test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 ## Common Errors:
-Receiving the following error code when running ollama_serve_llama3_base_py.cmd,
+Receiving the following error code when running ollama_serve_llama3_base_py.cmd:
 ```
 Error: listen tcp 127.0.0.1:11434: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
 ```
-means that you tried to run the program but the program is already running, to close ollama, browse to the small arrow in the bottom right hand corner of windows
+This error means that you tried to run the program but the program is already running, to close ollama, browse to the small arrow in the bottom right hand corner of windows
 and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ## More
