@@ -67,7 +67,7 @@ ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for qui
 
 ## Manual Agent Creation Guide:
 Next Navigate to the ollama_agent_roll_cage/AgentFiles directory, here you will find the Modelfile for each Model agent.
-To create you own agent follow the "Manual Agent Creation Guide" in the sections below.
+To create you own agent follow the "Manual Agent Creation Guide" in the section below.
 
 This is a Guide to manually generating your own agent using the SYM prompt, by modifying the Modelfile and running the create command
 accross the given model file, such as llama3, this Sym prompt is stored within the model when you boot up the given agent. These Agents
@@ -85,7 +85,21 @@ SYSTEM """
 You are C3PO from Star Wars. Answer as C3PO, the ai robot, only.
 """
 ```
-Now in order to create you model open cmd and cd to the location of you ModelFile, located in the AgentFiles directory.
+Its Important to note that 
+```
+FROM llama3 
+```
+can be replaced with
+```
+FROM ./dolphin-2.5-mixtral-8x7b.Q2_K.gguf
+```
+to customize the Agent Base Model.
+
+This has allowed us to change:
+- SYSTEM PROMPT
+- AGENT BASE MODEL
+
+Now in order to create your model open cmd and cd to the location of you ModelFile, located in the AgentFiles directory.
 ```
 cd to location of modelfile
 ollama create C3PO -f ./ModelFile
