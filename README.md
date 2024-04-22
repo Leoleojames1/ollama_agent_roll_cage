@@ -7,7 +7,7 @@ In the next release, ollama_agent_roll_cage will be given functions for **Text T
 https://huggingface.co/Manmay/tortoise-tts/tree/main
   
 <img
-src="Manual_Commands/Rollcage_ICON.jpg"
+src="Manual_Commands/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 # Installation
