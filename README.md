@@ -11,6 +11,7 @@ Before following this tutorial please download and setup ollama with llama3 from
 
 Ollama Program Download:
 https://ollama.com/download
+
 Also Please Follow this tutorial if it is more helpful for installing ollama:
 https://www.youtube.com/watch?v=90ozfdsQOKo
 
