@@ -101,6 +101,12 @@ data would be incapable of telling you "How to make a plasma blaster" but they w
 recreate the plasma blaster from star wars given the sufficient data from these given pdf libraries and science resources. 
 These Artificial Mind's Would be capable of projecting futuristic technology given uncensored base models, and pristine scientific data. 
 
+You can now access your custom agent by running the ollama_serve_llama3_base_py.cmd automation to start the server and converse with python chatbot add ons.
+
+<img
+src="Manual_Commands/Rollcage_ICON.jpg"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  
 ## Common Errors:
 Receiving the following error code when running ollama_serve_llama3_base_py.cmd,
 ```
