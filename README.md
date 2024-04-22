@@ -104,7 +104,7 @@ ollama create C3PO -f ./ModelFile
 
     if you intend to push the model to Ollama.com you may instead want,
 
-ollama create borch/llama3po -f ./ModelFile
+ollama create USERNAME/llama3po -f ./ModelFile
 ```
 Temperature: test this parameter and see where the specific use case fits, performance varies in niche edge cases.
 
