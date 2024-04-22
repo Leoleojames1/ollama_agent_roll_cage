@@ -117,7 +117,7 @@ data would be incapable of telling you "How to make a plasma blaster" but they w
 recreate the plasma blaster from star wars given the sufficient data from these given pdf libraries and science resources. 
 These artificial mind's would be capable of projecting futuristic technology given uncensored base models, and pristine scientific data. 
 
-You can now access your custom agent by running the ollama_serve_llama3_base_py.cmd automation to start the server and converse with python chatbot add ons.
+You can now access your custom agent by running the ollama_serve_llama3_base_py.cmd automation to start the server and converse with the ollama_agent_roll_cage chatbot add ons.
 
 <img
 src="Manual_Commands/CustomModel/C3PO_Test.png"
