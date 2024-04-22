@@ -6,8 +6,6 @@ ollama_agent_roll_cage is a python &amp; cmd toolset add-on for the ollama comma
 - following the release of ollama_agent_roll_cage 0.2 I will be uploading an installation and setup tutorial on youtube. 
 - ollama_agent_roll_cage 0.2 will also provide commands to train, and fine tune your own model.
 - ollama_agent_roll_cage 0.2 will be given methods for **Speech to Text transcription &amp; **Text To Speech .wav file generation for real time audio conversations between the user and the selected agent through the python interface, utilizing the tortise TTS model, this will interact with the command tree for audio based /swap, /save, /load, and /create commands
-
-https://huggingface.co/Manmay/tortoise-tts/tree/main
   
 <img
 src="Manual_Commands/rollcage.jpg"
