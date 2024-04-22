@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     user_input_model_select = input("PROVIDE AGENT NAME >>> ")
     while True:
-        user_input_prompt = input(">>> ")
+        user_input_prompt = input("<<<USER>>> ")
         if user_input_prompt.lower() == "/save":
             chatbot.save_to_json("chat_history.json")
             print("Chat history saved to chat_history.json")
@@ -48,4 +48,4 @@ if __name__ == "__main__":
             print("Chat history loaded from chat_history.json")
         else:
             response = chatbot.send_prompt(user_input_prompt, user_input_model_select)
-            print(response)
+            print(f"<<<{user_input_model_select}>>> {response}")
