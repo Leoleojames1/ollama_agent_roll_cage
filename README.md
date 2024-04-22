@@ -115,7 +115,7 @@ Error: listen tcp 127.0.0.1:11434: bind: Only one usage of each socket address (
 means that you tried to run the program but the program is already running, to close ollama, browse to the small arrow in the bottom right hand corner of windows
 and open it, right click on the ollama llama app icon, and click quit ollama.
 
-
+## More
 If you have found this software helpful, and would like to support the developement of open source tools by yours truly, you can contribute by donating BTC or ETH to my wallet address, thx and have a great day:
 
 **BTC Address:** bc1q6s6e8hgw2ewyqd5u3adjme0rp0r23caf53qjhf
