@@ -1,7 +1,8 @@
 # ollama_agent_roll_cage:
 ## About
 ollama_agent_roll_cage is an ollama add-on toolset giving the user more control over the agent creation process. 
-In the next update, ollama_agent_roll_cage will also be given the addition of **Text To Speach &amp; Speach To Text** methods for real time audio conversations between the user and the selected model through python, utilizing the tortise TTS model. 
+
+In the next release, ollama_agent_roll_cage will be given functions for **Text To Speech &amp; Speech To Text** methods for real time audio conversations between the user and the selected agent through python, utilizing the tortise TTS model, and cmd automation. 
   
 <img
 src="Manual_Commands/Rollcage_ICON.jpg"
