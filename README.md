@@ -74,7 +74,7 @@ appear under "ollama list" in cmd.
 
 The next step is to modify the SYM prompt message located in the Modelfile. Here is the following example:
 ```
-C3PO LLama3-PO Agent ./ModelFile
+#C3PO LLama3-PO Agent ./ModelFile
 
 FROM llama3
 #temperature higher -> creative, lower -> coherent
