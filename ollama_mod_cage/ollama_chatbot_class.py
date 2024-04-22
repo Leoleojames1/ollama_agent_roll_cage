@@ -37,15 +37,20 @@ class Chatbot:
 if __name__ == "__main__":
     chatbot = Chatbot()
 
-    user_input_model_select = input("PROVIDE AGENT NAME >>> ")
+    user_input_model_select = input("<<< PROVIDE AGENT NAME >>> ")
     while True:
-        user_input_prompt = input("<<<USER>>> ")
+        user_input_prompt = input("<<< USER >>> ")
         if user_input_prompt.lower() == "/save":
             chatbot.save_to_json("chat_history.json")
             print("Chat history saved to chat_history.json")
         elif user_input_prompt.lower() == "/load":
             chatbot.load_from_json("chat_history.json")
             print("Chat history loaded from chat_history.json")
+        elif user_input_prompt.lower() == "/swap":
+            # Clear chat history to allow user to select a new model
+            chatbot.chat_history = []
+            user_input_model_select = input("<<< PROVIDE NEW AGENT NAME >>> ")
+            print(f"Model changed to {user_input_model_select}")
         else:
             response = chatbot.send_prompt(user_input_prompt, user_input_model_select)
-            print(f"<<<{user_input_model_select}>>> {response}")
+            print(f"<<< {user_input_model_select} >>> {response}")
