@@ -4,8 +4,6 @@
   
 <img
 src="Manual_Commands/Rollcage_ICON.png"
-  alt="Alt text"
-  title="Plot Of the Infinite Product of the Product Representation for Sin(pi*x/n)"
   style="display: inline-block; margin: 0 auto; max-width: 100px">
   
 ## Pre-Requisite: ollama llama3 installation
