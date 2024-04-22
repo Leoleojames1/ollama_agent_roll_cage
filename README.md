@@ -108,7 +108,7 @@ Temperature: test this parameter and see where the specific use case fits, perfo
 
 SYSTEM prompt: this data tunes the prime directive of the model towards your directed intent & language in the system prompt. 
 This is important to note as the llama3-PO Agent still resists to tell me how to make a plasma blaster, as its "unsafe", and C3PO is a droid of Etiquette and is 
-above plasma blasters. My suspicion is that an uncensored model such as Mistral Dolphin would be capable at "Guessing" how a plasma blaster is made if it werent 
+above plasma blasters. My suspicion is that an uncensored model such as Mixtral Dolphin would be capable at "Guessing" how a plasma blaster is made if it werent 
 "resitricted" by Meta's safety even tho C3PO is a fictional Charachter. Something doesn't add up. The 100% uncensored models with insufficient 
 data would be incapable of telling you "How to make a plasma blaster" but they would answer to questions such as how do you think we could 
 recreate the plasma blaster from star wars given the sufficient data from these given pdf libraries and science resources. 
