@@ -1,11 +1,16 @@
 # ollama_agent_roll_cage:
 ## About
-  The ollama_agent_roll_cage toolset is an ollama add-on giving the user more control over the agent creation process. The ollama_agent_roll_cage tollset also brings the addition of **Text To Speach &amp; Speach To Text** methods for real time audio conversations between the user and the selected model through ollama. 
+ollama_agent_roll_cage is an ollama add-on toolset giving the user more control over the agent creation process. 
+
+In the next release, ollama_agent_roll_cage will be given functions for **Text To Speech &amp; Speech To Text** methods for real time audio conversations between the user and the selected agent through python, utilizing the tortise TTS model:
+
+https://huggingface.co/Manmay/tortoise-tts/tree/main
   
 <img
 src="Manual_Commands/Rollcage_ICON.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
+# Installation
 ## Pre-Requisite: ollama llama3 installation
 Before following this tutorial please download and setup ollama with llama3 from the following link, you will be asked to provide an email for either hugging face or meta to download the llama3 model, this is fine, as you are agreeing to the software license agreement which is a beneficial document for open source developers and is meant to protect meta from large corporations such as amazon and google. Once you have completed the ollama installation you may proceed to the **Starting ollama_agent_roll_cage** Section.
 
@@ -101,6 +106,12 @@ data would be incapable of telling you "How to make a plasma blaster" but they w
 recreate the plasma blaster from star wars given the sufficient data from these given pdf libraries and science resources. 
 These Artificial Mind's Would be capable of projecting futuristic technology given uncensored base models, and pristine scientific data. 
 
+You can now access your custom agent by running the ollama_serve_llama3_base_py.cmd automation to start the server and converse with python chatbot add ons.
+
+<img
+src="Manual_Commands/CustomModel/C3PO_Test.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  
 ## Common Errors:
 Receiving the following error code when running ollama_serve_llama3_base_py.cmd,
 ```
@@ -108,3 +119,11 @@ Error: listen tcp 127.0.0.1:11434: bind: Only one usage of each socket address (
 ```
 means that you tried to run the program but the program is already running, to close ollama, browse to the small arrow in the bottom right hand corner of windows
 and open it, right click on the ollama llama app icon, and click quit ollama.
+
+## More
+If you have found this software helpful, and would like to support the developement of open source tools by yours truly, you can contribute by donating BTC or ETH to one of my wallet addresses, thx and have a great day:
+
+**BTC Address:** bc1q6s6e8hgw2ewyqd5u3adjme0rp0r23caf53qjhf
+
+**ETH Address:** 0x51a530f0c2b24e834bB5C5e740e1170C6a1521Cc
+
