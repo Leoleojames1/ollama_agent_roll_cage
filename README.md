@@ -122,8 +122,18 @@ These artificial mind's would be capable of projecting futuristic technology giv
 
 You can now access your custom agent by running the ollama_serve_llama3_base_py.cmd automation to start the server and converse with the ollama_agent_roll_cage chatbot add ons.
 
+Check out the following summary tests for the following agents:
 <img
-src="Manual_Commands/CustomModel/C3PO_Test.png"
+src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  <img
+src="Manual_Commands/Agent_Test_Pics/DOLPHIN_LLAMA3_CARD_CHAT_2.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  <img
+src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  <img
+src="Manual_Commands/Agent_Test_Pics/LLAMA3_TEST_CARD_CHAT.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 ## Common Errors:
