@@ -99,11 +99,15 @@ This has allowed us to change:
 
 Now in order to create your customized model, open a new cmd and cd to the location of you ModelFile, located in the ollama_agent_roll_cage/AgentFiles directory and type the following command:
 ```
-ollama create C3PO -f ./ModelFile
+  ollama create C3PO -f ./ModelFile
 
-    if you intend to push the model to Ollama.com you may instead want,
+if you intend to push the model to Ollama.com you may instead want,
 
-ollama create USERNAME/llama3po -f ./ModelFile
+  ollama create USERNAME/llama3po -f ./ModelFile
+
+or
+
+  ollama create borch/dolphin-2.5-mixtral-8x7b_SYS_PROMPT_TUNE_1 -f ./ModelFile
 ```
 Temperature: test this parameter and see where the specific use case fits, performance varies in niche edge cases.
 
