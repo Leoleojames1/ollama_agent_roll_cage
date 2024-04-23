@@ -99,11 +99,15 @@ This has allowed us to change:
 
 Now in order to create your customized model, open a new cmd and cd to the location of you ModelFile, located in the ollama_agent_roll_cage/AgentFiles directory and type the following command:
 ```
-ollama create C3PO -f ./ModelFile
+  ollama create C3PO -f ./ModelFile
 
-    if you intend to push the model to Ollama.com you may instead want,
+if you intend to push the model to Ollama.com you may instead want,
 
-ollama create USERNAME/llama3po -f ./ModelFile
+  ollama create USERNAME/llama3po -f ./ModelFile
+
+or
+
+  ollama create borch/dolphin-2.5-mixtral-8x7b_SYS_PROMPT_TUNE_1 -f ./ModelFile
 ```
 Temperature: test this parameter and see where the specific use case fits, performance varies in niche edge cases.
 
@@ -118,8 +122,22 @@ These artificial mind's would be capable of projecting futuristic technology giv
 
 You can now access your custom agent by running the ollama_serve_llama3_base_py.cmd automation to start the server and converse with the ollama_agent_roll_cage chatbot add ons.
 
+Check out the following summary tests for the following agents:
+
 <img
-src="Manual_Commands/CustomModel/C3PO_Test.png"
+src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  
+  <img
+src="Manual_Commands/Agent_Test_Pics/DOLPHIN_LLAMA3_CARD_CHAT_2.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  
+  <img
+src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  
+  <img
+src="Manual_Commands/Agent_Test_Pics/LLAMA3_TEST_CARD_CHAT.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 ## Common Errors:
