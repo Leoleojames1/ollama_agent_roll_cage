@@ -140,7 +140,7 @@ src="Manual_Commands/Agent_Test_Pics/DOLPHIN_LLAMA3_CARD_CHAT_2.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
   <img
-src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
+src="Manual_Commands/Agent_Test_Pics/JESU_TEST_CARD_CHAT.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
 Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
