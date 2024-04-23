@@ -92,7 +92,7 @@ if __name__ == "__main__":
         # Clear chat history to allow user to select a new agent
         elif user_input_prompt.lower() == "/swap":
             ollama_chatbot_class.chat_history = []
-            user_input_model_select = input(HEADER + "<<< PROVIDE NEW AGENT NAME >>> " + END)
+            user_input_model_select = input(HEADER + "<<< PROVIDE NEW AGENT NAME >>> " + OKBLUE)
             print(f"Model changed to {user_input_model_select}")
 
         # Quit back to root directory in cmd
