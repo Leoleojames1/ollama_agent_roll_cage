@@ -13,7 +13,8 @@ src="Manual_Commands/rollcage.jpg"
   
 # Installation
 ## Pre-Requisite: ollama llama3 installation
--BEFORE ANYTHING INSTALL Conda/MiniConda with Python 3.12 & setup venv as ollamaEnv 
+*BEFORE ANYTHING INSTALL Conda/MiniConda with Python 3.12 & setup venv as ollamaEnv*
+
 Before following this tutorial please download and setup ollama with llama3 from the following link, you will be asked to provide an email for either hugging face or meta to download the llama3 model, this is fine, as you are agreeing to the software license agreement which is a beneficial document for open source developers and is meant to protect meta from large corporations such as amazon and google. Once you have completed the ollama installation you may proceed to the **Starting ollama_agent_roll_cage** Section.
 
 Ollama Program Download:
