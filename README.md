@@ -29,6 +29,7 @@ After installing ollama in the users directory at
 ```
   C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama
 ```
+(Sadly we have to but we can change the model files directory later)
 open a new cmd, and type
 ```
   ollama
