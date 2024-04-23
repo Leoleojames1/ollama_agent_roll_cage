@@ -142,11 +142,18 @@ src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
 
 Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
 
-## /swap ollama_chatbot_class.py model swap command for quick model swap
+## /swap 
+### model swap command for quick model change
   <img
 src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
+  ## /save & /load
+### conversation history save & load commands for memory persistence
+  <img
+src="Manual_Commands/Agent_Test_Pics/C3PO_Load_memory_test.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+
 ## Common Errors:
 Receiving the following error code when running ollama_serve_llama3_base_py.cmd:
 ```
