@@ -139,6 +139,13 @@ src="Manual_Commands/Agent_Test_Pics/DOLPHIN_LLAMA3_CARD_CHAT_2.png"
   <img
 src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
+
+Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
+
+## /swap ollama_chatbot_class.py model swap command for quick model swap
+  <img
+src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 ## Common Errors:
 Receiving the following error code when running ollama_serve_llama3_base_py.cmd:
