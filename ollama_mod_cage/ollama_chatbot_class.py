@@ -30,6 +30,8 @@ import torch
 import sounddevice as sd
 from TTS.api import TTS
 import re
+import speech_recognition as sr
+import keyboard
 
 class ollama_chatbot_class:
     """ A class for accessing the ollama local serve api via python, and creating new custom agents.
@@ -52,6 +54,13 @@ class ollama_chatbot_class:
         tts_response = self.tts.tts(text=response, speaker_wav=(f"{self.tts_wav_path}"), language="en")
         return tts_response
     
+    def get_audio(self):
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            print("Listening...")
+            audio = r.listen(source)
+        return audio
+
     def _generate_tts_response(self, response):
         return self.tts.tts(text=response, speaker_wav=self.tts_wav_path, language="en")
     
@@ -86,8 +95,8 @@ class ollama_chatbot_class:
         text = re.sub(r"(Mr|Mrs|Ms|Dr|i\.e)\.", r"\1<prd>", text)
         text = re.sub(r"\.\.\.", r"<prd><prd><prd>", text)
 
-        # Split on period, question mark, exclamation mark, or page break followed by optional spaces
-        sentences = re.split(r"[.!?]\s*|\n\s*", text)
+        # Split on period, question mark, or exclamation mark followed by optional spaces
+        sentences = re.split(r"[.!?]\s*", text)
 
         # Remove empty sentences
         sentences = [s.strip() for s in sentences if s.strip()]
@@ -148,41 +157,54 @@ if __name__ == "__main__":
 
     user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
     while True:
-        # Check for user input
-        user_input_prompt = input(GREEN + "<<< USER >>> " + OKCYAN)
+        user_input_prompt = ""
+        speech_done = False
+        while keyboard.is_pressed('space'):  # user holds down the space bar
+            audio = ollama_chatbot_class.get_audio()
+            try:
+                user_input_prompt = sr.Recognizer().recognize_google(audio)
+                speech_done = True
+                print(GREEN + f"<<< USER >>> ")
+            except sr.UnknownValueError:
+                print("Google Speech Recognition could not understand audio")
+            except sr.RequestError as e:
+                print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
-        # Save the current chat history to chat_history_json
-        if user_input_prompt.lower() == "/save":
-            ollama_chatbot_class.save_to_json("chat_history.json")
-            print("Chat history saved to chat_history.json")
+        # If speech recognition was successful, proceed with the rest of the loop
+        if speech_done:
+            print(YELLOW + f"{user_input_prompt}" + OKCYAN)
+            # Save the current chat history to chat_history_json
+            if user_input_prompt.lower() == "/save":
+                ollama_chatbot_class.save_to_json("chat_history.json")
+                print("Chat history saved to chat_history.json")
 
-        # Load chat_history.json to the current model
-        elif user_input_prompt.lower() == "/load":
-            ollama_chatbot_class.load_from_json("chat_history.json")
-            print("Chat history loaded from chat_history.json")
+            # Load chat_history.json to the current model
+            elif user_input_prompt.lower() == "/load":
+                ollama_chatbot_class.load_from_json("chat_history.json")
+                print("Chat history loaded from chat_history.json")
 
-        # Clear chat history to allow user to select a new agent
-        elif user_input_prompt.lower() == "/swap":
-            ollama_chatbot_class.chat_history = []
-            user_input_model_select = input(HEADER + "<<< PROVIDE NEW AGENT NAME >>> " + OKBLUE)
-            print(f"Model changed to {user_input_model_select}")
+            # Clear chat history to allow user to select a new agent
+            elif user_input_prompt.lower() == "/swap":
+                ollama_chatbot_class.chat_history = []
+                user_input_model_select = input(HEADER + "<<< PROVIDE NEW AGENT NAME >>> " + OKBLUE)
+                print(f"Model changed to {user_input_model_select}")
 
-        # Quit back to root directory in cmd
-        elif user_input_prompt.lower() == "/quit":
-            break
+            # Quit back to root directory in cmd
+            elif user_input_prompt.lower() == "/quit":
+                break
 
-        # if not command, then prompt model
-        else:
-            # Send the prompt to the assistant
-            response = ollama_chatbot_class.send_prompt(user_input_prompt, user_input_model_select)
-            print(RED + f"<<< {user_input_model_select} >>> " + END + f"{response}" + RED)
+            # if not command, then prompt model
+            else:
+                # Send the prompt to the assistant
+                response = ollama_chatbot_class.send_prompt(user_input_prompt, user_input_model_select)
+                print(RED + f"<<< {user_input_model_select} >>> " + END + f"{response}" + RED)
 
-            # Split the response into sentences for TTS
-            tts_response_sentences = ollama_chatbot_class.split_into_sentences(response)
+                # Split the response into sentences for TTS
+                tts_response_sentences = ollama_chatbot_class.split_into_sentences(response)
 
-            # Generate audio for each sentence in TTS
-            for sentence in tts_response_sentences:
-                tts_audio = ollama_chatbot_class.agent_text_to_voice(sentence)
-                # Play the audio
-                sd.play(tts_audio, samplerate=22050)
-                sd.wait()
+                # Generate audio for each sentence in TTS
+                for sentence in tts_response_sentences:
+                    tts_audio = ollama_chatbot_class.agent_text_to_voice(sentence)
+                    # Play the audio
+                    sd.play(tts_audio, samplerate=22050)
+                    sd.wait()
