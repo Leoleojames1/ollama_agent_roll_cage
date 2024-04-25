@@ -1,6 +1,6 @@
 """ ollama_chatbot_class.py
 
-    ollama_agent_roll_cage, is a command line interface for STT, TTS commands with local LLMS.
+    ollama_agent_roll_cage, is a command line interface for STT, & TTS commands with local LLMS.
     It is an easy to install add on for the ollama application.
     
         This software was designed by Leo Borcherding with the intent of creating an easy to use
@@ -156,6 +156,8 @@ if __name__ == "__main__":
     ollama_chatbot_class = ollama_chatbot_class()
 
     user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
+    print("Press space bar to record audio.")
+    print(GREEN + f"<<< USER >>> " + END)
     while True:
         user_input_prompt = ""
         speech_done = False
@@ -163,8 +165,26 @@ if __name__ == "__main__":
             audio = ollama_chatbot_class.get_audio()
             try:
                 user_input_prompt = sr.Recognizer().recognize_google(audio)
+                # Use re.sub to replace "slash swap" with "/swap"
+                user_input_prompt = re.sub(r"forward slash swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
+                user_input_prompt = re.sub(r"forward slash save", "/save", user_input_prompt, flags=re.IGNORECASE)
+                user_input_prompt = re.sub(r"forward slash load", "/load", user_input_prompt, flags=re.IGNORECASE)
+                user_input_prompt = re.sub(r"forward slash quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
+
+                if user_input_prompt.lower() == "/swap":
+                    ollama_chatbot_class.chat_history = []
+                    user_input_model_select = input(HEADER + "<<< PROVIDE NEW AGENT NAME >>> " + OKBLUE)
+                    print(f"Model changed to {user_input_model_select}")
+                elif user_input_prompt.lower() == "/save":
+                    ollama_chatbot_class.save_to_json("chat_history.json")
+                    print("Chat history saved to chat_history.json")
+                elif user_input_prompt.lower() == "/load":
+                    ollama_chatbot_class.load_from_json("chat_history.json")
+                    print("Chat history loaded from chat_history.json")
+                elif user_input_prompt.lower() == "/quit":
+                    break
+
                 speech_done = True
-                print(GREEN + f"<<< USER >>> ")
             except sr.UnknownValueError:
                 print("Google Speech Recognition could not understand audio")
             except sr.RequestError as e:
@@ -173,38 +193,19 @@ if __name__ == "__main__":
         # If speech recognition was successful, proceed with the rest of the loop
         if speech_done:
             print(YELLOW + f"{user_input_prompt}" + OKCYAN)
-            # Save the current chat history to chat_history_json
-            if user_input_prompt.lower() == "/save":
-                ollama_chatbot_class.save_to_json("chat_history.json")
-                print("Chat history saved to chat_history.json")
+            # Send the prompt to the assistant
+            response = ollama_chatbot_class.send_prompt(user_input_prompt, user_input_model_select)
+            print(RED + f"<<< {user_input_model_select} >>> " + END + f"{response}" + RED)
 
-            # Load chat_history.json to the current model
-            elif user_input_prompt.lower() == "/load":
-                ollama_chatbot_class.load_from_json("chat_history.json")
-                print("Chat history loaded from chat_history.json")
-
-            # Clear chat history to allow user to select a new agent
-            elif user_input_prompt.lower() == "/swap":
-                ollama_chatbot_class.chat_history = []
-                user_input_model_select = input(HEADER + "<<< PROVIDE NEW AGENT NAME >>> " + OKBLUE)
-                print(f"Model changed to {user_input_model_select}")
-
-            # Quit back to root directory in cmd
-            elif user_input_prompt.lower() == "/quit":
-                break
-
-            # if not command, then prompt model
-            else:
-                # Send the prompt to the assistant
-                response = ollama_chatbot_class.send_prompt(user_input_prompt, user_input_model_select)
-                print(RED + f"<<< {user_input_model_select} >>> " + END + f"{response}" + RED)
-
-                # Split the response into sentences for TTS
-                tts_response_sentences = ollama_chatbot_class.split_into_sentences(response)
-
-                # Generate audio for each sentence in TTS
-                for sentence in tts_response_sentences:
-                    tts_audio = ollama_chatbot_class.agent_text_to_voice(sentence)
-                    # Play the audio
-                    sd.play(tts_audio, samplerate=22050)
+            # Split the response into sentences for TTS
+            tts_response_sentences = ollama_chatbot_class.split_into_sentences(response)
+            
+            flag = True
+            # Generate audio for each sentence in TTS
+            for sentence in tts_response_sentences:
+                # Play the audio
+                tts_audio = ollama_chatbot_class.agent_text_to_voice(sentence)
+                if flag == False:
                     sd.wait()
+                flag == False
+                sd.play(tts_audio, samplerate=22050)
