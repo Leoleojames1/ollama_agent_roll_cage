@@ -23,15 +23,12 @@
             leoleojames1/ollama_agent_roll_cage
 
 """
-import os
 import requests
 import json
-import torch
-import sounddevice as sd
-from TTS.api import TTS
 import re
 import speech_recognition as sr
 import keyboard
+from tts_processor import tts_processor
 
 class ollama_chatbot_class:
     """ A class for accessing the ollama local serve api via python, and creating new custom agents.
@@ -43,16 +40,38 @@ class ollama_chatbot_class:
         self.headers = {'Content-Type': 'application/json'}
         self.chat_history = []
 
-        current_dir = os.getcwd()
-        parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+        # current_dir = os.getcwd()
+        # parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.tts_wav_path = os.path.join(parent_dir, "AgentFiles\\Ignored_TTS\\pipeline\\active_group\\clone_speech.wav")
-        self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
+        # self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        # self.tts_wav_path = os.path.join(parent_dir, "AgentFiles\\Ignored_TTS\\pipeline\\active_group\\clone_speech.wav")
+        # self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
 
-    def agent_text_to_voice(self, response):
-        tts_response = self.tts.tts(text=response, speaker_wav=(f"{self.tts_wav_path}"), language="en")
-        return tts_response
+    # def generate_audio(self, sentence):
+    #     # Generate audio for a single sentence
+    #     return self.agent_text_to_voice(sentence)
+    
+    # def process_tts_responses(self, tts_response_sentences):
+    #     # Initialize a process pool with the desired number of processes
+    #     num_processes = len(tts_response_sentences)  # One process per sentence
+    #     audio_results = {}
+
+    #     with Pool(num_processes) as pool:
+    #         for pick in range(num_processes):  # Iterate over the range of processes
+    #             sentence = tts_response_sentences[pick]  # Get the corresponding sentence
+    #             audio_result = pool.apply(self.generate_audio, args=(sentence,))
+    #             audio_results[pick] = audio_result
+
+    #     # Play the audio sequentially
+    #     for tok in range(num_processes):
+    #         sd.play(audio_results[tok], samplerate=22050)
+    #         sd.wait()  # Wait for the audio to finish playing
+
+    # def agent_text_to_voice(self, response):
+    #     # Generate audio
+    #     tts_response = self.tts.tts(text=response, speaker_wav=self.tts_wav_path, language="en")
+
+    #     return tts_response
     
     def get_audio(self):
         r = sr.Recognizer()
@@ -60,9 +79,6 @@ class ollama_chatbot_class:
             print("Listening...")
             audio = r.listen(source)
         return audio
-
-    def _generate_tts_response(self, response):
-        return self.tts.tts(text=response, speaker_wav=self.tts_wav_path, language="en")
     
     def send_prompt(self, user_input_prompt, user_input_model_select):
         self.chat_history.append({"user": "User", "message": user_input_prompt})
@@ -86,22 +102,6 @@ class ollama_chatbot_class:
         except requests.RequestException as e:
             return f"Error: {e}"
 
-    def split_into_sentences(self, text: str) -> list[str]:
-        # Add spaces around punctuation marks for consistent splitting
-        text = " " + text + " "
-        text = text.replace("\n", " ")
-
-        # Handle common abbreviations and special cases
-        text = re.sub(r"(Mr|Mrs|Ms|Dr|i\.e)\.", r"\1<prd>", text)
-        text = re.sub(r"\.\.\.", r"<prd><prd><prd>", text)
-
-        # Split on period, question mark, or exclamation mark followed by optional spaces
-        sentences = re.split(r"[.!?]\s*", text)
-
-        # Remove empty sentences
-        sentences = [s.strip() for s in sentences if s.strip()]
-
-        return sentences
     
     def save_to_json(self, filename):
         """ a method for saving the current agent conversation history
@@ -154,6 +154,7 @@ if __name__ == "__main__":
     UNDERLINE = '\033[4m'
 
     ollama_chatbot_class = ollama_chatbot_class()
+    tts_processor = tts_processor()
 
     user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
     print("Press space bar to record audio.")
@@ -197,18 +198,5 @@ if __name__ == "__main__":
             response = ollama_chatbot_class.send_prompt(user_input_prompt, user_input_model_select)
             print(RED + f"<<< {user_input_model_select} >>> " + END + f"{response}" + RED)
 
-            # Split the response into sentences for TTS
-            tts_response_sentences = ollama_chatbot_class.split_into_sentences(response)
-            
-            flag = True
-            item = 0
-            tts_audio = {}
-            # Generate audio for each sentence in TTS
-            for sentence in tts_response_sentences:
-                item += 1
-                tts_audio[item] = ollama_chatbot_class.agent_text_to_voice(sentence)
-                # Play the audio
-                if flag == False:
-                 sd.wait()
-                sd.play(tts_audio[item], samplerate=22050)
-                flag = False
+            # Split the response into sentences for TTS Multiprocessing
+            tts_processor.process_tts_responses(response)
