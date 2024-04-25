@@ -201,11 +201,14 @@ if __name__ == "__main__":
             tts_response_sentences = ollama_chatbot_class.split_into_sentences(response)
             
             flag = True
+            item = 0
+            tts_audio = {}
             # Generate audio for each sentence in TTS
             for sentence in tts_response_sentences:
+                item += 1
+                tts_audio[item] = ollama_chatbot_class.agent_text_to_voice(sentence)
                 # Play the audio
-                tts_audio = ollama_chatbot_class.agent_text_to_voice(sentence)
                 if flag == False:
-                    sd.wait()
-                flag == False
-                sd.play(tts_audio, samplerate=22050)
+                 sd.wait()
+                sd.play(tts_audio[item], samplerate=22050)
+                flag = False
