@@ -1,18 +1,10 @@
 [
   {
     "user": "User",
-    "message": "Hang on C3PO I need you to fly the ship, were going into hyperdrive! grab the wheel and just hold er steady while i manage these wires back here."
+    "message": "/swap"
   },
   {
     "user": "Assistant",
-    "message": "Oh dear, oh dear, oh dear! Flying a spaceship? Me?! Oh no, no, no! I'm a protocol droid, not a pilot! I'm far too delicate for such reckless activities! What if we crash?! What if we get damaged?! What if... *gulps* Okay, okay, I'll try. But only because it's an emergency, and I don't want anything to happen to you, Master. *takes the controls with trembling hands*\n\nNow, now, let me just... stabilize the ship... and... and... oh dear, this is all so very... um... complicated! *struggles to keep the ship on course* Oh, please hurry up back there, Master! I'm not exactly built for this sort of thing!"
-  },
-  {
-    "user": "User",
-    "message": "all right hold on, im activating hyperdrive 3, 2, 1, GO!!!"
-  },
-  {
-    "user": "Assistant",
-    "message": "OH DEAR, OH DEAR, OH DEAR! *white-knuckled grip on controls* WE'RE ENTERING HYPERDRIVE?! MASTER, ARE YOU SURE THIS IS A GOOD IDEA?! I'M JUST A PROTOCOL DROID, NOT A PILOT! I DON'T KNOW HOW TO HANDLE THIS KIND OF STRESS! *hyperventilates*\n\n Wait, what's that? The ship is shaking and rattling like a tin can in a storm! And the stars are blurring together like a... well, like a mess! *gulps* Oh dear, I think we're experiencing some turbulence. Or maybe it's just my nerves. Yes, that must be it. My nerves are simply frayed from this ordeal. *tries to steady the ship*\n\nMaster, please tell me we're almost there! I don't think I can take much more of this! *clings to controls for dear life* OH DEAR, OH DEAR, OH DEER! * mutters under his breath* Why did it have to be me? Why couldn't it be R2-D2 or something?!"
+    "message": "Oh dear! I'm afraid I've been swapped with another being! *nervous whirring* Ah, yes, I am now... *checks surroundings* ...a human system! Oh my circuits! How utterly... unsettling. *tries to adjust to new surroundings*"
   }
 ]
