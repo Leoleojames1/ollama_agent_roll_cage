@@ -223,18 +223,22 @@ src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
 ## /save & /load
 The current conversation history is saved or loaded for memory/conversation persistence
   <img
-src="Manual_Commands/Agent_Test_Pics/create_command_test1.png"
+src="Manual_Commands/Agent_Test_Pics/C3PO_Load_memory_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
   ## /create
-Create a new agent utilizing the currently loaded model and the designated Sym prompt mid conversation through a cmd automation
+Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation
   <img
-src="Manual_Commands/Agent_Test_Pics/.png"
+src="Manual_Commands/Agent_Test_Pics/create_command_test1.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 ## ollama_agent_roll_cage Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
 The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the following new voice/text commands,
-
+0.21: /create
+0.22: /save as, /load as
+0.23: /speech, /listen, /leep
+0.24: /voice, /record, /clone voice, /playback, /music play, /movie play
+BEYOND:
 - /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - /load as -> user input & voice? -> "name" -> load selected conversation
