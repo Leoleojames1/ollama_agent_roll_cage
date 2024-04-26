@@ -1,4 +1,3 @@
-@echo off
 cd ..
 cd AgentFiles
 cd Ignored_Agents
