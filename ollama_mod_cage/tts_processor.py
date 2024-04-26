@@ -1,4 +1,7 @@
-# tts_processor.py
+""" tts_processor.py
+
+    A class for processing the response sentences and audio generation for the ollama_chat_bot_class
+"""
 
 import sounddevice as sd
 import os
@@ -8,6 +11,8 @@ from TTS.api import TTS
 
 class tts_processor:
     def __init__(self):
+        """a method for initializing the class
+        """
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
 
@@ -16,12 +21,20 @@ class tts_processor:
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
 
     def process_tts_responses(self, response):
+        """a method for managing the response preprocessing methods
+            args: response
+            returns: none
+        """
         # Call Sentence Splitter
         tts_response_sentences = self.split_into_sentences(response)
         self.generate_play_audio_loop(tts_response_sentences)
         return
 
     def generate_play_audio_loop(self, tts_response_sentences):
+        """a method for generating and playing the chatbot audio loops
+            args: tts_response_sentences
+            none: none
+        """
         # Generate audio for each sentence in TTS
         flag = True
         for sentence in tts_response_sentences:
@@ -39,6 +52,10 @@ class tts_processor:
         return
 
     def split_into_sentences(self, text: str) -> list[str]:
+        """a method for splitting the llm response into sentences
+            args: text: str -> list[str]
+            returns: sentences
+        """
         # Add spaces around punctuation marks for consistent splitting
         text = " " + text + " "
         text = text.replace("\n", " ")
