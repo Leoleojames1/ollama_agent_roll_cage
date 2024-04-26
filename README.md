@@ -59,6 +59,9 @@ Also Please Follow this tutorial if it is more helpful for installing ollama:
 
 [https://www.youtube.com/watch?v=90ozfdsQOKo](https://www.youtube.com/watch?v=3t_P0tDvRCE&t=127s)
 
+***The llama3 Dolphin model is based on Llama-3-8b, which and is governed by META LLAMA 3 COMMUNITY LICENSE AGREEMENT:
+https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE***
+
 After installing ollama in the users directory automatically it will be in:
 ```
   C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama
