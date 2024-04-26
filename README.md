@@ -229,7 +229,7 @@ src="Manual_Commands/Agent_Test_Pics/C3PO_Load_memory_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
   ## /create
-Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "forward slash create"
+Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "forward slash create".
 
   <img
 src="Manual_Commands/Agent_Test_Pics/create_command_test1.png"
