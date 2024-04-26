@@ -16,7 +16,23 @@ https://docs.anaconda.com/free/miniconda/miniconda-install/
 Make sure to utilize a conda virtual environment for all of your python dependecy management.
 Once you have conda installed open the command line and name your new vEnv whatever you want with python version 3.11 as 3.12 has dependency issues:
 ```
-conda create -n ollamaEnvPy311 python=3.11
+conda create -n py311_ollama python=3.11
+```
+then activate it
+```
+conda activate py311_ollama
+```
+right away install the nvdia py indexer,
+```
+pip install nvidia-pyindex
+```
+then cd to the location of ollama_agent_roll_cage in the command line:
+```
+D:\ollama_mod_cage
+```
+and type
+```
+pip install -r requirements.txt
 ```
 
 ## Installing Cuda for NVIDIA GPU
@@ -94,17 +110,22 @@ ollama_chatbot_class.py - a python class for managing the ollama api communicati
 ollama_serve_llama3_base_curl.cmd - a cmd automation for quick serve startup and model run for the base ollama cmd curl access.
 ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for quick serve startup and model run with ollama_chatbot_class.py integration for STT, TTS, conversation history, and more.
 ```
+ollama_serve_llama3_base_py.cmd is the main runpoint for starting the program and opening the server or the virtual enviroment.
 
-Coqui Text to Speech Library:
+## Installing Coqui Text to Speech
+Now download the Coqui Text to Speech Library with pip install:
 https://pypi.org/project/TTS/
 https://github.com/coqui-ai/TTS
+```
+pip install TTS
+```
 
 Now download the XTTS Model for coqui, open cmd cd to ollama_agent_roll_cage\AgentFiles\Ignored_TTS and clone the model with:
 coqui/XTTS-v2 Model: https://huggingface.co/coqui/XTTS-v2
 ```
 git clone https://huggingface.co/coqui/XTTS-v2
 ```
-
+#Installing S
 Speech Recognition Library:
 https://pypi.org/project/SpeechRecognition/
 
