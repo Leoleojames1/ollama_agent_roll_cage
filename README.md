@@ -1,4 +1,4 @@
-# ollama_agent_roll_cage 0.2:
+# ollama_agent_roll_cage 0.21:
 ## About
 **ollama_agent_roll_cage** is a python &amp; cmd toolset add-on for the **ollama command line interface**. The ollama_agent_roll_cage toolset automates the creation of **agents** giving the user more control over the likely output. Firstly ollama_agent_roll_cage provides **SYSTEM** **prompt** templates for each ./Modelfile, allowing the user to **design** and **deploy** **custom agents** quickly. Secondly, ollama_agent_roll_cage allows the user to **select which local model file is used** in **agent construction** with the desired system prompt. 
 
@@ -215,20 +215,35 @@ src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
 Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
 
 ## /swap 
-### model swap command for quick model change
+Swap out the current chatbot model for any other model, type /swap or say "forward slash swap" in STT.
+
   <img
 src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-  ## /save & /load
-### conversation history save & load commands for memory persistence
+## /save & /load
+The current conversation history is saved or loaded for memory/conversation persistence.
+
   <img
 src="Manual_Commands/Agent_Test_Pics/C3PO_Load_memory_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
+  ## /create
+Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "forward slash create" or type /create.
+
+  <img
+src="Manual_Commands/Agent_Test_Pics/create_command_test1.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  
 ## ollama_agent_roll_cage Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
 The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the following new voice/text commands,
-
+```
+- PUSHED Update 0.21: /create
+- Update 0.22: /save as, /load as
+- Update 0.23: /speech, /listen, /leep
+- Update 0.24: /voice, /record, /clone voice, /playback, /music play, /movie play
+```
+ Future Development Cycle Plans:
 - /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - /load as -> user input & voice? -> "name" -> load selected conversation
