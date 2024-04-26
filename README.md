@@ -13,7 +13,7 @@ src="Manual_Commands/rollcage.jpg"
 Miniconda for modular python virtual environments:
 https://docs.anaconda.com/free/miniconda/miniconda-install/
 
-Once you have conda installed open the command line and name your new vEnv whatever you want with:
+Once you have conda installed open the command line and name your new vEnv whatever you want with python version 3.11 as 3.12 has dependency issues:
 ```
 conda create -n ollamaEnvPy311 python=3.11
 ```
