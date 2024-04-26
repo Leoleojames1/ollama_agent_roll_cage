@@ -19,7 +19,7 @@
 
     Development for this software was started on: 4/20/2024 
     By: Leo Borcherding
-        on github @
+        on github @ 
             leoleojames1/ollama_agent_roll_cage
 
 """
