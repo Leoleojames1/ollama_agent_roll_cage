@@ -247,7 +247,8 @@ The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the 
 - /movie play "name" -> play back named movie mp4 file from library
 - /music play "name" -> play back named music mp3 file from library
 - /generate image -> "prompt" -> generate image with custom LORA model
-- /generate video -> "prompt" -> generate video with custom SORA model 
+- /generate video -> "prompt" -> generate video with custom SORA model
+- /lock -> password lock current agent configuration
        
 ## Common Errors:
 Receiving the following error code when running ollama_serve_llama3_base_py.cmd:
