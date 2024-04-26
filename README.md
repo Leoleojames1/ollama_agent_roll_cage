@@ -120,15 +120,17 @@ https://github.com/coqui-ai/TTS
 pip install TTS
 ```
 
-Now download the XTTS Model for coqui, open cmd cd to ollama_agent_roll_cage\AgentFiles\Ignored_TTS and clone the model with:
+Now download the XTTS Model for coqui, open command prompt and cd to ollama_agent_roll_cage\AgentFiles\Ignored_TTS and clone the model into this folder with:
 coqui/XTTS-v2 Model: https://huggingface.co/coqui/XTTS-v2
 ```
 git clone https://huggingface.co/coqui/XTTS-v2
 ```
-#Installing S
+# Installing py Speech Recognition (speech to text)
 Speech Recognition Library:
 https://pypi.org/project/SpeechRecognition/
-
+```
+pip install SpeechRecognition
+```
 
 You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
 
