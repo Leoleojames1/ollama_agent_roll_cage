@@ -22,10 +22,20 @@ conda create -n ollamaEnvPy311 python=3.11
 # Installing Cuda for NVIDIA GPU
 *Im using an NVIDIA GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
 
+## Cuda
+please now download and install cuda for nvidia graphics cards:
+https://developer.nvidia.com/cuda-downloads
+
+please also download cudnn and combine cuda & cudnn like in this video:
+
+## Cudnn:
+https://developer.nvidia.com/cudnn
+
+
 # Installing Ollama
 Now download and install **ollama** with **llama3 8b Instruct** from the following link, you will be asked to provide an email for either hugging face or meta to download the llama3 model, this is fine, as you are agreeing to the software license agreement which is a beneficial document for open source developers and is meant to protect meta from large corporations such as amazon and google. Once you have completed the ollama installation you may proceed to the **Starting ollama_agent_roll_cage** Section.
 
-Ollama Program Download:
+## Ollama Program Download:
 
 https://ollama.com/download
 
