@@ -8,6 +8,7 @@ import os
 import torch
 import re
 from TTS.api import TTS
+import speech_recognition as sr
 
 class tts_processor:
     def __init__(self):
@@ -20,6 +21,22 @@ class tts_processor:
         self.tts_wav_path = os.path.join(self.parent_dir, "AgentFiles\\Ignored_TTS\\pipeline\\active_group\\clone_speech.wav")
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
 
+    def get_audio(self):
+        """ a method for collecting the audio from the microphone
+            args: none
+            returns: audio
+        """
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            print("Listening...")
+            audio = r.listen(source)
+        return audio
+    
+    def recognize_speech(self, audio):
+        """ a method for calling the speech recognizer
+        """
+        return sr.Recognizer().recognize_google(audio)
+    
     def process_tts_responses(self, response):
         """a method for managing the response preprocessing methods
             args: response

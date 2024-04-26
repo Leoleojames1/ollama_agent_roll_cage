@@ -28,9 +28,9 @@ import subprocess
 import requests
 import json
 import re
-import speech_recognition as sr
 import keyboard
 from tts_processor import tts_processor
+import speech_recognition as sr
 
 class ollama_chatbot_class:
     """ A class for accessing the ollama local serve api via python, and creating new custom agents.
@@ -46,22 +46,6 @@ class ollama_chatbot_class:
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
         self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles\\Ignored_Agents\\") 
-    
-    def get_audio(self):
-        """ a method for collecting the audio from the microphone
-            args: none
-            returns: audio
-        """
-        r = sr.Recognizer()
-        with sr.Microphone() as source:
-            print("Listening...")
-            audio = r.listen(source)
-        return audio
-    
-    def recognize_speech(self, audio):
-        """ a method for calling the speech recognizer
-        """
-        return sr.Recognizer().recognize_google(audio)
     
     def send_prompt(self, user_input_prompt, user_input_model_select):
         """ a method for prompting the model
@@ -114,10 +98,10 @@ class ollama_chatbot_class:
         # collect agent data
         user_input_agent_name = input(WHITE + "<<< PROVIDE NEW AGENT NAME TO CREATE >>> " + OKBLUE)
         user_input_temperature = input(WHITE + "<<< PROVIDE NEW AGENT TEMPERATURE (0.1 - 5.0) >>> " + OKBLUE)
-        # print("Press space bar to record the new agent's system prompt.")
-        # mic_audio = self.get_audio()
-        # system_prompt = self.recognize_speech(mic_audio)
-        system_prompt = input(WHITE + "<<< PROVIDE SYSTEM PROMPT >>> " + OKBLUE)
+        print("Press space bar to record the new agent's system prompt.")
+        mic_audio = self.get_audio()
+        system_prompt = tts_processor.recognize_speech(mic_audio)
+        # system_prompt = input(WHITE + "<<< PROVIDE SYSTEM PROMPT >>> " + OKBLUE)
         model_create_dir = os.path.join(self.ignored_agents, f"{user_input_agent_name}")
         model_create_file = os.path.join(self.ignored_agents, f"{user_input_agent_name}\\modelfile")
 
@@ -187,13 +171,13 @@ if __name__ == "__main__":
     print(GREEN + f"<<< USER >>> " + END)
     while True:
         user_input_prompt = ""
-        # user_input_prompt = input()
         speech_done = False
         while keyboard.is_pressed('space'):  # user holds down the space bar
-            audio = ollama_chatbot_class.get_audio() # record audio
             try:
+                audio = tts_processor.get_audio() # record audio
                 # Recognize speech
-                user_input_prompt = ollama_chatbot_class.recognize_speech(audio)
+                user_input_prompt = tts_processor.recognize_speech(audio)
+                speech_done = True
 
                 # Use re.sub to replace "forward slash cmd" with "/cmd"
                 user_input_prompt = re.sub(r"forward slash swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
@@ -226,16 +210,8 @@ if __name__ == "__main__":
                     break
                 elif user_input_prompt.lower() == "/create":
                     ollama_chatbot_class.write_model_file_call_and_agent_automation()
-                # Speech done
-                speech_done = True
-            # Flip speech recognition errors
-            except sr.UnknownValueError:
-                print("Google Speech Recognition could not understand audio")
-            except sr.RequestError as e:
-                print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
-                # If speech recognition was successful, proceed with the rest of the loop
-                if speech_done:
+                elif speech_done == True:
                     print(YELLOW + f"{user_input_prompt}" + OKCYAN)
                     # Send the prompt to the assistant
                     response = ollama_chatbot_class.send_prompt(user_input_prompt, user_input_model_select)
@@ -244,3 +220,9 @@ if __name__ == "__main__":
                     # Split the response into sentences for TTS Multiprocessing
                     tts_processor.process_tts_responses(response)
                     print(GREEN + f"<<< USER >>> " + END)
+
+                # Speech done
+            except sr.UnknownValueError:
+                print("Google Speech Recognition could not understand audio")
+            except sr.RequestError as e:
+                print("Could not request results from Google Speech Recognition service; {0}".format(e))
