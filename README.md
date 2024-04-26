@@ -13,6 +13,7 @@ src="Manual_Commands/rollcage.jpg"
 Miniconda for modular python virtual environments:
 https://docs.anaconda.com/free/miniconda/miniconda-install/
 
+Make sure to utilize a conda virtual environment for all of your python dependecy management.
 Once you have conda installed open the command line and name your new vEnv whatever you want with python version 3.11 as 3.12 has dependency issues:
 ```
 conda create -n ollamaEnvPy311 python=3.11
@@ -94,10 +95,21 @@ ollama_serve_llama3_base_curl.cmd - a cmd automation for quick serve startup and
 ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for quick serve startup and model run with ollama_chatbot_class.py integration for STT, TTS, conversation history, and more.
 ```
 
+Coqui Text to Speech Library:
+https://pypi.org/project/TTS/
+https://github.com/coqui-ai/TTS
+
+Now download the XTTS Model for coqui, open cmd cd to ollama_agent_roll_cage\AgentFiles\Ignored_TTS and clone the model with:
+coqui/XTTS-v2 Model: https://huggingface.co/coqui/XTTS-v2
+```
+git clone https://huggingface.co/coqui/XTTS-v2
+```
+
+Speech Recognition Library:
+https://pypi.org/project/SpeechRecognition/
 
 
-
-
+You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
 
 ## Manual Agent Creation Guide:
 Next Navigate to the ollama_agent_roll_cage/AgentFiles directory, here you will find the Modelfile for each Model agent.
@@ -154,8 +166,6 @@ above plasma blasters. My suspicion is that an uncensored model such as Mixtral 
 data would be incapable of telling you "How to make a plasma blaster" but they would answer to questions such as how do you think we could 
 recreate the plasma blaster from star wars given the sufficient data from these given pdf libraries and science resources. 
 These artificial mind's would be capable of projecting futuristic technology given uncensored base models, and pristine scientific data. 
-
-You can now access your custom agent by running the ollama_serve_llama3_base_py.cmd automation to start the server and converse with the ollama_agent_roll_cage chatbot add ons.
 
 Check out the following summary tests for the following agents:
 
