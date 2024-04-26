@@ -99,7 +99,7 @@ class ollama_chatbot_class:
         user_input_agent_name = input(WHITE + "<<< PROVIDE NEW AGENT NAME TO CREATE >>> " + OKBLUE)
         user_input_temperature = input(WHITE + "<<< PROVIDE NEW AGENT TEMPERATURE (0.1 - 5.0) >>> " + OKBLUE)
         print("Press space bar to record the new agent's system prompt.")
-        mic_audio = self.get_audio()
+        mic_audio = tts_processor.get_audio()
         system_prompt = tts_processor.recognize_speech(mic_audio)
         # system_prompt = input(WHITE + "<<< PROVIDE SYSTEM PROMPT >>> " + OKBLUE)
         model_create_dir = os.path.join(self.ignored_agents, f"{user_input_agent_name}")
