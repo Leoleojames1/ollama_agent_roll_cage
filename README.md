@@ -28,7 +28,7 @@ pip install nvidia-pyindex
 ```
 then cd to the location of ollama_agent_roll_cage in the command line:
 ```
-D:\ollama_mod_cage
+D:\ollama_agent_roll_cage
 ```
 and type
 ```
