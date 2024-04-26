@@ -222,7 +222,7 @@ src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
 src="Manual_Commands/Agent_Test_Pics/C3PO_Load_memory_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
-## ollama_agent_roll_cage Updates 0.21, 0.22, 0.23 -> 0.3 - New Commands:
+## ollama_agent_roll_cage Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
 The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the following new voice/text commands,
 
 - /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
