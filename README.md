@@ -224,23 +224,24 @@ src="Manual_Commands/Agent_Test_Pics/C3PO_Load_memory_test.png"
 
 ## ollama_agent_roll_cage Updates 0.21, 0.22, 0.23 -> 0.3 - New Commands:
 The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the following new voice/text commands,
-    /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
-    /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
-    /load as -> user input & voice? -> "name" -> load selected conversation
-    /speech on/off -> swap between Speech to Speech & Text to Text interface
-    /listen -> turn off speech to text recognition, text to speech generation listen mode only
-    /leep -> turn off text to speech audio generation, speech to text recognition only, for speed interface
-    /search {request} -> send search request to google api for context lookup
-    /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
-    /voice -> user input & voice? -> swap the current audio reference wav file to modify the agent voice
-    /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
-    /clone voice -> call /record, save and call /voice to swap voice instantly for instant voice clone transformation from library
-    /playback -> playback any stored wav file in wav library
-    /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
-    /PDF list -> list all pdfs stored in agent library
-    /book audio -> load a book pdf or audiobook wav for playback
-    /movie play "name" -> play back named movie mp4 file from library
-    /music play "name" -> play back named music mp3 file from library
+
+- /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
+- /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
+- /load as -> user input & voice? -> "name" -> load selected conversation
+- /speech on/off -> swap between Speech to Speech & Text to Text interface
+- /listen -> turn off speech to text recognition, text to speech generation listen mode only
+- /leep -> turn off text to speech audio generation, speech to text recognition only, for speed interface
+- /search {request} -> send search request to google api for context lookup
+- /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
+- /voice -> user input & voice? -> swap the current audio reference wav file to modify the agent voice
+- /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
+- /clone voice -> call /record, save and call /voice to swap voice instantly for instant voice clone transformation from library
+- /playback -> playback any stored wav file in wav library
+- /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
+- /PDF list -> list all pdfs stored in agent library
+- /book audio -> load a book pdf or audiobook wav for playback
+- /movie play "name" -> play back named movie mp4 file from library
+- /music play "name" -> play back named music mp3 file from library
        
 ## Common Errors:
 Receiving the following error code when running ollama_serve_llama3_base_py.cmd:
