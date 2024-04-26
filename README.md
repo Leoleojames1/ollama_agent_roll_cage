@@ -19,8 +19,8 @@ Once you have conda installed open the command line and name your new vEnv whate
 conda create -n ollamaEnvPy311 python=3.11
 ```
 
-# Installing Cuda for NVDIA GPU
-*Im using a GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
+# Installing Cuda for NVIDIA GPU
+*Im using an NVIDIA GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
 
 # Installing Ollama
 Now download and install **ollama** with **llama3 8b Instruct** from the following link, you will be asked to provide an email for either hugging face or meta to download the llama3 model, this is fine, as you are agreeing to the software license agreement which is a beneficial document for open source developers and is meant to protect meta from large corporations such as amazon and google. Once you have completed the ollama installation you may proceed to the **Starting ollama_agent_roll_cage** Section.
@@ -51,7 +51,7 @@ to see all downloaded models you can type
 ```
   ollama list
 ```
-pulling down the 70b model is possible and I was able to run it on my GTX Titan XP however it was HORRIFICLY slow. I would not recommend it unless you have a lot of processing power.
+pulling down the 70b model is possible and I was able to run it on my NVIDIA GTX Titan XP however it was HORRIFICLY slow. I would not recommend it unless you have a lot of processing power.
 Now you can choose to run the model, or run a **local server** (REQUIRED FOR ollama_agent_roll_cage) and then make requests from the **local api** **server** set up with **ollama**.
 
 ## Running the model in cmd
