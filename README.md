@@ -5,11 +5,6 @@ ollama_agent_roll_cage is a python &amp; cmd toolset add-on for the ollama comma
 **SPEECH TO SPEECH 0.2 DEMO VIDEO 1:**
 
 https://www.youtube.com/watch?v=T7pGI5V1Soo
-
-### ollama_agent_roll_cage update 0.2:
-- after the release of ollama_agent_roll_cage 0.2 I will be uploading an installation and setup tutorial on youtube. 
-- ollama_agent_roll_cage 0.2 will also provide commands to train, and fine tune your own model.
-- ollama_agent_roll_cage 0.2 the chatbot class will be given new methods for **Speech to Text transcription &amp; **Text To Speech .wav file generation for real time audio conversations between the user and the selected agent through the python interface, utilizing the tortise TTS model, this will interact with the command tree for audio based /swap, /save, /load, and /create commands
   
 <img
 src="Manual_Commands/rollcage.jpg"
