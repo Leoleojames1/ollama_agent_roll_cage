@@ -235,6 +235,16 @@ Create a new agent utilizing the currently loaded model and the designated Syste
 src="Manual_Commands/Agent_Test_Pics/create_command_test1.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
+## Common Errors:
+
+### Running the Server while its already running
+Receiving the following error code when running ollama_serve_llama3_base_py.cmd:
+```
+Error: listen tcp 127.0.0.1:11434: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+```
+This error means that you tried to run the program but the program is already running, to close ollama, browse to the small arrow in the bottom right hand corner of windows
+and open it, right click on the ollama llama app icon, and click quit ollama.
+
 ## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
 ### ***UPCOMING SOON***
 ```
@@ -278,14 +288,6 @@ Download and install mojo, replace python setup with mojo for up to 35,000% effi
 ### sentence parser - comprehensive filter
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
 - filter unique strings such as `` , also manage bullet points for 1. 2. 3. 4., as these are not the end of sentence periods, maybe send the response to another llm for query boost and sentence filtering
-  
-## Common Errors:
-Receiving the following error code when running ollama_serve_llama3_base_py.cmd:
-```
-Error: listen tcp 127.0.0.1:11434: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
-```
-This error means that you tried to run the program but the program is already running, to close ollama, browse to the small arrow in the bottom right hand corner of windows
-and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ## More
 If you have found this software helpful, and would like to support the developement of open source tools by yours truly, you can contribute by donating BTC or ETH to one of my wallet addresses, thx and have a great day:
