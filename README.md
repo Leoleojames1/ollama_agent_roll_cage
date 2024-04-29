@@ -300,7 +300,7 @@ Download and install mojo, replace python setup with mojo for up to 35,000% effi
 - filter unique strings such as `` , also manage bullet points for 1. 2. 3. 4., as these are not the end of sentence periods, maybe send the response to another llm for query boost and sentence filtering
 
 ### Beyond
-- add ollama_agent_roll_cage_language variant for German, Spanish, French, Mandarin, Russian, latin? xD, arabic, hebrew, italian, hindi, japanese, portugeuse, which will include the translations down to the /voice commands and language models.
+- add ollama_agent_roll_cage_language variant for **German, Spanish, French, Mandarin, Russian, latin? xD, arabic, hebrew, italian, hindi, japanese, portugeuse,** which will include the translations down to the /voice commands and language models.
 - /swap language
   
 ## More information about me and the project:
