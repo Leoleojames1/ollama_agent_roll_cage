@@ -272,7 +272,7 @@ The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the 
 - Find a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible.
 - coqui tts likely fix for seperate wave file issue: https://github.com/coqui-ai/TTS/discussions/2988
 - Fix issues with Multithreading & Multiprocessessing Pickling Error for Coqui TTS either in ollama_agent_roll_cage or in coqui TTS.
-- 
+  
 ### sentence parser - comprehensive filter
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
 - filter unique strings such as `` , also manage bullet points for 1. 2. 3. 4., as these are not the end of sentence periods, maybe send the response to another llm for query boost and sentence filtering
