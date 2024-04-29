@@ -249,8 +249,9 @@ This error means that you tried to run the program but the program is already ru
 and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
-## ***UPCOMING SOON***
-### BASE 0.199 ***PUSHED TO GITHUB***
+***UPCOMING SOON***
+
+### Update 0.199 ***PUSHED TO GITHUB***
 - /save - save current conversation to main history file
 - /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
 - /quit - break the main python loop and return to command line
