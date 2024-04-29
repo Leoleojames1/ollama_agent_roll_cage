@@ -236,15 +236,15 @@ src="Manual_Commands/Agent_Test_Pics/create_command_test1.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 ## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
-### ***UPCOMING***
+### ***UPCOMING SOON***
 ```
 The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the following new voice/text commands,
-- PUSHED Update 0.21: /create
-- Update 0.22: /save as, /load as
-- Update 0.23: /speech, /listen, /leep
-- Update 0.24: /voice, /record, /clone voice, /playback, /music play, /movie play
+- PUSHED Update 0.21: /create -> agents
+- Update 0.22: /save as, /load -> as conversation history
+- Update 0.23: /speech, /listen, /leep -> STS, TTT, TTS, & STT MODES for alternative use cases.
+- Update 0.24: /voice, /record, /clone voice, /playback, /music play, /movie play -> voice model selection, live voice cloning, mp3 file playback requests
 ```
-## Future Development Cycle Plans:
+## Future command interface development list:
 - /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - /load as -> user input & voice? -> "name" -> load selected conversation
@@ -272,10 +272,11 @@ The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the 
 - Find a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible.
 - coqui tts likely fix for seperate wave file issue: https://github.com/coqui-ai/TTS/discussions/2988
 - Fix issues with Multithreading & Multiprocessessing Pickling Error for Coqui TTS either in ollama_agent_roll_cage or in coqui TTS.
-
-
-### sentence parser - 
-- SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind       
+- 
+### sentence parser - comprehensive filter
+- SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
+- filter unique strings such as `` , also manage bullet points for 1. 2. 3. 4., as these are not the end of sentence periods, maybe send the response to another llm for query boost and sentence filtering
+  
 ## Common Errors:
 Receiving the following error code when running ollama_serve_llama3_base_py.cmd:
 ```
