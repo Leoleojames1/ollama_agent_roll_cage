@@ -275,7 +275,7 @@ The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the 
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
 - /lock -> password lock current agent configuration
-- /yo llama pull that up -> a copy of jamie from joe rogan using C3PO voice clone audio reference w/ google api search finds: youtube clips, wiki pedia google results, and explains the point, also 
+- /yo llama pull that up -> a copy of jamie from joe rogan using C3PO voice clone audio reference w/ google api search finds: youtube clips, wiki pedia google results, and explains the point, also screen shares macros with keyboard and/or google youtube wiki search browser. preferably with macro moves for opening complex task and managing operations.
 
 ## Optimization Plans:
 ### Mojo - install
