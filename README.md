@@ -235,15 +235,16 @@ Create a new agent utilizing the currently loaded model and the designated Syste
 src="Manual_Commands/Agent_Test_Pics/create_command_test1.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-## ollama_agent_roll_cage Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
-The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the following new voice/text commands,
+## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
+### ***UPCOMING***
 ```
+The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the following new voice/text commands,
 - PUSHED Update 0.21: /create
 - Update 0.22: /save as, /load as
 - Update 0.23: /speech, /listen, /leep
 - Update 0.24: /voice, /record, /clone voice, /playback, /music play, /movie play
 ```
- Future Development Cycle Plans:
+## Future Development Cycle Plans:
 - /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - /load as -> user input & voice? -> "name" -> load selected conversation
@@ -266,7 +267,7 @@ The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the 
 - /lock -> password lock current agent configuration
 
 ## Optimization Plans:
-### text to speech - audio wave file live conversation generation
+### coqui text to speech - audio wave file live conversation generation
 - add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
 - Find a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible.
 - coqui tts likely fix for seperate wave file issue: https://github.com/coqui-ai/TTS/discussions/2988
