@@ -247,40 +247,46 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
 ### ***UPCOMING SOON***
-```
-The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the following new voice/text commands,
-- PUSHED Update 0.21: /create -> agents
-- Update 0.22: /save as, /load -> as conversation history
-- Update 0.23: /speech, /listen, /leep -> STS, TTT, TTS, & STT MODES for alternative use cases.
-- Update 0.24: /voice, /record, /clone voice, /playback, /music play, /movie play -> voice model selection, live voice cloning, mp3 file playback requests
-```
-## Future command interface development list:
+### Update 0.21 ***PUSHED TO GITHUB***
 - /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
+  
+### Update 0.22
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - /load as -> user input & voice? -> "name" -> load selected conversation
-- /speech on/off -> swap between Speech to Speech & Text to Text interface
+  
+### Update 0.23
+- /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
 - /listen -> turn off speech to text recognition, text to speech generation listen mode only
 - /leep -> turn off text to speech audio generation, speech to text recognition only, for speed interface
-- /search {request} -> send search request to google api for context lookup
-- /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
-- /voice -> user input & voice? -> swap the current audio reference wav file to modify the agent voice
+  
+- /voice -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /clone voice -> call /record, save and call /voice to swap voice instantly for instant voice clone transformation from library
+
+
+### Update 0.24
 - /playback -> playback any stored wav file in wav library
-- /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
-- /PDF list -> list all pdfs stored in agent library
 - /book audio -> load a book pdf or audiobook wav for playback
 - /movie play "name" -> play back named movie mp4 file from library
 - /music play "name" -> play back named music mp3 file from library
+  
+### Update 0.25
+- /search {request} -> send search request to google api for context lookup
+- /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
+- /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
+- /PDF list -> list all pdfs stored in agent library
+- 
+### Update 0.26  
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
-- /lock -> password lock current agent configuration
+- 
+### Update 0.28
 - /smart listen -> listen to the conversation between 2 people, record history, only trigger a response when the most likely human response would occur, i, e, talk short, give human like responses, yet still retain the knowledge of llama3. While 2 users converse, llama3 model learns the conversation flow, and know when stepping in for moderation, fact checking, search results, live in a heated debate where one would want to know the true nature of scientific data, historical data, language data, and all data in the moment of live conversation with agent roll cage
 - /moderator -> make roll cage a conversation moderator for 2 different people having a conersation always listing and processing thoughts but never responding until "/yo llama what do you think about that" is asked after activating /moderator.
 - /yo llama what do you think about that -> llama3 response for the /moderator chat history as a mediator between 2 people.
-- /yo llama pull that up -> a copy of jamie from joe rogan using C3PO voice clone audio reference w/ google api search finds: youtube clips, wiki pedia google results, and explains the point, also screen shares macros with keyboard and/or google youtube wiki search browser. preferably with macro moves for opening complex task and managing operations.
+- /yo llama pull that up -> a copy of jamie from joe rogan using C3PO voice clone audio reference w/ google api search finds: youtube clips, wiki pedia google results, and explains the point, also screen shares macros with keyboard and/or google youtube wiki search browser. preferably with macro moves for opening complex task and managing operations. -> send to joe rogan and jamie? xD
 
-## Optimization Plans:
+## Optimization Plans: *** Updates 0.22 ***
 ### Mojo - install
 Download and install mojo, replace python setup with mojo for up to 35,000% efficiency increase.
 ### coqui text to speech - audio wave file live conversation generation
@@ -293,7 +299,30 @@ Download and install mojo, replace python setup with mojo for up to 35,000% effi
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
 - filter unique strings such as `` , also manage bullet points for 1. 2. 3. 4., as these are not the end of sentence periods, maybe send the response to another llm for query boost and sentence filtering
 
-## More
+### Beyond
+- add ollama_agent_roll_cage_language variant for German, Spanish, French, Mandarin, Russian, latin? xD, arabic, hebrew, italian, hindi, japanese, portugeuse, which will include the translations down to the /voice commands and language models.
+- /swap language
+  
+## More information about me and the project:
+        This software was designed by Leo Borcherding with the intent of creating an easy to use
+    ai interface for anyone, through Speech to Text and Text to Speech.
+        
+        With ollama_agent_roll_cage we can provide hands free access to LLM data. 
+    This has a host of applications and I want to bring this software to users 
+    suffering from blindness/vision loss, and children suffering from austism spectrum 
+    disorder as way for learning and expanding communication and speech. 
+    
+        The C3PO ai is a great imaginary friend! I could envision myself 
+    talking to him all day telling me stories about a land far far away! 
+    This makes learning fun and accessible! Children would be directly 
+    rewarded for better speech as the ai responds to subtle differences 
+    in language ultimately educating them without them realizing it.
+
+    Development for this software was started on: 4/20/2024 
+    By: Leo Borcherding
+        on github @ 
+            leoleojames1/ollama_agent_roll_cage
+
 If you have found this software helpful, and would like to support the developement of open source tools by yours truly, you can contribute by donating BTC or ETH to one of my wallet addresses, thx and have a great day:
 
 **BTC Address:** bc1q6s6e8hgw2ewyqd5u3adjme0rp0r23caf53qjhf
