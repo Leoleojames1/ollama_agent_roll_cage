@@ -246,7 +246,7 @@ This error means that you tried to run the program but the program is already ru
 and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
-### ***UPCOMING SOON***
+## ***UPCOMING SOON***
 ### Update 0.21 ***PUSHED TO GITHUB***
 - /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
   
@@ -275,7 +275,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
 - /PDF list -> list all pdfs stored in agent library
-- 
+
 ### Update 0.26  
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
