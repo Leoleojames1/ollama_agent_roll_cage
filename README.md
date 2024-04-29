@@ -254,7 +254,8 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /namecall on/off -> activate long form voice recording with out the need for spacebar, when namecall is activated the chatbot will start storing all recorded microphone input, with noise suppression filter.
 Speech recognized conversation will be stored as a prompt and if the prompt loades over it will prompt the model tell is to wait, and say that the audio wont be played so just take this as an input and
 digest without responding. thus the next prompt which was too long will be sent afterwards, without the user being interrupted by the model. The model will only respond to the prompt by saying the key
-words "roll cage namecall" in which it will then respond. (if a command is said namecall will wait for called command to execute before continuing)
+words "roll cage namecall" inside of the prompt at any point, in which it will then respond once you stop talking and give the model enough wait time to auto respond if the message contains content and no speech
+has been said for a variable amount of time to define a custom speed. (if a command is said namecall will wait for called command to execute before continuing, and the entire prompt should contain only the command)
 
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - /load as -> user input & voice? -> "name" -> load selected conversation
