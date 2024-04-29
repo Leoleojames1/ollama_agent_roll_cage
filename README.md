@@ -267,6 +267,8 @@ The 0.21, 0.22, 0.23 -> 0.3 updates for ollama_agent_roll_cage will contain the 
 - /lock -> password lock current agent configuration
 
 ## Optimization Plans:
+## Mojo - install
+Download and install mojo, replace python setup with mojo for up to 35,000% efficiency increase.
 ### coqui text to speech - audio wave file live conversation generation
 - add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
 - Find a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible.
