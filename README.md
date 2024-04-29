@@ -250,6 +250,12 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
 ## ***UPCOMING SOON***
+### BASE 0.199 ***PUSHED TO GITHUB***
+- /save - save current conversation to main history file
+- /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
+- /quit - break the main python loop and return to command line
+- /swap - swap the current model with the specified model
+  
 ### Update 0.21 ***PUSHED TO GITHUB***
 - /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
   
@@ -268,6 +274,7 @@ has been said for a variable amount of time to define a custom speed. (if a comm
 - coqui tts likely fix for seperate wave file issue: https://github.com/coqui-ai/TTS/discussions/2988
   
 ### Update 0.23
+- /full voice on/off -> turn on/of speech to text for user input command arguments
 - /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
 - /listen -> turn off speech to text recognition, text to speech generation listen mode only
 - /leep -> turn off text to speech audio generation, speech to text recognition only, for speed interface
