@@ -274,7 +274,7 @@ has been said for a variable amount of time to define a custom speed. (if a comm
 - coqui tts likely fix for seperate wave file issue: https://github.com/coqui-ai/TTS/discussions/2988
   
 ### Update 0.23
-- /full voice on/off -> turn on/of speech to text for user input command arguments
+- /full voice on/off -> turn on/off speech to text for user input command arguments
 - /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
 - /listen -> turn off speech to text recognition, text to speech generation listen mode only
 - /leep -> turn off text to speech audio generation, speech to text recognition only, for speed interface
