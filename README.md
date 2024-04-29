@@ -307,16 +307,20 @@ Download and install mojo, replace python setup with mojo for up to 35,000% effi
         This software was designed by Leo Borcherding with the intent of creating an easy to use
     ai interface for anyone, through Speech to Text and Text to Speech.
         
-        With ollama_agent_roll_cage we can provide hands free access to LLM data. 
-    This has a host of applications and I want to bring this software to users 
-    suffering from blindness/vision loss, and children suffering from austism spectrum 
+        With ollama_agent_roll_cage we can provide hands free access to LLM data.
+    This tool provides opensource developers with framewor for create and deploying
+    custom agents for a variety of tasks. In addition to rapid development I want to 
+    bring this design this software to have a fluid experience for people suffering 
+    from blindness/vision loss, and children suffering from austism spectrum 
     disorder as way for learning and expanding communication and speech. 
     
         The C3PO ai is a great imaginary friend! I could envision myself 
     talking to him all day telling me stories about a land far far away! 
     This makes learning fun and accessible! Children would be directly 
     rewarded for better speech as the ai responds to subtle differences 
-    in language ultimately educating them without them realizing it.
+    in language ultimately educating them without them realizing it. I
+    employ you all to start developing you own custom systems, and finding
+    those awesome niche applications that can help a lot of people.
 
     Development for this software was started on: 4/20/2024 
     By: Leo Borcherding
