@@ -248,7 +248,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 ## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
 ## ***UPCOMING SOON***
 ### Update 0.21 ***PUSHED TO GITHUB***
-- /create -> user input & voice? -> "agent name" "SYM PROMPT" -> uses currently loaded model
+- /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with you own specific customizations
   
 ### Update 0.22
 - /namecall on/off -> activate long form voice recording with out the need for spacebar, when namecall is activated the chatbot will start storing all recorded microphone input, with noise suppression filter.
