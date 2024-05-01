@@ -283,7 +283,7 @@ has been said for a variable amount of time to define a custom speed. (if a comm
 - /full voice on/off -> turn on/off speech to text for user input command arguments
 - /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
 - /listen -> turn off speech to text recognition, text to speech generation listen mode only
-- /leep -> turn off text to speech audio generation, speech to text recognition only, for speed interface
+- /leap -> turn off text to speech audio generation, speech to text recognition only, for speed interface
   
 - /voice -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
