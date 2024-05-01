@@ -276,7 +276,7 @@ has been said for a variable amount of time to define a custom speed. (if a comm
 - /load as -> user input & voice? -> "name" -> load selected conversation
 
 - add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
-- Find a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible.
+- Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible.
 - coqui tts likely fix for seperate wave file issue: https://github.com/coqui-ai/TTS/discussions/2988
   
 ### Update 0.23
