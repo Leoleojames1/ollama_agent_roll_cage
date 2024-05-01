@@ -269,13 +269,12 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /load as -> user input & voice? -> "name" -> load selected conversation
 
 - DONE: add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
-- WAV FILE LIBRARY SERPERATE STORAGE DONE: Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
+- DONE: Wave File Storage Library - Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
   
 ### Update 0.23
-- /full voice on/off -> turn on/off speech to text for user input command arguments
 - /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
-- /listen -> turn off speech to text recognition, text to speech generation listen mode only
-- /leap -> turn off text to speech audio generation, speech to text recognition only, for speed interface
+- /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
+- /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
   
 - /voice -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
