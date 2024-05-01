@@ -265,19 +265,11 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
   
 ### Update 0.22
-- /automatic response -> automatically response to the user if not google audio has been detetected from mic in loop, once promp response plays mic will open up again for input:
-  
-Speech recognized conversation will be stored as a prompt and if the prompt loades over it will prompt the model tell is to wait, and say that the audio wont be played so just take this as an input and
-digest without responding. thus the next prompt which was too long will be sent afterwards, without the user being interrupted by the model. The model will only respond to the prompt by saying the key
-words "roll cage namecall" inside of the prompt at any point, in which it will then respond once you stop talking and give the model enough wait time to auto respond if the message contains content and no speech
-has been said for a variable amount of time to define a custom speed. (if a command is said namecall will wait for called command to execute before continuing, and the entire prompt should contain only the command)
-
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - /load as -> user input & voice? -> "name" -> load selected conversation
 
-- add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
-- Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible.
-- coqui tts likely fix for seperate wave file issue: https://github.com/coqui-ai/TTS/discussions/2988
+- DONE: add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
+- WAV FILE LIBRARY SERPERATE STORAGE DONE: Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
   
 ### Update 0.23
 - /full voice on/off -> turn on/off speech to text for user input command arguments
