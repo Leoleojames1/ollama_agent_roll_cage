@@ -29,8 +29,9 @@ import requests
 import json
 import re
 import keyboard
-from tts_processor import tts_processor
+from tts_processor_class import tts_processor_class
 import speech_recognition as sr
+from directory_manager_class import directory_manager_class
 
 class ollama_chatbot_class:
     """ A class for accessing the ollama local serve api via python, and creating new custom agents.
@@ -90,18 +91,50 @@ class ollama_chatbot_class:
         with open(filename, "r") as json_file:
             self.chat_history = json.load(json_file)
 
-    def write_model_file_call_and_agent_automation(self):
+    def write_model_file_and_run_agent_create(self):
         """ a method to automatically generate a new agent via commands
             args: none
             returns: none
         """
-        # collect agent data
-        user_input_agent_name = input(WHITE + "<<< PROVIDE NEW AGENT NAME TO CREATE >>> " + OKBLUE)
-        user_input_temperature = input(WHITE + "<<< PROVIDE NEW AGENT TEMPERATURE (0.1 - 5.0) >>> " + OKBLUE)
-        print("Press space bar to record the new agent's system prompt.")
-        mic_audio = tts_processor.get_audio()
-        system_prompt = tts_processor.recognize_speech(mic_audio)
-        # system_prompt = input(WHITE + "<<< PROVIDE SYSTEM PROMPT >>> " + OKBLUE)
+        # collect agent data with stt or ttt
+        if listen_flag == False:  # listen_flag is True
+            print("Press space bar to record the new agent's agent name.")
+            user_input_agent_name = print(WARNING + "<<< PROVIDE NEW AGENT NAME TO CREATE >>> " + OKBLUE)
+            while keyboard.is_pressed('space'):  # user holds down the space bar
+                try:
+                    mic_audio = tts_processor_class.get_audio()
+                    user_input_agent_name = tts_processor_class.recognize_speech(mic_audio)
+                    user_input_agent_name = tts_processor_class.file_name_voice_filter(user_input_agent_name)
+                except sr.UnknownValueError:
+                    print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
+                except sr.RequestError as e:
+                    print(OKCYAN + "Could not request results from Google Speech Recognition service; {0}".format(e) + OKCYAN)
+
+            print("Press space bar to record the new agent's temperature.")
+            while keyboard.is_pressed('space'):  # user holds down the space bar
+                try:
+                    user_input_temperature = print(WARNING + "<<< PROVIDE NEW AGENT TEMPERATURE (0.1 - 5.0) >>> " + OKBLUE)
+                    mic_audio = tts_processor_class.get_audio()
+                    user_input_temperature = tts_processor_class.recognize_speech(mic_audio)
+                except sr.UnknownValueError:
+                    print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
+                except sr.RequestError as e:
+                    print(OKCYAN + "Could not request results from Google Speech Recognition service; {0}".format(e) + OKCYAN)
+            while keyboard.is_pressed('space'):  # user holds down the space bar
+                try:        
+                    print("Press space bar to record the new agent's system prompt.")
+                    mic_audio = tts_processor_class.get_audio()
+                    system_prompt = tts_processor_class.recognize_speech(mic_audio)
+                except sr.UnknownValueError:
+                    print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
+                except sr.RequestError as e:
+                    print(OKCYAN + "Could not request results from Google Speech Recognition service; {0}".format(e) + OKCYAN)
+
+        elif listen_flag == True:
+            user_input_agent_name = input(WARNING + "<<< PROVIDE NEW AGENT NAME TO CREATE >>> " + OKBLUE)
+            user_input_temperature = input(WARNING + "<<< PROVIDE NEW AGENT TEMPERATURE (0.1 - 5.0) >>> " + OKBLUE)
+            system_prompt = input(WHITE + "<<< PROVIDE SYSTEM PROMPT >>> " + OKBLUE)
+
         model_create_dir = os.path.join(self.ignored_agents, f"{user_input_agent_name}")
         model_create_file = os.path.join(self.ignored_agents, f"{user_input_agent_name}\\modelfile")
 
@@ -137,6 +170,25 @@ class ollama_chatbot_class:
         except Exception as e:
             print(f"Error executing create_agent_cmd: {str(e)}")
 
+    def voice_command_select_filter(self, user_input_prompt):
+        """ a method for managing the voice command selection
+            Args: user_input_prompt
+            Returns: user_input_prompt
+        """ 
+        user_input_prompt = re.sub(r"forward slash swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash save", "/save", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash load", "/load", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash create", "/create", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash listen on", "/listen on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash listen on", "/listen off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash speech on", "/speech on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash speech off", "/speech off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash leap on", "/leap on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"forward slash leap off", "/leap off", user_input_prompt, flags=re.IGNORECASE)
+
+        return user_input_prompt
+    
 if __name__ == "__main__":
     """ 
     The main loop for the ollama_chatbot_class, utilizing a state machine for user command injection during command line prompting,
@@ -161,68 +213,106 @@ if __name__ == "__main__":
     UNDERLINE = '\033[4m'
     WHITE = '\x1B[37m'
 
+    # initialize command state flags
+    leap_flag = False
+    listen_flag = False
+
     # instantiate class calls
     ollama_chatbot_class = ollama_chatbot_class()
-    tts_processor = tts_processor()
+    tts_processor_class = tts_processor_class()
+    directory_manager_class = directory_manager_class()
 
     # begin chatbot loop
     user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
-    print("Press space bar to record audio.")
+    print(OKCYAN + "Press space bar to record audio:" + OKCYAN)
     print(GREEN + f"<<< USER >>> " + END)
     while True:
         user_input_prompt = ""
         speech_done = False
-        while keyboard.is_pressed('space'):  # user holds down the space bar
-            try:
-                audio = tts_processor.get_audio() # record audio
-                # Recognize speech
-                user_input_prompt = tts_processor.recognize_speech(audio)
-                speech_done = True
+        if listen_flag == True:  # listen_flag is True
+            print(OKCYAN + "Please type your selected prompt:" + OKCYAN)
+            user_input_prompt = input(GREEN + f"<<< USER >>> " + END)
+            speech_done = True
+        elif listen_flag == False:
+            while keyboard.is_pressed('space'):  # user holds down the space bar
+                try:
+                    # Record audio from microphone
+                    audio = tts_processor_class.get_audio()
+                    # Recognize speech to text from audio
+                    user_input_prompt = tts_processor_class.recognize_speech(audio)
+                    speech_done = True
+                except sr.UnknownValueError:
+                    print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
+                except sr.RequestError as e:
+                    print(OKCYAN + "Could not request results from Google Speech Recognition service; {0}".format(e) + OKCYAN)
 
-                # Use re.sub to replace "forward slash cmd" with "/cmd"
-                user_input_prompt = re.sub(r"forward slash swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
-                user_input_prompt = re.sub(r"forward slash save", "/save", user_input_prompt, flags=re.IGNORECASE)
-                user_input_prompt = re.sub(r"forward slash load", "/load", user_input_prompt, flags=re.IGNORECASE)
-                user_input_prompt = re.sub(r"forward slash quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
-                user_input_prompt = re.sub(r"forward slash create", "/create", user_input_prompt, flags=re.IGNORECASE)
+        # Use re.sub to replace "forward slash cmd" with "/cmd"
+        user_input_prompt = ollama_chatbot_class.voice_command_select_filter(user_input_prompt)
 
-                # TODO Add commands for 0.21: 
-                # /create, /save as, /load as, 
-                
-                # TODO Add commands for 0.22: 
-                # /speech, /listen, /leep
+        # if cmd call desired cmd functions
+        if user_input_prompt.lower() == "/swap":
+            ollama_chatbot_class.chat_history = []
+            user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME TO SWAP >>> " + OKBLUE)
+            print(f"Model changed to {user_input_model_select}")
 
-                # TODO Add commands for 0.23: 
-                # /voice, /record, /clone voice, /playback, /music play, /movie play
+        elif user_input_prompt.lower() == "/save":
+            ollama_chatbot_class.save_to_json("chat_history.json")
+            print("Chat history saved to chat_history.json")
+            print(GREEN + f"<<< USER >>> " + END)
+        elif user_input_prompt.lower() == "/load":
+            ollama_chatbot_class.load_from_json("chat_history.json")
+            print("Chat history loaded from chat_history.json")
+            print(GREEN + f"<<< USER >>> " + END)
+        elif user_input_prompt.lower() == "/quit":
+            break
+        elif user_input_prompt.lower() == "/create":
+            ollama_chatbot_class.write_model_file_and_run_agent_create()
+            print(GREEN + f"<<< USER >>> " + END)
+        elif user_input_prompt.lower() == "/listen on":
+            listen_flag = True
+        elif user_input_prompt.lower() == "/listen off":
+            listen_flag = False
+            print(GREEN + f"<<< USER >>> " + END)
+        elif user_input_prompt.lower() == "/leap on":
+            leap_flag = True
+            print(GREEN + f"<<< USER >>> " + END)
+        elif user_input_prompt.lower() == "/leap off":
+            leap_flag = False
+            print(GREEN + f"<<< USER >>> " + END)
+        elif user_input_prompt.lower() == "/speech on":
+            leap_flag = False
+            listen_flag = False
+            print(GREEN + f"<<< USER >>> " + END)
+        elif user_input_prompt.lower() == "/speech off":
+            leap_flag = True
+            listen_flag = True
+            print(GREEN + f"<<< USER >>> " + END)
 
-                # if cmd call desired cmd functions
-                if user_input_prompt.lower() == "/swap":
-                    ollama_chatbot_class.chat_history = []
-                    user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME TO SWAP >>> " + OKBLUE)
-                    print(f"Model changed to {user_input_model_select}")
-                elif user_input_prompt.lower() == "/save":
-                    ollama_chatbot_class.save_to_json("chat_history.json")
-                    print("Chat history saved to chat_history.json")
-                elif user_input_prompt.lower() == "/load":
-                    ollama_chatbot_class.load_from_json("chat_history.json")
-                    print("Chat history loaded from chat_history.json")
-                elif user_input_prompt.lower() == "/quit":
-                    break
-                elif user_input_prompt.lower() == "/create":
-                    ollama_chatbot_class.write_model_file_call_and_agent_automation()
+        elif speech_done == True:
+            print(YELLOW + f"{user_input_prompt}" + OKCYAN)
+            # Send the prompt to the assistant
+            response = ollama_chatbot_class.send_prompt(user_input_prompt, user_input_model_select)
+            print(RED + f"<<< {user_input_model_select} >>> " + END + f"{response}" + RED)
 
-                elif speech_done == True:
-                    print(YELLOW + f"{user_input_prompt}" + OKCYAN)
-                    # Send the prompt to the assistant
-                    response = ollama_chatbot_class.send_prompt(user_input_prompt, user_input_model_select)
-                    print(RED + f"<<< {user_input_model_select} >>> " + END + f"{response}" + RED)
+            # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
+            # Clear speech cache and split the response into sentences for next TTS cache
+            if leap_flag is not None and isinstance(leap_flag, bool):
+                if leap_flag != True:
+                    directory_manager_class.clear_directory(tts_processor_class.tts_store_wav_locker_path)
+                    tts_processor_class.process_tts_responses(response)
+            elif leap_flag is None:
+                pass
+            print(GREEN + f"<<< USER >>> " + END)
 
-                    # Split the response into sentences for TTS Multiprocessing
-                    tts_processor.process_tts_responses(response)
-                    print(GREEN + f"<<< USER >>> " + END)
+            # TODO Add commands for 0.21: 
+            # /save as, /load as, - get done NOWWWWWW
+            
+            # TODO Add commands for 0.22: 
+            # /speech - done, /listen - done, /leap - done
 
-                # Speech done
-            except sr.UnknownValueError:
-                print("Google Speech Recognition could not understand audio")
-            except sr.RequestError as e:
-                print("Could not request results from Google Speech Recognition service; {0}".format(e))
+            # TODO Add commands for 0.23: 
+            # /voice, /record, /clone voice, /playback, /music play, /movie play
+
+            # TODO 0.25 RAG AND GOOGLE API
+
+            # TODO LORA AND SORA STABLE DIFFUSION

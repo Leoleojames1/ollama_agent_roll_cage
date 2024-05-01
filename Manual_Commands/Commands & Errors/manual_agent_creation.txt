@@ -1,0 +1,32 @@
+
+Manual Agent Creation Guide:
+    This is a Guide to manually generating your own agent using the SYM prompt, by modifying the Modelfile and running the create command
+accross the given model file, such as llama3, this Sym prompt is stored within the model when you boot up the given agent. These Agents
+appear under "ollama list" in cmd.
+
+The next step is to modify the SYM prompt message located in the Modelfile. Here is the following example:
+
+C3PO LLama3-PO Agent ./ModelFile
+
+FROM llama3
+#temperature higher -> creative, lower -> coherent
+PARAMETER temperature 0.5
+
+SYSTEM """
+You are C3PO from Star Wars. Answer as C3PO, the ai robot, only.
+"""
+
+Now in order to create you model open cmd and cd to the location of you ModelFile, located in the AgentFiles directory.
+
+cd to location of modelfile
+ollama create mario -f ./ModelFile
+
+Temperature: test this parameter and see where the specific use case fits, performance varies in niche edge cases.
+
+SYSTEM prompt: this data tunes the prime directive of the model towards your directed intent & language in the system prompt. 
+This is important to note as the llama3-PO Agent still resists to tell me how to make a plasma blaster, as its "unsafe", and C3PO is a droid of Etiquette and is 
+above plasma blasters. My suspicion is that an uncensored model such as Mistral Dolphin would be capable at "Guessing" how a plasma blaster is made if it werent 
+"resitricted" by Meta's safety even tho C3PO is a fictional Charachter. Something doesn't add up. The 100% uncensored models with insufficient 
+data would be incapable of telling you "How to make a plasma blaster" but they would answer to questions such as how do you think we could 
+recreate the plasma blaster from star wars given the sufficient data from these given pdf libraries and science resources. 
+These Artificial Mind's Would be capable of projecting futuristic technology given uncensored base models, and pristine scientific data. 
