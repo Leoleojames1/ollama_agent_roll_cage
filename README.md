@@ -265,7 +265,8 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
   
 ### Update 0.22
-- /namecall on/off -> activate long form voice recording with out the need for spacebar, when namecall is activated the chatbot will start storing all recorded microphone input, with noise suppression filter.
+- /automatic response -> automatically response to the user if not google audio has been detetected from mic in loop, once promp response plays mic will open up again for input:
+  
 Speech recognized conversation will be stored as a prompt and if the prompt loades over it will prompt the model tell is to wait, and say that the audio wont be played so just take this as an input and
 digest without responding. thus the next prompt which was too long will be sent afterwards, without the user being interrupted by the model. The model will only respond to the prompt by saying the key
 words "roll cage namecall" inside of the prompt at any point, in which it will then respond once you stop talking and give the model enough wait time to auto respond if the message contains content and no speech
