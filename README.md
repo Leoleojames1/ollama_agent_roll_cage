@@ -252,12 +252,12 @@ Error: listen tcp 127.0.0.1:11434: bind: Only one usage of each socket address (
 This error means that you tried to run the program but the program is already running, to close ollama, browse to the small arrow in the bottom right hand corner of windows
 and open it, right click on the ollama llama app icon, and click quit ollama.
 
-## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
-***UPCOMING SOON*** BOLD SENTENCES HAVE BEEN PUSHED TO GITHUB
+## Updates 0.21 -> 0.3 - Development Cycle - New Commands, Features, & Optimizations:
+***UPCOMING SOON***
 
 ### Update 0.199: Chatbot script, TTS processor class, Model /Swap ***PUSHED TO GITHUB***
-- /save - save current conversation to main history file - soon to be replaced
-- /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.  - soon to be replaced
+- /save - save current conversation to main history file
+- /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
 - /quit - break the main python loop and return to command line
 - /swap - swap the current model with the specified model
   
