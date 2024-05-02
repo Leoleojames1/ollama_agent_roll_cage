@@ -256,7 +256,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 ***UPCOMING SOON*** BOLD SENTENCES HAVE BEEN PUSHED TO GITHUB
 
 ### Update 0.199: Chatbot script, TTS processor class, Model /Swap ***PUSHED TO GITHUB***
-- **/save - save current conversation to main history file - soon to be replaced**
+- /save - save current conversation to main history file - soon to be replaced
 - /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.  - soon to be replaced
 - /quit - break the main python loop and return to command line
 - /swap - swap the current model with the specified model
