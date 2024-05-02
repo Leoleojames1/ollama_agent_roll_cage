@@ -298,7 +298,9 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 ### Update 0.26  
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
-- 
+- /generate agent web cam -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
+- /recognize video - activate image recognition for video web cam input for functional utility
+  
 ### Update 0.27
 - /smart listen -> listen to the conversation between 2 people, record history, only trigger a response when the most likely human response would occur, i, e, talk short, give human like responses, yet still retain the knowledge of llama3. While 2 users converse, llama3 model learns the conversation flow, and know when stepping in for moderation, fact checking, search results, live in a heated debate where one would want to know the true nature of scientific data, historical data, language data, and all data in the moment of live conversation with agent roll cage
 - /moderator -> make roll cage a conversation moderator for 2 different people having a conersation always listing and processing thoughts but never responding until "/yo llama what do you think about that" is asked after activating /moderator.
@@ -307,6 +309,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ### Update 0.28
 - /preload command list - command_list.txt, run desired default commands on "/preload command list" call
+- /job set run {name} - create macro job set with cmd automations and automated keyboard output for mouse and key to automate specific tasks 
 
 ## Optimization Plans: *** Updates 0.XX - UNKNOW, some likely soon ***
 ### Mojo - install
