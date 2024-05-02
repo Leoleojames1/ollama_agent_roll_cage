@@ -264,7 +264,7 @@ if __name__ == "__main__":
     directory_manager_class = directory_manager_class()
 
     # initialize command state flags
-    leap_flag = False
+    leap_flag = True
     listen_flag = True
     
     # begin chatbot loop
