@@ -266,7 +266,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
   
 ### Update 0.22: Conversation History Library, & Speech Optimization ***PUSHED TO GITHUB***
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
-  -> get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
+  -- get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
 - /load as -> user input & voice? -> "name" -> load selected conversation
 
 - FINISHED: "Smart Wait Length Timer": add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
