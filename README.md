@@ -264,10 +264,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 ### Update 0.21: Custom Agent /Create Automation ***PUSHED TO GITHUB***
 - /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
 
-### Update 0.22: Conversation History Library, & Speech Optimization ***PUSHED TO GITHUB***
-- /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
-  -- get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
-- /load as -> user input & voice? -> "name" -> load selected conversation
+### Update 0.22: Speech Optimization ***PUSHED TO GITHUB***
 - "Smart Wait Length Timer": add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
 - "Wave File Storage Library": Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
@@ -278,12 +275,15 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
 - /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
   
-### Update 0.24: Agent voice reference swap, record, and voice clone
+### Update 0.24: Agent voice swap & Conversation History Library ***PUSHED TO GITHUB***
 - /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
+- /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
+  -- get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
+- /load as -> user input & voice? -> "name" -> load selected conversation
+  
+### Update 0.25: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
 - /clone voice -> call record, save and call /voice to swap voice instantly for instant voice clone transformation from library
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
-
-### Update 0.25: record, playback wav, mp3, mp4, audiobook, music, movie
 - /record as -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /playback -> playback any stored wav file in wav library
 - /book audio -> load a book pdf or audiobook wav for playback
