@@ -305,6 +305,9 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /yo llama what do you think about that -> llama3 response for the /moderator chat history as a mediator between 2 people.
 - /yo llama pull that up -> a copy of jamie from joe rogan using C3PO voice clone audio reference w/ google api search finds: youtube clips, wiki pedia google results, and explains the point, also screen shares macros with keyboard and/or google youtube wiki search browser. preferably with macro moves for opening complex task and managing operations. -> send to joe rogan and jamie? xD
 
+### Update 0.28
+- /preload command list - command_list.txt, run desired default commands on "/preload command list" call
+
 ## Optimization Plans: *** Updates 0.XX - UNKNOW, some likely soon ***
 ### Mojo - install
 Download and install mojo, replace python setup with mojo for up to 35,000% efficiency increase.
