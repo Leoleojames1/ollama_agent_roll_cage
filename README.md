@@ -256,38 +256,40 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 ***UPCOMING SOON***
 
 ### Update 0.199 ***PUSHED TO GITHUB***
-- /save - save current conversation to main history file
-- /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
-- /quit - break the main python loop and return to command line
-- /swap - swap the current model with the specified model
+- FINISHED: /save - save current conversation to main history file - soon to be replaced
+- FINISHED: /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.  - soon to be replaced
+- FINISHED: /quit - break the main python loop and return to command line
+- FINISHED: /swap - swap the current model with the specified model
   
-### Update 0.21 ***PUSHED TO GITHUB***
-- /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
+### Update 0.21: Custom Agent /Create Automation ***PUSHED TO GITHUB***
+- FINISHED: /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
   
-### Update 0.22
+### Update 0.22: Save/Load as history for Agent & conversation name
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
+- -- get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
 - /load as -> user input & voice? -> "name" -> load selected conversation
 
-- DONE: add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
-- DONE: Wave File Storage Library - Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
-  
+- FINISHED: "Smart Wait Length Timer": add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
+- FINISHED: "Wave File Storage Library": Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
+
 ### Update 0.23
-- /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
-- /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
-- /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
+- FINISHED: /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
+- FINISHED: /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
+- FINISHED: /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
   
+### Update 0.24
 - /voice -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /clone voice -> call /record, save and call /voice to swap voice instantly for instant voice clone transformation from library
 
 
-### Update 0.24
+### Update 0.25
 - /playback -> playback any stored wav file in wav library
 - /book audio -> load a book pdf or audiobook wav for playback
 - /movie play "name" -> play back named movie mp4 file from library
 - /music play "name" -> play back named music mp3 file from library
   
-### Update 0.25
+### Update 0.26
 - /search {request} -> send search request to google api for context lookup
 - /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
@@ -296,12 +298,18 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 ### Update 0.26  
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
-- 
-### Update 0.28
+- /generate agent web cam -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
+- /recognize video - activate image recognition for video web cam input for functional utility
+  
+### Update 0.27
 - /smart listen -> listen to the conversation between 2 people, record history, only trigger a response when the most likely human response would occur, i, e, talk short, give human like responses, yet still retain the knowledge of llama3. While 2 users converse, llama3 model learns the conversation flow, and know when stepping in for moderation, fact checking, search results, live in a heated debate where one would want to know the true nature of scientific data, historical data, language data, and all data in the moment of live conversation with agent roll cage
 - /moderator -> make roll cage a conversation moderator for 2 different people having a conersation always listing and processing thoughts but never responding until "/yo llama what do you think about that" is asked after activating /moderator.
 - /yo llama what do you think about that -> llama3 response for the /moderator chat history as a mediator between 2 people.
 - /yo llama pull that up -> a copy of jamie from joe rogan using C3PO voice clone audio reference w/ google api search finds: youtube clips, wiki pedia google results, and explains the point, also screen shares macros with keyboard and/or google youtube wiki search browser. preferably with macro moves for opening complex task and managing operations. -> send to joe rogan and jamie? xD
+
+### Update 0.28
+- /preload command list - command_list.txt, run desired default commands on "/preload command list" call
+- /job set run {name} - create macro job set with cmd automations and automated keyboard output for mouse and key to automate specific tasks 
 
 ## Optimization Plans: *** Updates 0.XX - UNKNOW, some likely soon ***
 ### Mojo - install
