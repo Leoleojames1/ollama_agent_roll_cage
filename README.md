@@ -278,12 +278,12 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - FINISHED: /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
   
 ### Update 0.24
-- /voice -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
+- /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
+- /clone voice -> call record, save and call /voice to swap voice instantly for instant voice clone transformation from library
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
-- /clone voice -> call /record, save and call /voice to swap voice instantly for instant voice clone transformation from library
-
 
 ### Update 0.25
+- /record as -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /playback -> playback any stored wav file in wav library
 - /book audio -> load a book pdf or audiobook wav for playback
 - /movie play "name" -> play back named movie mp4 file from library
