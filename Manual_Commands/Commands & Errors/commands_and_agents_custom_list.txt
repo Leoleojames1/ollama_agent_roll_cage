@@ -1,0 +1,50 @@
+/save
+/load
+/quit
+/create
+
+/listen on
+/listen off
+
+/leap on
+/leap off
+
+/speech on
+/speech off
+
+
+Artic Snowflake
+Gemma
+Phi-3
+Mistral
+Llama3
+Dolphin
+
+Shrek
+C3PO
+Tony Stark
+Rapsutin Warmind
+Rick from Rick and Morty
+Dr Strange
+Sherlock Holmes
+Harry Potter
+Winnie the Pooh
+Optimus Prime
+The Genie (Aladdin)
+
+George Carlin
+Jesus
+Donald Trump
+Joe Biden
+Eminem
+
+Albert Einstein - Known for his contributions to physics, he could give scientific explanations and engage users in thought-provoking discussions
+Leonardo Da Vinci - As a polymath, a da Vinci AI could provide insights on a wide range of topics from art to engineering. search
+Marie Curie - science and her groundbreaking research in radioactivity search
+Ada Lovelace - modeled after Lovelace could provide programming help and inspire users with google search
+Neil Armostrong - space and share the excitement of exploration and discovery google search
+Pac-Man - This classic video game character could turn the chat into a fun game, asking users to make decisions to avoid ghosts or collect points.
+Alex Trebek (Jeopardy!): An AI modeled after the beloved game show host could quiz users on a variety of topics, turning learning into a game.
+
+
+
