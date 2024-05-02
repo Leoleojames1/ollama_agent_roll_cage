@@ -265,7 +265,7 @@ if __name__ == "__main__":
 
     # initialize command state flags
     leap_flag = False
-    listen_flag = False
+    listen_flag = True
     
     # begin chatbot loop
     user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
