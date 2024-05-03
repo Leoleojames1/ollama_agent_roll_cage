@@ -286,7 +286,7 @@ if __name__ == "__main__":
     WHITE = '\x1B[37m'
 
     # initialize command state flags
-    leap_flag = False
+    leap_flag = True
     listen_flag = True
 
     # instantiate class calls
@@ -332,37 +332,37 @@ if __name__ == "__main__":
         elif re.match(r"/save as ([^/.]*)", user_input_prompt.lower()):
             ollama_chatbot_class.save_to_json()
             print(f"Chat history saved to {ollama_chatbot_class.save_name}.json")
-            print(GREEN + f"<<< USER >>> " + END)
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
 
         elif re.match(r"/load as ([^/.]*)", user_input_prompt.lower()):
             ollama_chatbot_class.load_from_json()
             print(f"Chat history loaded from {ollama_chatbot_class.load_name}.json")
-            print(GREEN + f"<<< USER >>> " + END)
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
 
         elif user_input_prompt.lower() == "/quit":
             break
         elif user_input_prompt.lower() == "/create":
             ollama_chatbot_class.write_model_file_and_run_agent_create(listen_flag)
-            print(GREEN + f"<<< USER >>> " + END)
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
         elif user_input_prompt.lower() == "/listen on":
             listen_flag = True
         elif user_input_prompt.lower() == "/listen off":
             listen_flag = False
-            print(GREEN + f"<<< USER >>> " + END)
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
         elif user_input_prompt.lower() == "/leap on":
             leap_flag = True
-            print(GREEN + f"<<< USER >>> " + END)
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
         elif user_input_prompt.lower() == "/leap off":
             leap_flag = False
-            print(GREEN + f"<<< USER >>> " + END)
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
         elif user_input_prompt.lower() == "/speech on":
             leap_flag = False
             listen_flag = False
-            print(GREEN + f"<<< USER >>> " + END)
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
         elif user_input_prompt.lower() == "/speech off":
             leap_flag = True
             listen_flag = True
-            print(GREEN + f"<<< USER >>> " + END)
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
 
         elif speech_done == True:
             print(YELLOW + f"{user_input_prompt}" + OKCYAN)
