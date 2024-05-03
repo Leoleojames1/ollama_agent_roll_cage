@@ -260,10 +260,10 @@ src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
 The current conversation history is saved or loaded for memory/conversation persistence.
 
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/c3po_save_as.png" style="width: 30%;">
-  <img src="Manual_Commands/Agent_Test_Pics/c3po_load_as_1.png" style="width: 30%;">
+  <img src="Manual_Commands/Agent_Test_Pics/c3po_save_as.png" style="width: 50%;">
+  <img src="Manual_Commands/Agent_Test_Pics/c3po_load_as_1.png" style="width: 50%;">
 </div>
-<img src="Manual_Commands/Agent_Test_Pics/c3po_save_as_2.png" style="display: block; margin: 0 auto; width: 30%;">
+<img src="Manual_Commands/Agent_Test_Pics/c3po_save_as_2.png" style="display: block; margin: 0 auto;">
   
   ### /create
 Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "activate create" or type /create.
