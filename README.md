@@ -2,7 +2,7 @@
 
 ***NOTE: This tool is a culmination of many different pieces of software however I want to share how amazing bing chat has been for testing and deploying new functions for each class in the program. Just thank you microsoft bing is amazing now. (and a big thanks to OpenAI for helping them do that)***
 
-# ollama_agent_roll_cage 0.23
+# ollama_agent_roll_cage 0.24
 ## About
 **ollama_agent_roll_cage** is a python &amp; cmd toolset add-on for the **ollama command line interface**. The ollama_agent_roll_cage toolset automates the creation of **agents** giving the user more control over the likely output. Firstly ollama_agent_roll_cage provides **SYSTEM** **prompt** templates for each ./Modelfile, allowing the user to **design** and **deploy** **custom agents** quickly. Secondly, ollama_agent_roll_cage allows the user to **select which local model file is used** in **agent construction** with the desired system prompt. 
 
@@ -11,6 +11,9 @@ https://www.youtube.com/watch?v=T7pGI5V1Soo
 
 **/create shrek 0.212 DEMO VIDEO 2:**
 https://www.youtube.com/watch?v=2IBPWCKCKjE
+
+**/voice /save as 0.24 DEMO, INSTALL, & SETUP VIDEO 3:**
+https:// COMING SOON, BEING FILMED
 
 <img
 src="Manual_Commands/rollcage.jpg"
@@ -203,7 +206,7 @@ These artificial mind's would be capable of projecting futuristic technology giv
 
 Check out the following summary tests for the following agents:
 
-  <img
+<img
 src="Manual_Commands/Agent_Test_Pics/LLAMA3_TEST_CARD_CHAT.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
@@ -211,36 +214,29 @@ src="Manual_Commands/Agent_Test_Pics/LLAMA3_TEST_CARD_CHAT.png"
 src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-  <img
+<img
 src="Manual_Commands/Agent_Test_Pics/DOLPHIN_LLAMA3_CARD_CHAT_2.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-  <img
+<img
 src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
 Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
 
-## /swap 
-Swap out the current chatbot model for any other model, type /swap or say "forward slash swap" in STT.
+## /swap -> enter model name
+Swap out the current chatbot model for any other model, type /swap or say "activate swap" in STT.
 
   <img
 src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-## /save & /load
+## /save as & /load as
 The current conversation history is saved or loaded for memory/conversation persistence.
 
-  <img
-src="Manual_Commands/Agent_Test_Pics/C3PO_Load_memory_test.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-
   ## /create
-Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "forward slash create" or type /create.
+Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "activate create" or type /create.
 
-  <img
-src="Manual_Commands/Agent_Test_Pics/create_command_test1.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 ## Common Errors:
 
@@ -302,6 +298,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /generate agent web cam -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
 - /recognize video - activate image recognition for video web cam input for functional utility
 - Sora directed agent profile deepfake animation
+- https://github.com/Stability-AI/generative-models
 - Sora directed game animation for games such as "Rick and Morty" portal journey explore endless worlds with video generation.
   
 ### Update 0.28: Smart Conversation, Listen and parse gaps from conversation, lookup data, moderate
