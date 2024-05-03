@@ -302,6 +302,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /generate agent web cam -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
 - /recognize video - activate image recognition for video web cam input for functional utility
 - Sora directed agent profile deepfake animation
+- https://github.com/Stability-AI/generative-models
 - Sora directed game animation for games such as "Rick and Morty" portal journey explore endless worlds with video generation.
   
 ### Update 0.28: Smart Conversation, Listen and parse gaps from conversation, lookup data, moderate
