@@ -224,26 +224,19 @@ src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
 
 Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
 
-## /swap 
-Swap out the current chatbot model for any other model, type /swap or say "forward slash swap" in STT.
+## /swap -> enter model name
+Swap out the current chatbot model for any other model, type /swap or say "activate swap" in STT.
 
   <img
 src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-## /save & /load
+## /save as & /load as
 The current conversation history is saved or loaded for memory/conversation persistence.
 
-  <img
-src="Manual_Commands/Agent_Test_Pics/C3PO_Load_memory_test.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-
   ## /create
-Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "forward slash create" or type /create.
+Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "activate create" or type /create.
 
-  <img
-src="Manual_Commands/Agent_Test_Pics/create_command_test1.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 ## Common Errors:
 
