@@ -1,9 +1,15 @@
 """ tts_processor.py
      copy paste model names:
-        borch/llama3_speed_chat
-        borch/llama3_speed_chat_2
+        borch_llama3_speed_chat
+        borch_llama3_speed_chat
         c3po
-        
+        Jesus 
+        borch_llama3po 
+        dolphin-llama3 
+        dolphin-mistral 
+        gemma 
+        llama3 
+        mistral 
     A class for processing the response sentences and audio generation for the ollama_chat_bot_class
 """
 
@@ -28,8 +34,9 @@ class tts_processor_class:
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.tts_voice_ref_wav_path = os.path.join(self.parent_dir, "AgentFiles\\Ignored_TTS\\pipeline\\active_group\\clone_speech.wav")
-        self.tts_store_wav_locker_path = os.path.join(self.parent_dir, "ollama_mod_cage\\current_speech_wav")
+        self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
+        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
+        self.agent_voice_gen_dump = os.path.join(self.parent_dir, "ollama_mod_cage\\current_speech_wav")
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
 
     def get_audio(self):
@@ -46,16 +53,18 @@ class tts_processor_class:
     def recognize_speech(self, audio):
         """ a method for calling the speech recognizer
         """
-        return sr.Recognizer().recognize_google(audio)
+        speech_str = sr.Recognizer().recognize_google(audio)
+        print(f">>{speech_str}<<")
+        return speech_str
     
-    def process_tts_responses(self, response):
+    def process_tts_responses(self, response, voice_name):
         """a method for managing the response preprocessing methods
             args: response
             returns: none
         """
         # Call Sentence Splitter
         tts_response_sentences = self.split_into_sentences(response)
-        self.generate_play_audio_loop(tts_response_sentences)
+        self.generate_play_audio_loop(tts_response_sentences, voice_name)
         return
     
     def play_audio_thread(self, audio_data, sample_rate):
@@ -63,14 +72,14 @@ class tts_processor_class:
         sd.play(audio_data, sample_rate)
         sd.wait()
 
-    def generate_play_audio_loop(self, tts_response_sentences):
+    def generate_play_audio_loop(self, tts_response_sentences, voice_name):
         """ a method to generate and play the audio for the chatbot
             args: tts_sentences
             returns: none
         """
         ticker = 0
         last_sentence = None
-
+        voice_name_path = os.path.join(self.tts_voice_ref_wav_pack_path, f"{voice_name}\\clone_speech.wav")
         for sentence in tts_response_sentences:
             ticker += 1
 
@@ -80,7 +89,7 @@ class tts_processor_class:
 
             # Generate TTS audio (replace with your actual TTS logic)
             print("starting speeech generation:")
-            tts_audio = self.tts.tts(text=sentence, speaker_wav=self.tts_voice_ref_wav_path, language="en", speed=2.4)
+            tts_audio = self.tts.tts(text=sentence, speaker_wav=voice_name_path, language="en", speed=2.6)
 
             # Convert to NumPy array (adjust dtype as needed)
             tts_audio = np.array(tts_audio, dtype=np.float32)
@@ -88,7 +97,7 @@ class tts_processor_class:
             # Create a new WAV file for each sentence
             wav_name_str = f"current_speech_{ticker}.wav"
             wav_paths = {}
-            wav_paths[ticker] = f"{self.tts_store_wav_locker_path}\\{wav_name_str}"
+            wav_paths[ticker] = f"{self.agent_voice_gen_dump}\\{wav_name_str}"
 
             # Write the TTS audio directly to the WAV file
             sf.write(wav_paths[ticker], tts_audio, 22050)
@@ -135,11 +144,11 @@ class tts_processor_class:
 
         return combined_sentences
     
-    def file_name_voice_filter(self, user_input_agent_name):
+    def file_name_voice_filter(self, input):
         """ a method for preprocessing the voice recognition with a filter before forwarding the agent file names.
             args: user_input_agent_name
             returns: user_input_agent_name
         """
         # Use regex to replace all spaces with underscores
-        user_input_agent_name = re.sub(' ', '_', user_input_agent_name)
-        return user_input_agent_name
+        output = re.sub(' ', '_', input)
+        return output

@@ -1,10 +1,10 @@
 borch/dolphin-2_5-mixtral-8x7b_SYS_PROMPT_TUNE_1 
-borch/llama3_speed_chat 
-borch/llama3_speed_chat_shrek 
-borch/llama3po 
 C3PO 
-Dolphin_Eminem_Swear_God 
+Dolphin_Eminem_Rap_God 
 Jesus 
+borch_llama3_speed_chat 
+borch_llama3_speed_chat_shrek 
+borch_llama3po 
 dolphin-llama3 
 dolphin-mistral 
 gemma 
