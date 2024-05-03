@@ -204,37 +204,69 @@ data would be incapable of telling you "How to make a plasma blaster" but they w
 recreate the plasma blaster from star wars given the sufficient data from these given pdf libraries and science resources. 
 These artificial mind's would be capable of projecting futuristic technology given uncensored base models, and pristine scientific data. 
 
+### Agents
 Check out the following summary tests for the following agents:
 
 <img
-src="Manual_Commands/Agent_Test_Pics/LLAMA3_TEST_CARD_CHAT.png"
+src="Manual_Commands/Agent_Test_Pics/llama_3.jpg"
+src="Manual_Commands/Agent_Test_Pics/llama_3.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 <img
-src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png"
+src="Manual_Commands/Agent_Test_Pics/c3po1.png"
+src="Manual_Commands/Agent_Test_Pics/c3po1.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 <img
-src="Manual_Commands/Agent_Test_Pics/DOLPHIN_LLAMA3_CARD_CHAT_2.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-  
-<img
-src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
+src="Manual_Commands/Agent_Test_Pics/jesus.jpg"
+src="Manual_Commands/Agent_Test_Pics/jesus.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
-Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
+  <img
+src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg"
+src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
 
+### Models
+Some great models to setup and try out with ollama pull {modelname}
+<img
+src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png"
+src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+
+## Commands
+ollama_agent_roll_cage 0.24 currently supports the following commands:
+- /save - save current conversation to main history file
+- /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
+- /quit - break the main python loop and return to command line
+- /swap - swap the current model with the specified model
+- /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
+- /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
+- /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
+- /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
+- /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
+- /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
+- /load as -> user input & voice? -> "name" -> load selected conversation
+  
 ## /swap -> enter model name
+Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
 Swap out the current chatbot model for any other model, type /swap or say "activate swap" in STT.
 
   <img
 src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-## /save as & /load as
+### /save as & /load as
 The current conversation history is saved or loaded for memory/conversation persistence.
-
-  ## /create
+  <img
+src="Manual_Commands/Agent_Test_Pics/c3po_save_as.png"
+src="Manual_Commands/Agent_Test_Pics/c3po_load_as_1.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  <img
+src="Manual_Commands/Agent_Test_Pics/c3po_save_as_2.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+  
+  ### /create
 Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "activate create" or type /create.
 
   
