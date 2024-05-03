@@ -2,7 +2,7 @@
 
 ***NOTE: This tool is a culmination of many different pieces of software however I want to share how amazing bing chat has been for testing and deploying new functions for each class in the program. Just thank you microsoft bing is amazing now. (and a big thanks to OpenAI for helping them do that)***
 
-# ollama_agent_roll_cage 0.212:
+# ollama_agent_roll_cage 0.23
 ## About
 **ollama_agent_roll_cage** is a python &amp; cmd toolset add-on for the **ollama command line interface**. The ollama_agent_roll_cage toolset automates the creation of **agents** giving the user more control over the likely output. Firstly ollama_agent_roll_cage provides **SYSTEM** **prompt** templates for each ./Modelfile, allowing the user to **design** and **deploy** **custom agents** quickly. Secondly, ollama_agent_roll_cage allows the user to **select which local model file is used** in **agent construction** with the desired system prompt. 
 
@@ -252,73 +252,73 @@ Error: listen tcp 127.0.0.1:11434: bind: Only one usage of each socket address (
 This error means that you tried to run the program but the program is already running, to close ollama, browse to the small arrow in the bottom right hand corner of windows
 and open it, right click on the ollama llama app icon, and click quit ollama.
 
-## Updates 0.21, 0.22, 0.23 -> 0.3 - Development Cycle Plan - New Commands:
+## Updates 0.21 -> 0.3 - Development Cycle - New Commands, Features, & Optimizations:
 ***UPCOMING SOON***
 
-### Update 0.199 ***PUSHED TO GITHUB***
-- FINISHED: /save - save current conversation to main history file - soon to be replaced
-- FINISHED: /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.  - soon to be replaced
-- FINISHED: /quit - break the main python loop and return to command line
-- FINISHED: /swap - swap the current model with the specified model
+### Update 0.199: Chatbot script, TTS processor class, Model /Swap ***PUSHED TO GITHUB***
+- /save - save current conversation to main history file
+- /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
+- /quit - break the main python loop and return to command line
+- /swap - swap the current model with the specified model
   
 ### Update 0.21: Custom Agent /Create Automation ***PUSHED TO GITHUB***
-- FINISHED: /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
-  
-### Update 0.22: Save/Load as history for Agent & conversation name
-- /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
-- -- get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
-- /load as -> user input & voice? -> "name" -> load selected conversation
+- /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
 
-- FINISHED: "Smart Wait Length Timer": add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
-- FINISHED: "Wave File Storage Library": Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
+### Update 0.22: Speech Optimization ***PUSHED TO GITHUB***
+- "Smart Wait Length Timer": add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
+- "Wave File Storage Library": Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
+- SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
+- filter unique strings such as `` , also manage bullet points for 1. 2. 3. 4., as these are not the end of sentence periods, maybe send the response to another llm for query boost and sentence filtering
 
-### Update 0.23
-- FINISHED: /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
-- FINISHED: /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
-- FINISHED: /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
+### Update 0.23: Speech modes leap, listen, speech on/off ***PUSHED TO GITHUB***
+- /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
+- /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
+- /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
   
-### Update 0.24
+### Update 0.24: Agent voice swap & Conversation History Library ***PUSHED TO GITHUB***
 - /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
+- /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
+  -- get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
+- /load as -> user input & voice? -> "name" -> load selected conversation
+  
+### Update 0.25: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
 - /clone voice -> call record, save and call /voice to swap voice instantly for instant voice clone transformation from library
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
-
-### Update 0.25
 - /record as -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /playback -> playback any stored wav file in wav library
 - /book audio -> load a book pdf or audiobook wav for playback
 - /movie play "name" -> play back named movie mp4 file from library
 - /music play "name" -> play back named music mp3 file from library
   
-### Update 0.26
+### Update 0.26: Google Search API & Ollama RAG integration, Prompt Query Boost, PDF Document Access 
 - /search {request} -> send search request to google api for context lookup
 - /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
 - /PDF list -> list all pdfs stored in agent library
 
-### Update 0.26  
+### Update 0.27: ComfyUI Automation with custom LORA &/or SORA
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
 - /generate agent web cam -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
 - /recognize video - activate image recognition for video web cam input for functional utility
+- Sora directed agent profile deepfake animation
+- Sora directed game animation for games such as "Rick and Morty" portal journey explore endless worlds with video generation.
   
-### Update 0.27
+### Update 0.28: Smart Conversation, Listen and parse gaps from conversation, lookup data, moderate
 - /smart listen 1 -> listens and responds after long pause, parses spaces from gapped chat history and recombines conversation history if for words said while the model is responding
 - /smart listen 2 -> listen to the conversation between 2 people, record history, only trigger a response when the most likely human response would occur, i, e, talk short, give human like responses, yet still retain the knowledge of llama3. While 2 users converse, llama3 model learns the conversation flow, and know when stepping in for moderation, fact checking, search results, live in a heated debate where one would want to know the true nature of scientific data, historical data, language data, and all data in the moment of live conversation with agent roll cage
 - /moderator -> make roll cage a conversation moderator for 2 different people having a conersation always listing and processing thoughts but never responding until "/yo llama what do you think about that" is asked after activating /moderator.
 - /yo llama what do you think about that -> llama3 response for the /moderator chat history as a mediator between 2 people.
 - /yo llama pull that up -> a copy of jamie from joe rogan using C3PO voice clone audio reference w/ google api search finds: youtube clips, wiki pedia google results, and explains the point, also screen shares macros with keyboard and/or google youtube wiki search browser. preferably with macro moves for opening complex task and managing operations. -> send to joe rogan and jamie? xD
 
-### Update 0.28
+### Update 0.29: On startup run default command setup, create automation job set with cmd automations and mouse/keyboard macros
 - /preload command list - command_list.txt, run desired default commands on "/preload command list" call
 - /job set run {name} - create macro job set with cmd automations and automated keyboard output for mouse and key to automate specific tasks 
 
-## Optimization Plans: *** Updates 0.XX - UNKNOW, some likely soon ***
+## Future Optimization Plans: *** Updates 0.XX - UNKNOW, some likely soon ***
 ### Mojo - install
-Download and install mojo, replace python setup with mojo for up to 35,000% efficiency increase.
+Download and install mojo, replace python setup with mojo for up to 68,000% efficiency increase.
 ### coqui text to speech - audio wave file live conversation generation
-- add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
-- Find a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible.
-- coqui tts likely fix for seperate wave file issue: https://github.com/coqui-ai/TTS/discussions/2988
 - Fix issues with Multithreading & Multiprocessessing Pickling Error for Coqui TTS either in ollama_agent_roll_cage or in coqui TTS.
   
 ### sentence parser - comprehensive filter
