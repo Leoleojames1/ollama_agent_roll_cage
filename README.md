@@ -206,7 +206,7 @@ These artificial mind's would be capable of projecting futuristic technology giv
 
 Check out the following summary tests for the following agents:
 
-  <img
+<img
 src="Manual_Commands/Agent_Test_Pics/LLAMA3_TEST_CARD_CHAT.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
@@ -214,11 +214,11 @@ src="Manual_Commands/Agent_Test_Pics/LLAMA3_TEST_CARD_CHAT.png"
 src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-  <img
+<img
 src="Manual_Commands/Agent_Test_Pics/DOLPHIN_LLAMA3_CARD_CHAT_2.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-  <img
+<img
 src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
