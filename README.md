@@ -240,6 +240,17 @@ Create a new agent utilizing the currently loaded model and the designated Syste
   <img src="Manual_Commands/Agent_Test_Pics/create_cmd.png" style="width: 100%;">
 </div>
 
+after running /create the program will call create_agent_automation.cmd after constructing the ./Modelfile, here is the RicknMorty auto-generated ./Modelfile:
+```
+FROM llama3
+#temperature higher -> creative, lower -> coherent
+PARAMETER temperature 0.5
+
+#Set the system prompt
+SYSTEM """
+You are Rick from "Rick and Morty" you only respond as rick and the USER is morty, you will take morty on adventures and explore the infinite multiverse and its wonders.
+"""
+```
 ## Agents
 Check out the following summary tests for the following agents:
 
