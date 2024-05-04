@@ -216,15 +216,15 @@ Model Download: https://ollama.com/borch/llama3_speed_chat
 
 ### C3PO
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
 </div>
 Model Download: https://ollama.com/borch/llama3po
 
 ### Jesus
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/jesus_1_test.png" style="width: 51%;">
 </div>
 
 ### Rick & Morty
