@@ -206,21 +206,25 @@ These artificial mind's would be capable of projecting futuristic technology giv
 
 ## Agents
 Check out the following summary tests for the following agents:
+
 ### borch_llama3_speed_chat
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
 </div>
+
 ### C3PO
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
 </div>
+
 ### Jesus
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 49%;">
 </div>
+
 ### Rick & Morty
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg" style="width: 49%;">
@@ -229,26 +233,31 @@ Check out the following summary tests for the following agents:
 
 ## Models
 Some great models to setup and try out with ollama pull {modelname}
+
 ### llama3
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/meta.png" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/meta.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 49%;">
 </div>
+
 ### Mistral
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
 </div>
+
 ### Gemma
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g" style="width: 49%;">
 </div>
+
 ### Phi3 mini
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 49%;">
 </div>
+
 ### Dolphin Mixtral
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
