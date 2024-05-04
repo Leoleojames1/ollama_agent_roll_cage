@@ -253,7 +253,7 @@ Model Download: https://ollama.com/library/mistral
 ### Gemma
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/gemma_who_are_you.png" style="width: 49%;">
 </div>
 Model Download: https://ollama.com/library/gemma
 
