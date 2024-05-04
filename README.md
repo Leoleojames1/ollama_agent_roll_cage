@@ -249,7 +249,7 @@ Some great models to setup and try out with ollama pull {modelname}
 ### Gemma
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/google_g" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
 </div>
 
 ### Phi3 mini
