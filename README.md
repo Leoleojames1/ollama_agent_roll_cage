@@ -316,7 +316,10 @@ The current conversation history is saved or loaded for memory/conversation pers
   ### /create
 Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "activate create" or type /create.
 
-  
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/create_cmd.png" style="width: 100%;">
+</div>
+
 ## Common Errors:
 
 ### Running the Server while its already running
