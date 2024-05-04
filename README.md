@@ -292,8 +292,8 @@ Further exploration in this space is required. The ability to request infinite s
 
 ### Dolphin Mixtral
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/Dolphin_molotov.png" style="width: 51%;">
 </div>
 Model Download: https://ollama.com/library/dolphin-mistral
   
