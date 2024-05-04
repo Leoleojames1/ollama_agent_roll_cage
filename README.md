@@ -330,7 +330,12 @@ Further exploration in this space is required. The ability to request infinite s
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/Dolphin_molotov.png" style="width: 59%;">
 </div>
-Model Download: https://ollama.com/library/dolphin-mistral
+Dolphin Mistral Ollama Model Download: 
+https://ollama.com/library/dolphin-mistral
+
+Utilizing the GGUF create command from earlier, models not available on ollama and instead found on hugging face can be utilized for creating new ollama models and agents:
+https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b
+https://huggingface.co/cognitivecomputations/dolphin-2.8-mistral-7b-v02
 
 ## Common Errors:
 
