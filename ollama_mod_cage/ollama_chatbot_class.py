@@ -156,7 +156,7 @@ class ollama_chatbot_class:
             try:
                 mic_audio = tts_processor_class.get_audio()
                 user_create_agent_name = tts_processor_class.recognize_speech(mic_audio)
-                user_create_agent_name = tts_processor_class.file_name_voice_filter(user_create_agent_name)
+                user_create_agent_name = tts_processor_class.file_name_conversation_history_filter(user_create_agent_name)
             except sr.UnknownValueError:
                 print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
             except sr.RequestError as e:
@@ -231,13 +231,13 @@ class ollama_chatbot_class:
         match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.voice_name = match.group(2)
-            self.voice_name = tts_processor_class.file_name_voice_filter(self.voice_name)
+            self.voice_name = tts_processor_class.file_name_conversation_history_filter(self.voice_name)
 
         # Search for the name after 'forward slash movie'
         match = re.search(r"(activate movie|/movie) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.movie_name = match.group(2)
-            self.movie_name = tts_processor_class.file_name_voice_filter(self.movie_name)
+            self.movie_name = tts_processor_class.file_name_conversation_history_filter(self.movie_name)
         else:
             self.movie_name = None
 
@@ -245,7 +245,7 @@ class ollama_chatbot_class:
         match = re.search(r"(activate save as|/save as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.save_name = match.group(2)
-            self.save_name = tts_processor_class.file_name_voice_filter(self.save_name)
+            self.save_name = tts_processor_class.file_name_conversation_history_filter(self.save_name)
             print(f"save_name string: {self.save_name}")
         else:
             self.save_name = None
@@ -254,7 +254,7 @@ class ollama_chatbot_class:
         match = re.search(r"(activate load as|/load as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.load_name = match.group(2)
-            self.load_name = tts_processor_class.file_name_voice_filter(self.load_name)
+            self.load_name = tts_processor_class.file_name_conversation_history_filter(self.load_name)
             print(f"load_name string: {self.load_name}")
         else:
             self.load_name = None
@@ -328,6 +328,10 @@ if __name__ == "__main__":
             ollama_chatbot_class.chat_history = []
             ollama_chatbot_class.user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME TO SWAP >>> " + OKBLUE)
             print(f"Model changed to {ollama_chatbot_class.user_input_model_select}")
+
+        elif re.match(r"/voice swap ([^/.]*)", user_input_prompt.lower()):
+            print(f"Agent voice swapped to {ollama_chatbot_class.voice_name}.json")
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
 
         elif re.match(r"/save as ([^/.]*)", user_input_prompt.lower()):
             ollama_chatbot_class.save_to_json()

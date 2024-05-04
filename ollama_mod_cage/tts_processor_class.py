@@ -150,5 +150,14 @@ class tts_processor_class:
             returns: user_input_agent_name
         """
         # Use regex to replace all spaces with underscores
-        output = re.sub(' ', '_', input)
+        output = re.sub(' ', '_', input).lower()
+        return output
+    
+    def file_name_conversation_history_filter(self, input):
+        """ a method for preprocessing the voice recognition with a filter before forwarding the agent file names.
+            args: user_input_agent_name
+            returns: user_input_agent_name
+        """
+        # Use regex to replace all spaces with underscores and convert to lowercase
+        output = re.sub(' ', '_', input).lower()
         return output

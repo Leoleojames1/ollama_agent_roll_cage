@@ -7,6 +7,11 @@ borch_llama3_speed_chat_shrek
 borch_llama3po 
 dolphin-llama3 
 dolphin-mistral 
+dolphin-phi 
 gemma 
 llama3 
+llava 
 mistral 
+phi3 
+snowflake-arctic-embed 
+wizardlm2 
