@@ -207,32 +207,29 @@ These artificial mind's would be capable of projecting futuristic technology giv
 ### Agents
 Check out the following summary tests for the following agents:
 
-<img
-src="Manual_Commands/Agent_Test_Pics/llama_3.jpg"
-src="Manual_Commands/Agent_Test_Pics/llama_3.jpg"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-  
-<img
-src="Manual_Commands/Agent_Test_Pics/c3po1.png"
-src="Manual_Commands/Agent_Test_Pics/c3po1.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-  
-<img
-src="Manual_Commands/Agent_Test_Pics/jesus.jpg"
-src="Manual_Commands/Agent_Test_Pics/jesus.jpg"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-
-  <img
-src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg"
-src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
+</div>
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
+</div>
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 49%;">
+</div>
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg" style="width: 49%;">
+</div>
 
 ### Models
 Some great models to setup and try out with ollama pull {modelname}
-<img
-src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png"
-src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
+</div>
 
 ## Commands
 ollama_agent_roll_cage 0.24 currently supports the following commands:
