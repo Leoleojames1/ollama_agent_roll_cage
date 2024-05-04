@@ -4,7 +4,7 @@
 
 # ollama_agent_roll_cage (OARC) Version 0.24
 ## About
-**ollama_agent_roll_cage** (OARC) is a python &amp; cmd toolset add-on for the **ollama command line interface**. The ollama_agent_roll_cage toolset automates the creation of **agents** giving the user more control over the likely output. Firstly ollama_agent_roll_cage provides **SYSTEM** **prompt** templates for each ./Modelfile, allowing the user to **design** and **deploy** **custom agents** quickly. Secondly, ollama_agent_roll_cage allows the user to **select which local model file is used** in **agent construction** with the desired system prompt. 
+**ollama_agent_roll_cage** (OARC) is a completely local python &amp; cmd toolset add-on for the **ollama command line interface**. The ollama_agent_roll_cage toolset automates the creation of **agents** giving the user more control over the likely output. Firstly ollama_agent_roll_cage provides **SYSTEM** **prompt** templates for each ./Modelfile, allowing the user to **design** and **deploy** **custom agents** quickly. Secondly, ollama_agent_roll_cage allows the user to **select which local model file is used** in **agent construction** with the desired system prompt. 
 
 **SPEECH TO SPEECH 0.2 DEMO VIDEO 1:**
 https://www.youtube.com/watch?v=T7pGI5V1Soo
@@ -148,6 +148,7 @@ pip install SpeechRecognition
 
 You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
 
+# Getting Started After Installation:
 ## Manual Agent Creation Guide:
 Next Navigate to the ollama_agent_roll_cage/AgentFiles directory, here you will find the Modelfile for each Model agent.
 
@@ -215,14 +216,37 @@ ollama_agent_roll_cage 0.24 currently supports the following commands:
 - /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - /load as -> user input & voice? -> "name" -> load selected conversation
+
+### /swap -> enter model name
+Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
+Swap out the current chatbot model for any other model, type /swap or say "activate swap" in STT.
+
+  <img
+src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
   
+### /save as & /load as
+The current conversation history is saved or loaded for memory/conversation persistence.
+
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_random_num_memory_save_load.png" style="width: 100%;">
+</div>
+<img src="Manual_Commands/Agent_Test_Pics/llama3_rand_num_memory_test_JSON_GIT_EX.png" style="display: block; margin: 0 auto;">
+  
+  ### /create
+Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "activate create" or type /create.
+
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/create_cmd.png" style="width: 100%;">
+</div>
+
 ## Agents
 Check out the following summary tests for the following agents:
 
 ### borch_llama3_speed_chat
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 39%;">
-  <img src="Manual_Commands/Agent_Test_Pics/llama_3_speed_chat_who.png" style="width: 51%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
 </div>
 Model Download: https://ollama.com/borch/llama3_speed_chat
 
@@ -242,7 +266,7 @@ Model Download: https://ollama.com/borch/llama3po
 ### Rick & Morty
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg" style="width: 39%;">
-  <img src="Manual_Commands/Agent_Test_Pics/ricknmorty1.png" style="width: 51%;">
+  <img src="Manual_Commands/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
 </div>
 
 ## Models
@@ -251,21 +275,21 @@ Some great models to setup and try out with ollama pull {modelname}
 ### llama3
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 39%;">
-  <img src="Manual_Commands/Agent_Test_Pics/llama3_who_are_you.png" style="width: 51%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
 </div>
 Model Download: https://ollama.com/library/llama3
 
 ### Mistral
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 39%;">
-  <img src="Manual_Commands/Agent_Test_Pics/mistral_who_are_you.png" style="width: 51%;">
+  <img src="Manual_Commands/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
 </div>
 Model Download: https://ollama.com/library/mistral
 
 ### Gemma
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 39%;">
-  <img src="Manual_Commands/Agent_Test_Pics/gemma_who_are_you.png" style="width: 51%;">
+  <img src="Manual_Commands/Agent_Test_Pics/gemma_who_are_you.png" style="width: 59%;">
 </div>
 Model Download: https://ollama.com/library/gemma
 
@@ -293,30 +317,10 @@ Further exploration in this space is required. The ability to request infinite s
 ### Dolphin Mixtral
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 39%;">
-  <img src="Manual_Commands/Agent_Test_Pics/Dolphin_molotov.png" style="width: 51%;">
+  <img src="Manual_Commands/Agent_Test_Pics/Dolphin_molotov.png" style="width: 59%;">
 </div>
 Model Download: https://ollama.com/library/dolphin-mistral
-  
-## /swap -> enter model name
-Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
-Swap out the current chatbot model for any other model, type /swap or say "activate swap" in STT.
 
-  <img
-src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-  
-### /save as & /load as
-The current conversation history is saved or loaded for memory/conversation persistence.
-
-<div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/llama3_random_num_memory_save_load.png" style="width: 100%;">
-</div>
-<img src="Manual_Commands/Agent_Test_Pics/llama3_rand_num_memory_test_JSON_GIT_EX.png" style="display: block; margin: 0 auto;">
-  
-  ### /create
-Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "activate create" or type /create.
-
-  
 ## Common Errors:
 
 ### Running the Server while its already running
