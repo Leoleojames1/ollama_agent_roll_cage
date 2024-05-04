@@ -265,10 +265,11 @@ https://huggingface.co/docs/transformers/main/model_doc/phi3
   <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 51%;">
 </div>
+
 and here is the wikipedia result for a cauchy product, this is a good test to show how phi3 responds to complex analysis in mathematics when specifying the latex language (LaTeX: https://en.wikipedia.org/wiki/LaTeX ) :
 
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_wikipedia.png" style="width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_wikipedia.png" style="width: 65%;">
 </div>
 
 Cauchy Product Wikipedia: https://en.wikipedia.org/wiki/Cauchy_product
