@@ -258,6 +258,9 @@ Model Download: https://ollama.com/library/mistral
 Model Download: https://ollama.com/library/gemma
 
 ### Phi3 mini
+Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion parameter language model trained on 3.3 trillion tokens, whose overall performance, as measured by both academic benchmarks and internal testing, rivals that of models such as Mixtral 8x7B and GPT-3.5 (e.g., phi-3-mini achieves 69% on MMLU and 8.38 on MT-bench)" as said by themselves on hugging face:
+https://huggingface.co/docs/transformers/main/model_doc/phi3
+
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 35%;">
   <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 55%;">
@@ -266,6 +269,7 @@ and here is the wikipedia result for a cauchy product:
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_wikipedia.png" style="width: 100%;">
 </div>
+Cauchy Product Wikipedia: https://en.wikipedia.org/wiki/Cauchy_product
 Model Download: https://ollama.com/library/phi3
 
 ### Dolphin Mixtral
