@@ -286,7 +286,7 @@ if __name__ == "__main__":
     WHITE = '\x1B[37m'
 
     # initialize command state flags
-    leap_flag = True
+    leap_flag = False
     listen_flag = True
 
     # instantiate class calls

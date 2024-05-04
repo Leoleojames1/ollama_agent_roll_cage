@@ -1,5 +1,6 @@
 """ tts_processor.py
      copy paste model names:
+        borch/llama3_speed_chat_2
         borch_llama3_speed_chat
         borch_llama3_speed_chat
         c3po
@@ -36,6 +37,7 @@ class tts_processor_class:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
         self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
+        #TODO if not exist create current_speech_wav dir
         self.agent_voice_gen_dump = os.path.join(self.parent_dir, "ollama_mod_cage\\current_speech_wav")
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
 
@@ -78,17 +80,12 @@ class tts_processor_class:
             returns: none
         """
         ticker = 0
-        last_sentence = None
         voice_name_path = os.path.join(self.tts_voice_ref_wav_pack_path, f"{voice_name}\\clone_speech.wav")
         for sentence in tts_response_sentences:
             ticker += 1
 
-            if last_sentence is not None and isinstance(last_sentence, str):
-                if len(last_sentence) >= len(sentence):
-                    sd.wait()
-
             # Generate TTS audio (replace with your actual TTS logic)
-            print("starting speeech generation:")
+            print("starting speech generation:")
             tts_audio = self.tts.tts(text=sentence, speaker_wav=voice_name_path, language="en", speed=2.6)
 
             # Convert to NumPy array (adjust dtype as needed)
@@ -102,12 +99,10 @@ class tts_processor_class:
             # Write the TTS audio directly to the WAV file
             sf.write(wav_paths[ticker], tts_audio, 22050)
 
-            # Store processed sentence
-            last_sentence = sentence
             print(f"Generated WAV file: {wav_paths[ticker]}")
 
             # Play the audio in a separate thread
-            audio_thread = threading.Thread(target=self.play_audio_thread(tts_audio, 22050))
+            audio_thread = threading.Thread(target=self.play_audio_thread, args=(tts_audio, 22050))
             audio_thread.start()
 
     def split_into_sentences(self, text: str) -> list[str]:
