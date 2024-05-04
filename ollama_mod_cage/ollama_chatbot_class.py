@@ -128,7 +128,7 @@ class ollama_chatbot_class:
         with open(file_load_path_str, "r") as json_file:
             self.chat_history = json.load(json_file)
 
-    def create_agent_cmd(self):
+    def create_agent_cmd(self, user_create_agent_name):
         """Executes the create_agent_automation.cmd file with the specified agent name.
             Args: 
             Returns: None
@@ -138,7 +138,7 @@ class ollama_chatbot_class:
             batch_file_path = os.path.join(self.current_dir, "create_agent_automation.cmd")
 
             # Call the batch file
-            subprocess.run(f"call {batch_file_path} {self.user_input_model_select}", shell=True)
+            subprocess.run(f"call {batch_file_path} {user_create_agent_name}", shell=True)
         except Exception as e:
             print(f"Error executing create_agent_cmd: {str(e)}")
 
