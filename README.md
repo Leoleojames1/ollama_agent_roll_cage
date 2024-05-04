@@ -295,8 +295,7 @@ src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
 The current conversation history is saved or loaded for memory/conversation persistence.
 
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/c3po_save_as.png" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/c3po_load_as_1.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_random_num_memory_save_load.png" style="width: 80%;">
 </div>
 <img src="Manual_Commands/Agent_Test_Pics/c3po_save_as_2.png" style="display: block; margin: 0 auto;">
   
