@@ -395,3 +395,4 @@ if __name__ == "__main__":
 
             # TODO 0.27  
             # TODO LORA AND SORA STABLE DIFFUSION
+            # hey c3po! its me han solo, are you ready to go on this trip? were going to a space gas station/pawn shop
