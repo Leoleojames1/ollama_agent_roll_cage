@@ -259,8 +259,8 @@ Model Download: https://ollama.com/library/gemma
 
 ### Phi3 mini
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 30%;">
+  <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 69%;">
 </div>
 and here is the wikipedia result for a cauchy product: 
 <div style="display: flex; width: 100%;">
