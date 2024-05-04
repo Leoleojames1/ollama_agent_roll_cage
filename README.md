@@ -297,7 +297,7 @@ The current conversation history is saved or loaded for memory/conversation pers
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama3_random_num_memory_save_load.png" style="width: 100%;">
 </div>
-<img src="Manual_Commands/Agent_Test_Pics/c3po_save_as_2.png" style="display: block; margin: 0 auto;">
+<img src="Manual_Commands/Agent_Test_Pics/llama3_rand_num_memory_test_JSON_GIT_EX.png" style="display: block; margin: 0 auto;">
   
   ### /create
 Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "activate create" or type /create.
