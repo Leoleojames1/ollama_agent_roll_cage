@@ -2,9 +2,9 @@
 
 ***NOTE: This tool is a culmination of many different pieces of software however I want to share how amazing bing chat has been for testing and deploying new functions for each class in the program. Just thank you microsoft bing is amazing now. (and a big thanks to OpenAI for helping them do that)***
 
-# ollama_agent_roll_cage 0.24
+# ollama_agent_roll_cage (OARC) Version 0.24
 ## About
-**ollama_agent_roll_cage** is a python &amp; cmd toolset add-on for the **ollama command line interface**. The ollama_agent_roll_cage toolset automates the creation of **agents** giving the user more control over the likely output. Firstly ollama_agent_roll_cage provides **SYSTEM** **prompt** templates for each ./Modelfile, allowing the user to **design** and **deploy** **custom agents** quickly. Secondly, ollama_agent_roll_cage allows the user to **select which local model file is used** in **agent construction** with the desired system prompt. 
+**ollama_agent_roll_cage** (OARC) is a python &amp; cmd toolset add-on for the **ollama command line interface**. The ollama_agent_roll_cage toolset automates the creation of **agents** giving the user more control over the likely output. Firstly ollama_agent_roll_cage provides **SYSTEM** **prompt** templates for each ./Modelfile, allowing the user to **design** and **deploy** **custom agents** quickly. Secondly, ollama_agent_roll_cage allows the user to **select which local model file is used** in **agent construction** with the desired system prompt. 
 
 **SPEECH TO SPEECH 0.2 DEMO VIDEO 1:**
 https://www.youtube.com/watch?v=T7pGI5V1Soo
@@ -204,37 +204,115 @@ data would be incapable of telling you "How to make a plasma blaster" but they w
 recreate the plasma blaster from star wars given the sufficient data from these given pdf libraries and science resources. 
 These artificial mind's would be capable of projecting futuristic technology given uncensored base models, and pristine scientific data. 
 
+## Agents
 Check out the following summary tests for the following agents:
 
-<img
-src="Manual_Commands/Agent_Test_Pics/LLAMA3_TEST_CARD_CHAT.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-  
-<img
-src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-  
-<img
-src="Manual_Commands/Agent_Test_Pics/DOLPHIN_LLAMA3_CARD_CHAT_2.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
-  
-<img
-src="Manual_Commands/Agent_Test_Pics/JESUS_TEST_CARD_CHAT.png"
-  style="display: inline-block; margin: 0 auto; max-width: 50px">
+### borch_llama3_speed_chat
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
+</div>
+Model Download: https://ollama.com/borch/llama3_speed_chat
 
-Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
+### C3PO
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
+</div>
+Model Download: https://ollama.com/borch/llama3po
 
+### Jesus
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 49%;">
+</div>
+
+### Rick & Morty
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg" style="width: 49%;">
+</div>
+
+## Models
+Some great models to setup and try out with ollama pull {modelname}
+
+### llama3
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 49%;">
+</div>
+Model Download: https://ollama.com/library/llama3
+
+### Mistral
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
+</div>
+Model Download: https://ollama.com/library/mistral
+
+### Gemma
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
+</div>
+Model Download: https://ollama.com/library/gemma
+
+### Phi3 mini
+Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion parameter language model trained on 3.3 trillion tokens, whose overall performance, as measured by both academic benchmarks and internal testing, rivals that of models such as Mixtral 8x7B and GPT-3.5 (e.g., phi-3-mini achieves 69% on MMLU and 8.38 on MT-bench)" as said by themselves on hugging face:
+https://huggingface.co/docs/transformers/main/model_doc/phi3
+
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 51%;">
+</div>
+and here is the wikipedia result for a cauchy product, this is a good test to show how phi3 responds to complex analysis in mathematics when specifying the latex language (LaTeX: https://en.wikipedia.org/wiki/LaTeX ) :
+
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_wikipedia.png" style="width: 100%;">
+</div>
+
+Cauchy Product Wikipedia: https://en.wikipedia.org/wiki/Cauchy_product
+
+Model Download: https://ollama.com/library/phi3
+
+Further exploration in this space is required. The ability to request infinite series, toy with infinite products, ask it to reshape the gamma function and integrate again with new variables! Its all so wonderful, but depressing, what we are seeing here is a societal shift in the way humans process information. Programers are already being replaced by ChatGPT. I hope in the future humans still study math for maths sake, and study coding for coding sake, the ai is a tool, not a crutch. We need to utilize ai to help those around use. I encourage you all to find an issue that you can solve with ai, think of baymax from big hero six. These emerging technologies for accessing high level information with low level knowledge requirements will reshape the field of mathematics as we know it, likely for the better, and hopefully humans are able to keep up with the evolution and harmony between mathematics and ai.
+
+### Dolphin Mixtral
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
+</div>
+Model Download: https://ollama.com/library/dolphin-mistral
+
+## Commands
+ollama_agent_roll_cage 0.24 currently supports the following commands:
+- /quit - break the main python loop and return to command line
+- /swap - swap the current model with the specified model
+- /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
+- /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
+- /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
+- /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
+- /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
+- /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
+- /load as -> user input & voice? -> "name" -> load selected conversation
+  
 ## /swap -> enter model name
+Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
 Swap out the current chatbot model for any other model, type /swap or say "activate swap" in STT.
 
   <img
 src="Manual_Commands/Agent_Test_Pics/model_swap_test.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
   
-## /save as & /load as
+### /save as & /load as
 The current conversation history is saved or loaded for memory/conversation persistence.
 
-  ## /create
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_random_num_memory_save_load.png" style="width: 100%;">
+</div>
+<img src="Manual_Commands/Agent_Test_Pics/llama3_rand_num_memory_test_JSON_GIT_EX.png" style="display: block; margin: 0 auto;">
+  
+  ### /create
 Create a new agent utilizing the currently loaded model and the designated System prompt mid conversation through a cmd automation. Just say "activate create" or type /create.
 
   
@@ -291,6 +369,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
 - /PDF list -> list all pdfs stored in agent library
+- /latex -> run latex render automation for current conversation whenm using a latex tuned model such as borch/phi3_latex
 
 ### Update 0.27: ComfyUI Automation with custom LORA &/or SORA
 - /generate image -> "prompt" -> generate image with custom LORA model
