@@ -222,7 +222,7 @@ Check out the following summary tests for the following agents:
 ### borch_llama3_speed_chat
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 30%;">
-  <img src="Manual_Commands/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 51%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
 </div>
 Model Download: https://ollama.com/borch/llama3_speed_chat
 
