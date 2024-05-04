@@ -357,6 +357,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
 - /PDF list -> list all pdfs stored in agent library
+- /latex -> run latex render automation for current conversation whenm using a latex tuned model such as borch/phi3_latex
 
 ### Update 0.27: ComfyUI Automation with custom LORA &/or SORA
 - /generate image -> "prompt" -> generate image with custom LORA model
