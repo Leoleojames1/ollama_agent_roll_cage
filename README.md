@@ -221,8 +221,8 @@ Check out the following summary tests for the following agents:
 
 ### borch_llama3_speed_chat
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama_3_speed_chat_who.png" style="width: 51%;">
 </div>
 Model Download: https://ollama.com/borch/llama3_speed_chat
 
@@ -250,15 +250,15 @@ Some great models to setup and try out with ollama pull {modelname}
 
 ### llama3
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_who_are_you.png" style="width: 51%;">
 </div>
 Model Download: https://ollama.com/library/llama3
 
 ### Mistral
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
-  <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/mistral_who_are_you.png" style="width: 51%;">
 </div>
 Model Download: https://ollama.com/library/mistral
 
