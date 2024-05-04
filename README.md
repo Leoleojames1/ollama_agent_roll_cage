@@ -204,6 +204,18 @@ data would be incapable of telling you "How to make a plasma blaster" but they w
 recreate the plasma blaster from star wars given the sufficient data from these given pdf libraries and science resources. 
 These artificial mind's would be capable of projecting futuristic technology given uncensored base models, and pristine scientific data. 
 
+## Commands
+ollama_agent_roll_cage 0.24 currently supports the following commands:
+- /quit - break the main python loop and return to command line
+- /swap - swap the current model with the specified model
+- /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
+- /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
+- /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
+- /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
+- /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
+- /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
+- /load as -> user input & voice? -> "name" -> load selected conversation
+  
 ## Agents
 Check out the following summary tests for the following agents:
 
@@ -284,18 +296,6 @@ Further exploration in this space is required. The ability to request infinite s
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
 </div>
 Model Download: https://ollama.com/library/dolphin-mistral
-
-## Commands
-ollama_agent_roll_cage 0.24 currently supports the following commands:
-- /quit - break the main python loop and return to command line
-- /swap - swap the current model with the specified model
-- /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
-- /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
-- /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
-- /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
-- /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
-- /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
-- /load as -> user input & voice? -> "name" -> load selected conversation
   
 ## /swap -> enter model name
 Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
