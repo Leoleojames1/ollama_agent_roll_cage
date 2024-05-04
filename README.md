@@ -227,14 +227,27 @@ Check out the following summary tests for the following agents:
 ### Models
 Some great models to setup and try out with ollama pull {modelname}
 <div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/meta.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/meta.png" style="width: 49%;">
+</div>
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
+</div>
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/google_g" style="width: 49%;">
+</div>
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 49%;">
+  <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 49%;">
+</div>
+<div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
 </div>
-
 ## Commands
 ollama_agent_roll_cage 0.24 currently supports the following commands:
-- /save - save current conversation to main history file
-- /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
 - /quit - break the main python loop and return to command line
 - /swap - swap the current model with the specified model
 - /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
