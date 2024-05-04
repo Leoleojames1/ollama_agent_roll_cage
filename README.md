@@ -262,8 +262,8 @@ Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion para
 https://huggingface.co/docs/transformers/main/model_doc/phi3
 
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 35%;">
-  <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 55%;">
+  <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 51%;">
 </div>
 and here is the wikipedia result for a cauchy product: 
 <div style="display: flex; width: 100%;">
