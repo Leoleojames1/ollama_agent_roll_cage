@@ -212,12 +212,14 @@ Check out the following summary tests for the following agents:
   <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 49%;">
 </div>
+Model Download: https://ollama.com/borch/llama3_speed_chat
 
 ### C3PO
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 49%;">
 </div>
+Model Download: https://ollama.com/borch/llama3po
 
 ### Jesus
 <div style="display: flex; width: 100%;">
@@ -239,30 +241,35 @@ Some great models to setup and try out with ollama pull {modelname}
   <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 49%;">
 </div>
+Model Download: https://ollama.com/library/llama3
 
 ### Mistral
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 49%;">
 </div>
+Model Download: https://ollama.com/library/mistral
 
 ### Gemma
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 49%;">
 </div>
+Model Download: https://ollama.com/library/gemma
 
 ### Phi3 mini
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 49%;">
 </div>
+Model Download: https://ollama.com/library/phi3
 
 ### Dolphin Mixtral
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 49%;">
 </div>
+Model Download: https://ollama.com/library/dolphin-mistral
 
 ## Commands
 ollama_agent_roll_cage 0.24 currently supports the following commands:
