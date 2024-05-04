@@ -265,12 +265,17 @@ https://huggingface.co/docs/transformers/main/model_doc/phi3
   <img src="Manual_Commands/Agent_Test_Pics/phi_microsoft.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 51%;">
 </div>
-and here is the wikipedia result for a cauchy product: 
+and here is the wikipedia result for a cauchy product, this is a good test to show how phi3 responds to complex analysis in mathematics when specifying the latex language (LaTeX: https://en.wikipedia.org/wiki/LaTeX ) :
+
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_wikipedia.png" style="width: 100%;">
 </div>
+
 Cauchy Product Wikipedia: https://en.wikipedia.org/wiki/Cauchy_product
+
 Model Download: https://ollama.com/library/phi3
+
+Further exploration in this space is required. The ability to request infinite series, toy with infinite products, ask it to reshape the gamma function and integrate again with new variables! Its all so wonderful, but depressing, what we are seeing here is a societal shift in the way humans process information. Programers are already being replaced by ChatGPT. I hope in the future humans still study math for maths sake, and study coding for coding sake, the ai is a tool, not a crutch. We need to utilize ai to help those around use. I encourage you all to find an issue that you can solve with ai, think of baymax from big hero six. These emerging technologies for accessing high level information with low level knowledge requirements will reshape the field of mathematics as we know it, likely for the better, and hopefully humans are able to keep up with the evolution and harmony between mathematics and ai.
 
 ### Dolphin Mixtral
 <div style="display: flex; width: 100%;">
