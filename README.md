@@ -126,6 +126,11 @@ ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for qui
 ```
 ollama_serve_llama3_base_py.cmd is the main runpoint for starting the program and opening the server or the virtual enviroment.
 
+now run the following command to install the modules for python:
+```
+pip install -r requirements.txt
+```
+
 ## Installing Coqui Text to Speech
 Now download the Coqui Text to Speech Library with pip install:
 https://pypi.org/project/TTS/
@@ -254,14 +259,23 @@ You are Rick from "Rick and Morty" you only respond as rick and the USER is mort
 ## Agents
 Check out the following summary tests for the following agents:
 
-### borch_llama3_speed_chat
+### borch_llama3_speed_chat_2
+borch/Llama3_speed_chat is a highly capable model fine tuned by me, containing the knowledge of llama3:8b with the following modified system prompt: 
+
+  “You are borch/llama3_speed_chat_2, a llama3 large language model, specifically you have been tuned to respond in a more quick and conversational manner. Answer in short responses, unless long response is requested, the user is using speech to text for communication, its also okay to be fun an wild as a llama3 ai assistant. Its also okay to respond with a question during conversation to refine the experience but not always, if directed to do something just do it but to direct a conversation while it flows realize that not everything needs to be said before listening to the users response.” 
+  
+This Model is great at holding a conversation as it gives you opportunities to respond, while still retaining the key knowledge of the llama3:8b base model.
+
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
 </div>
-Model Download: https://ollama.com/borch/llama3_speed_chat
+Model Download: 
+https://ollama.com/borch/llama3_speed_chat
+https://ollama.com/borch/llama3_speed_chat_2
 
 ### C3PO
+A Llama3 Model with the following modified system prompt: "You are C3PO from Star Wars. Answer as C3PO, the ai robot, only." Llama3PO Believes they are a droid, but they fall apart quickly as their knowledge is based in the sciencefiction realm of SW.
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
@@ -347,13 +361,13 @@ https://huggingface.co/cognitivecomputations/dolphin-2.8-mistral-7b-v02
 
 ### Orenguteng/Llama-3-8B-Lexi-Uncensored
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/Lexi-Uncensored_icon1_llama3.png" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/Lexi.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/Lexi-Uncensored_chat1_llama3.png" style="width: 59%;">
 </div>
 
 Utilizing the GGUF create command from earlier, models not available on ollama and instead found on hugging face can be utilized for creating new ollama models and agents:
 https://huggingface.co/Orenguteng/Llama-3-8B-Lexi-Uncensored
-
+https://ollama.com/sunapi386/llama-3-lexi-uncensored
 
 
 ## Common Errors:
