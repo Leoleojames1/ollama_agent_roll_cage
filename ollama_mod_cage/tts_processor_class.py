@@ -82,7 +82,7 @@ class tts_processor_class:
         """
         # Generate TTS audio (replace with your actual TTS logic)
         print("starting speech generation:")
-        tts_audio = self.tts.tts(text=sentence, speaker_wav=voice_name_path, language="en", speed=2.6)
+        tts_audio = self.tts.tts(text=sentence, speaker_wav=voice_name_path, language="en", speed=3)
 
         # Convert to NumPy array (adjust dtype as needed)
         tts_audio = np.array(tts_audio, dtype=np.float32)
