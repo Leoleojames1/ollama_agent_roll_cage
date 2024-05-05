@@ -367,7 +367,7 @@ https://huggingface.co/cognitivecomputations/dolphin-2.8-mistral-7b-v02
 
 Utilizing the GGUF create command from earlier, models not available on ollama and instead found on hugging face can be utilized for creating new ollama models and agents:
 https://huggingface.co/Orenguteng/Llama-3-8B-Lexi-Uncensored
-
+https://ollama.com/sunapi386/llama-3-lexi-uncensored
 
 
 ## Common Errors:
