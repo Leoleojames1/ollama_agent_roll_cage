@@ -300,10 +300,11 @@ llama3_benchmark
 </div>
 Model Download: 
 https://ollama.com/library/llama3
+https://huggingface.co/meta-llama/Meta-Llama-3-8B
 
 Check out how it compares:
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/llama3_benchmark.png" style="width: 75%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_benchmark.png" style="width: 100%;">
 </div>
 
 ### Mistral
