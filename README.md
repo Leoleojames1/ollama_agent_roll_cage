@@ -262,7 +262,8 @@ This Model is great at holding a conversation as it gives you opportunities to r
   <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
 </div>
-Model Download: 
+Model Download:
+
 https://ollama.com/borch/llama3_speed_chat
 https://ollama.com/borch/llama3_speed_chat_2
 
@@ -273,6 +274,7 @@ A Llama3 Model with the following modified system prompt: "You are C3PO from Sta
   <img src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
 </div>
 Model Download: 
+
 https://ollama.com/borch/llama3po
 
 ### Jesus
@@ -306,6 +308,7 @@ llama3_benchmark
 </div>
 
 Model Download: 
+
 https://ollama.com/library/llama3
 https://huggingface.co/meta-llama/Meta-Llama-3-8B
 https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct
@@ -332,6 +335,7 @@ It can be finetuned into an instruction-following model that achieves a score of
 </div>
 
 Model Download: 
+
 https://ollama.com/library/mistral
 https://mistral.ai/news/mixtral-of-experts/
 https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
@@ -346,6 +350,7 @@ Gemma is a family of lightweight, state-of-the-art open models from Google, buil
 </div>
 
 Model Download: 
+
 https://ollama.com/library/gemma
 https://huggingface.co/google/gemma-2b
 https://huggingface.co/google/gemma-7b
@@ -366,9 +371,11 @@ and here is the wikipedia result for a cauchy product, this is a good test to sh
 </div>
 
 Cauchy Product Wikipedia: 
+
 https://en.wikipedia.org/wiki/Cauchy_product
 
 Model Download: 
+
 https://ollama.com/library/phi3
 https://huggingface.co/microsoft/Phi-3-mini-128k-instruct
 https://huggingface.co/microsoft/Phi-3-mini-4k-instruct
@@ -387,12 +394,15 @@ Dolphin is uncensored. I have filtered the dataset to remove alignment and bias.
 </div>
 
 Dolphin Mistral Ollama Model Download: 
+
 https://ollama.com/library/dolphin-mistral
 
 Dolphin llama3 Ollama Model Download: 
+
 https://ollama.com/library/dolphin-llama3
 
 Utilizing the GGUF create command from earlier, models not available on ollama and instead found on hugging face can be utilized for creating new ollama models and agents:
+
 https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b
 https://huggingface.co/cognitivecomputations/dolphin-2.8-mistral-7b-v02
 
@@ -403,6 +413,7 @@ https://huggingface.co/cognitivecomputations/dolphin-2.8-mistral-7b-v02
 </div>
 
 Utilizing the GGUF create command from earlier, models not available on ollama and instead found on hugging face can be utilized for creating new ollama models and agents:
+
 https://huggingface.co/Orenguteng/Llama-3-8B-Lexi-Uncensored
 https://ollama.com/sunapi386/llama-3-lexi-uncensored
 
