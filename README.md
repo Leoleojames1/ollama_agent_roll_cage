@@ -36,14 +36,6 @@ right away install the nvdia py indexer,
 ```
 pip install nvidia-pyindex
 ```
-then cd to the location of ollama_agent_roll_cage in the command line:
-```
-D:\ollama_agent_roll_cage
-```
-and type
-```
-pip install -r requirements.txt
-```
 
 ## Installing Cuda for NVIDIA GPU
 *Im using an NVIDIA GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
