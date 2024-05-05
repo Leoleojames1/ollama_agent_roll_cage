@@ -361,7 +361,7 @@ https://huggingface.co/cognitivecomputations/dolphin-2.8-mistral-7b-v02
 
 ### Orenguteng/Llama-3-8B-Lexi-Uncensored
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/Lexi-Uncensored_icon1_llama3.png" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/Lexi.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/Lexi-Uncensored_chat1_llama3.png" style="width: 59%;">
 </div>
 
