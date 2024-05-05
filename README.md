@@ -304,9 +304,12 @@ llama3_benchmark
   <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
 </div>
+
 Model Download: 
 https://ollama.com/library/llama3
 https://huggingface.co/meta-llama/Meta-Llama-3-8B
+https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct
+https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct
 
 Check out how it compares:
 <div style="display: flex; width: 100%;">
@@ -331,6 +334,8 @@ It can be finetuned into an instruction-following model that achieves a score of
 Model Download: 
 https://ollama.com/library/mistral
 https://mistral.ai/news/mixtral-of-experts/
+https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
+https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1
 
 ### Gemma
 Gemma is a family of lightweight, state-of-the-art open models from Google, built from the same research and technology used to create the Gemini models. They are text-to-text, decoder-only large language models, available in English, with open weights, pre-trained variants, and instruction-tuned variants. Gemma models are well-suited for a variety of text generation tasks, including question answering, summarization, and reasoning. Their relatively small size makes it possible to deploy them in environments with limited resources such as a laptop, desktop or your own cloud infrastructure, democratizing access to state of the art AI models and helping foster innovation for everyone.
@@ -343,6 +348,7 @@ Gemma is a family of lightweight, state-of-the-art open models from Google, buil
 Model Download: 
 https://ollama.com/library/gemma
 https://huggingface.co/google/gemma-2b
+https://huggingface.co/google/gemma-7b
 
 ### Phi3 mini
 Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion parameter language model trained on 3.3 trillion tokens, whose overall performance, as measured by both academic benchmarks and internal testing, rivals that of models such as Mixtral 8x7B and GPT-3.5 (e.g., phi-3-mini achieves 69% on MMLU and 8.38 on MT-bench)" as said by themselves on hugging face:
