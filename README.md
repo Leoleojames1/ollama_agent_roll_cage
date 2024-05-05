@@ -280,7 +280,8 @@ A Llama3 Model with the following modified system prompt: "You are C3PO from Sta
   <img src="Manual_Commands/Agent_Test_Pics/c3po1.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
 </div>
-Model Download: https://ollama.com/borch/llama3po
+Model Download: 
+https://ollama.com/borch/llama3po
 
 ### Jesus
 <div style="display: flex; width: 100%;">
@@ -298,25 +299,36 @@ Model Download: https://ollama.com/borch/llama3po
 Some great models to setup and try out with ollama pull {modelname}
 
 ### llama3
+Meta Llama 3, a family of models developed by Meta Inc. are new state-of-the-art , available in both 8B and 70B parameter sizes (pre-trained or instruction-tuned).
+Llama 3 instruction-tuned models are fine-tuned and optimized for dialogue/chat use cases and outperform many of the available open-source chat models on common benchmarks.
+llama3_benchmark
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
 </div>
-Model Download: https://ollama.com/library/llama3
+Model Download: 
+https://ollama.com/library/llama3
+
+Check out how it compares:
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_benchmark.png" style="width: 75%;">
+</div>
 
 ### Mistral
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
 </div>
-Model Download: https://ollama.com/library/mistral
+Model Download: 
+https://ollama.com/library/mistral
 
 ### Gemma
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/gemma_who_are_you.png" style="width: 59%;">
 </div>
-Model Download: https://ollama.com/library/gemma
+Model Download: 
+https://ollama.com/library/gemma
 
 ### Phi3 mini
 Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion parameter language model trained on 3.3 trillion tokens, whose overall performance, as measured by both academic benchmarks and internal testing, rivals that of models such as Mixtral 8x7B and GPT-3.5 (e.g., phi-3-mini achieves 69% on MMLU and 8.38 on MT-bench)" as said by themselves on hugging face:
@@ -333,9 +345,11 @@ and here is the wikipedia result for a cauchy product, this is a good test to sh
   <img src="Manual_Commands/Agent_Test_Pics/cauchy_product_wikipedia.png" style="width: 65%;">
 </div>
 
-Cauchy Product Wikipedia: https://en.wikipedia.org/wiki/Cauchy_product
+Cauchy Product Wikipedia: 
+https://en.wikipedia.org/wiki/Cauchy_product
 
-Model Download: https://ollama.com/library/phi3
+Model Download: 
+https://ollama.com/library/phi3
 
 Further exploration in this space is required. The ability to request infinite series, toy with infinite products, ask it to reshape the gamma function and integrate again with new variables! Its all so wonderful, but depressing, what we are seeing here is a societal shift in the way humans process information. Programers are already being replaced by ChatGPT. I hope in the future humans still study math for maths sake, and study coding for coding sake, the ai is a tool, not a crutch. We need to utilize ai to help those around use. I encourage you all to find an issue that you can solve with ai, think of baymax from big hero six. These emerging technologies for accessing high level information with low level knowledge requirements will reshape the field of mathematics as we know it, likely for the better, and hopefully humans are able to keep up with the evolution and harmony between mathematics and ai.
 
@@ -361,7 +375,7 @@ https://huggingface.co/cognitivecomputations/dolphin-2.8-mistral-7b-v02
 
 ### Orenguteng/Llama-3-8B-Lexi-Uncensored
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/Lexi.png" style="width: 39%;">
+  <img src="Manual_Commands/Agent_Test_Pics/lexi.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/Lexi-Uncensored_chat1_llama3.png" style="width: 59%;">
 </div>
 
