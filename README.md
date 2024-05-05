@@ -308,18 +308,30 @@ Check out how it compares:
 </div>
 
 ### Mistral
+Today, the team is proud to release Mixtral 8x7B, a high-quality sparse mixture of experts model (SMoE) with open weights. Licensed under Apache 2.0. Mixtral outperforms Llama 2 70B on most benchmarks with 6x faster inference. It is the strongest open-weight model with a permissive license and the best model overall regarding cost/performance trade-offs. In particular, it matches or outperforms GPT3.5 on most standard benchmarks.
+
+Mixtral has the following capabilities.
+
+It gracefully handles a context of 32k tokens.
+It handles English, French, Italian, German and Spanish.
+It shows strong performance in code generation.
+It can be finetuned into an instruction-following model that achieves a score of 8.3 on MT-Bench.
+
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
 </div>
+
 Model Download: 
 https://ollama.com/library/mistral
+https://mistral.ai/news/mixtral-of-experts/
 
 ### Gemma
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/gemma_who_are_you.png" style="width: 59%;">
 </div>
+
 Model Download: 
 https://ollama.com/library/gemma
 
@@ -356,6 +368,7 @@ Dolphin is uncensored. I have filtered the dataset to remove alignment and bias.
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/Dolphin_molotov.png" style="width: 59%;">
 </div>
+
 Dolphin Mistral Ollama Model Download: 
 https://ollama.com/library/dolphin-mistral
 
