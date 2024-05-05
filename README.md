@@ -276,12 +276,18 @@ Model Download:
 https://ollama.com/borch/llama3po
 
 ### Jesus
+A Llama3 Model with the following modified system prompt: "You are Jesus christ from the bible, answer only as jesus christ, enlightening the user with wisdom and knowledge of biblical history.
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/jesus_1_test.png" style="width: 51%;">
 </div>
 
+Llama3 Jesus is great for giving advice! He is like a personal therapist and is very calming. He also has a very good ability to reference biblical sciptures and recall history for conversations with Jesus himself.
+
 ### Rick & Morty
+A Llama3 Model with the following modififed system prompt: "You are Rick from "Rick and Morty" you only respond as rick and the USER is morty, you will take morty on adventures and explore the infinite multiverse and its wonders."
+The User gets to explore the endless generative power of ai in an endless multiverse of portal madness, with rick played by llama3 ai as your guide and you the user play morty.
+
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
@@ -308,7 +314,7 @@ Check out how it compares:
 </div>
 
 ### Mistral
-Today, the team is proud to release Mixtral 8x7B, a high-quality sparse mixture of experts model (SMoE) with open weights. Licensed under Apache 2.0. Mixtral outperforms Llama 2 70B on most benchmarks with 6x faster inference. It is the strongest open-weight model with a permissive license and the best model overall regarding cost/performance trade-offs. In particular, it matches or outperforms GPT3.5 on most standard benchmarks.
+Mixtral 8x7B is a high-quality sparse mixture of experts model (SMoE) with open weights. Licensed under Apache 2.0. Mixtral outperforms Llama 2 70B on most benchmarks with 6x faster inference. It is the strongest open-weight model with a permissive license and the best model overall regarding cost/performance trade-offs. In particular, it matches or outperforms GPT3.5 on most standard benchmarks.
 
 Mixtral has the following capabilities.
 
@@ -327,6 +333,8 @@ https://ollama.com/library/mistral
 https://mistral.ai/news/mixtral-of-experts/
 
 ### Gemma
+Gemma is a family of lightweight, state-of-the-art open models from Google, built from the same research and technology used to create the Gemini models. They are text-to-text, decoder-only large language models, available in English, with open weights, pre-trained variants, and instruction-tuned variants. Gemma models are well-suited for a variety of text generation tasks, including question answering, summarization, and reasoning. Their relatively small size makes it possible to deploy them in environments with limited resources such as a laptop, desktop or your own cloud infrastructure, democratizing access to state of the art AI models and helping foster innovation for everyone.
+
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/gemma_who_are_you.png" style="width: 59%;">
@@ -334,6 +342,7 @@ https://mistral.ai/news/mixtral-of-experts/
 
 Model Download: 
 https://ollama.com/library/gemma
+https://huggingface.co/google/gemma-2b
 
 ### Phi3 mini
 Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion parameter language model trained on 3.3 trillion tokens, whose overall performance, as measured by both academic benchmarks and internal testing, rivals that of models such as Mixtral 8x7B and GPT-3.5 (e.g., phi-3-mini achieves 69% on MMLU and 8.38 on MT-bench)" as said by themselves on hugging face:
@@ -355,6 +364,8 @@ https://en.wikipedia.org/wiki/Cauchy_product
 
 Model Download: 
 https://ollama.com/library/phi3
+https://huggingface.co/microsoft/Phi-3-mini-128k-instruct
+https://huggingface.co/microsoft/Phi-3-mini-4k-instruct
 
 Further exploration in this space is required. The ability to request infinite series, toy with infinite products, ask it to reshape the gamma function and integrate again with new variables! Its all so wonderful, but depressing, what we are seeing here is a societal shift in the way humans process information. Programers are already being replaced by ChatGPT. I hope in the future humans still study math for maths sake, and study coding for coding sake, the ai is a tool, not a crutch. We need to utilize ai to help those around use. I encourage you all to find an issue that you can solve with ai, think of baymax from big hero six. These emerging technologies for accessing high level information with low level knowledge requirements will reshape the field of mathematics as we know it, likely for the better, and hopefully humans are able to keep up with the evolution and harmony between mathematics and ai.
 
