@@ -11,6 +11,8 @@
         gemma 
         llama3 
         mistral 
+        tic_tac
+        
     A class for processing the response sentences and audio generation for the ollama_chat_bot_class
 """
 
