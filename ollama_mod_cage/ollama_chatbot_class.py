@@ -68,17 +68,23 @@ class ollama_chatbot_class:
             args: user_input_prompt, user_input_model_select, search_google
             returns: none
         """
-        self.chat_history.append({"user": "User", "message": user_input_prompt})
-        # Use only the most recent user input as the prompt
-        # prompt = self.chat_history[-1]["message"]
+        self.chat_history.append({"user_name": "User", "message": user_input_prompt})
 
-        # join prompt with chat history, 3 turns
-        prompt = " ".join([message["message"] for message in self.chat_history[-3:]])
+        # join chat history, 3 turns
+        history = " ".join([message["message"] for message in self.chat_history[-3:]])
+
+        # Use only the most recent user input as the prompt
+        prompt = self.chat_history[-1]["message"]
+
+        # Combine history and prompt (option 2 tells the model not to respond to previous history)
+        # full_prompt = history + "\n\n" + prompt
+        full_prompt = \
+            history + "\n\nThis is the current prompt in the conversation. Do not respond to past conversation history only refer to it in the past tense, and certainly do not respond to yourself only respond to the User's current prompt here: " + prompt
 
         data = {
             "model": self.user_input_model_select,
             "stream": False,
-            "prompt": prompt,
+            "prompt": full_prompt,
         }
 
         try:
@@ -95,7 +101,7 @@ class ollama_chatbot_class:
 
         if "response" in response_data:
             llama_response = response_data.get("response")
-            self.chat_history.append({"user": "Assistant", "message": llama_response})
+            self.chat_history.append({"model_name": f"{self.user_input_model_select}", "message": llama_response})
             return llama_response
         else:
             return "Error: Response from model is not in the expected format"
@@ -120,7 +126,13 @@ class ollama_chatbot_class:
             Args: filename
             Returns: none
         """
-        file_load_path_dir = os.path.join(self.conversation_library, f"{self.user_input_model_select}")
+        # Check if user_input_model_select contains a slash
+        if "/" in self.user_input_model_select:
+            user_dir, model_dir = self.user_input_model_select.split("/")
+            file_load_path_dir = os.path.join(self.conversation_library, user_dir, model_dir)
+        else:
+            file_load_path_dir = os.path.join(self.conversation_library, self.user_input_model_select)
+
         file_load_path_str = os.path.join(file_load_path_dir, f"{self.load_name}.json")
         directory_manager_class.create_directory_if_not_exists(file_load_path_dir)
         print(f"file path 1:{file_load_path_dir} \n")
@@ -287,7 +299,7 @@ if __name__ == "__main__":
 
     # initialize command state flags
     leap_flag = False
-    listen_flag = True
+    listen_flag = False
 
     # instantiate class calls
     tts_processor_class = tts_processor_class()
@@ -329,16 +341,16 @@ if __name__ == "__main__":
             ollama_chatbot_class.user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME TO SWAP >>> " + OKBLUE)
             print(f"Model changed to {ollama_chatbot_class.user_input_model_select}")
 
-        elif re.match(r"/voice swap ([^/.]*)", user_input_prompt.lower()):
-            print(f"Agent voice swapped to {ollama_chatbot_class.voice_name}.json")
+        elif re.match(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt.lower()):
+            print(f"Agent voice swapped to {ollama_chatbot_class.voice_name}")
             print(GREEN + f"<<< USER >>> " + OKGREEN)
 
-        elif re.match(r"/save as ([^/.]*)", user_input_prompt.lower()):
+        elif re.match(r"(activate save as|/save as) ([^/.]*)", user_input_prompt.lower()):
             ollama_chatbot_class.save_to_json()
             print(f"Chat history saved to {ollama_chatbot_class.save_name}.json")
             print(GREEN + f"<<< USER >>> " + OKGREEN)
 
-        elif re.match(r"/load as ([^/.]*)", user_input_prompt.lower()):
+        elif re.match(r"(activate load as|/load as) ([^/.]*)", user_input_prompt.lower()):
             ollama_chatbot_class.load_from_json()
             print(f"Chat history loaded from {ollama_chatbot_class.load_name}.json")
             print(GREEN + f"<<< USER >>> " + OKGREEN)
@@ -378,7 +390,7 @@ if __name__ == "__main__":
             # Clear speech cache and split the response into sentences for next TTS cache
             if leap_flag is not None and isinstance(leap_flag, bool):
                 if leap_flag != True:
-                    directory_manager_class.clear_directory(tts_processor_class.agent_voice_gen_dump)
+                    # directory_manager_class.clear_directory(tts_processor_class.agent_voice_gen_dump)
                     tts_processor_class.process_tts_responses(response, ollama_chatbot_class.voice_name)
             elif leap_flag is None:
                 pass

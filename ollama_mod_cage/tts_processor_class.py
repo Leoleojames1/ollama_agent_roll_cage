@@ -16,11 +16,11 @@
 
 import sounddevice as sd
 import soundfile as sf
-import time
 import threading
 import os
 import torch
 import re
+import queue
 from TTS.api import TTS
 import speech_recognition as sr
 from directory_manager_class import directory_manager_class
@@ -37,9 +37,8 @@ class tts_processor_class:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
         self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
-        #TODO if not exist create current_speech_wav dir
-        self.agent_voice_gen_dump = os.path.join(self.parent_dir, "ollama_mod_cage\\current_speech_wav")
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
+        self.audio_queue = queue.Queue()
 
     def get_audio(self):
         """ a method for collecting the audio from the microphone
@@ -68,42 +67,50 @@ class tts_processor_class:
         tts_response_sentences = self.split_into_sentences(response)
         self.generate_play_audio_loop(tts_response_sentences, voice_name)
         return
-    
-    def play_audio_thread(self, audio_data, sample_rate):
+
+    def play_audio_thread(self):
         """A separate thread for audio playback."""
-        sd.play(audio_data, sample_rate)
-        sd.wait()
+        while True:
+            audio_data, sample_rate = self.audio_queue.get()
+            sd.play(audio_data, sample_rate)
+            sd.wait()
+
+    def generate_audio(self, sentence, voice_name_path, ticker):
+        """ a method to generate the audio for the chatbot
+            args: sentence, voice_name_path, ticker
+            returns: none
+        """
+        # Generate TTS audio (replace with your actual TTS logic)
+        print("starting speech generation:")
+        tts_audio = self.tts.tts(text=sentence, speaker_wav=voice_name_path, language="en", speed=2.6)
+
+        # Convert to NumPy array (adjust dtype as needed)
+        tts_audio = np.array(tts_audio, dtype=np.float32)
+
+        # Add the audio data to the queue
+        self.audio_queue.put((tts_audio, 22050))
 
     def generate_play_audio_loop(self, tts_response_sentences, voice_name):
         """ a method to generate and play the audio for the chatbot
             args: tts_sentences
             returns: none
         """
-        ticker = 0
+        ticker = 0  # Initialize ticker
         voice_name_path = os.path.join(self.tts_voice_ref_wav_pack_path, f"{voice_name}\\clone_speech.wav")
+
+        # Start the audio playback thread
+        audio_thread = threading.Thread(target=self.play_audio_thread)
+        audio_thread.start()
+
         for sentence in tts_response_sentences:
             ticker += 1
 
-            # Generate TTS audio (replace with your actual TTS logic)
-            print("starting speech generation:")
-            tts_audio = self.tts.tts(text=sentence, speaker_wav=voice_name_path, language="en", speed=2.6)
-
-            # Convert to NumPy array (adjust dtype as needed)
-            tts_audio = np.array(tts_audio, dtype=np.float32)
-
-            # Create a new WAV file for each sentence
-            wav_name_str = f"current_speech_{ticker}.wav"
-            wav_paths = {}
-            wav_paths[ticker] = f"{self.agent_voice_gen_dump}\\{wav_name_str}"
-
-            # Write the TTS audio directly to the WAV file
-            sf.write(wav_paths[ticker], tts_audio, 22050)
-
-            print(f"Generated WAV file: {wav_paths[ticker]}")
-
-            # Play the audio in a separate thread
-            audio_thread = threading.Thread(target=self.play_audio_thread, args=(tts_audio, 22050))
+            # Generate the audio in a separate thread
+            audio_thread = threading.Thread(target=self.generate_audio, args=(sentence, voice_name_path, ticker))
             audio_thread.start()
+
+            # Wait for the audio generation to finish before moving on to the next sentence
+            audio_thread.join()
 
     def split_into_sentences(self, text: str) -> list[str]:
         """A method for splitting the LLAMA response into sentences.
