@@ -126,6 +126,11 @@ ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for qui
 ```
 ollama_serve_llama3_base_py.cmd is the main runpoint for starting the program and opening the server or the virtual enviroment.
 
+now run the following command to install the modules for python:
+```
+pip install -r requirements.txt
+```
+
 ## Installing Coqui Text to Speech
 Now download the Coqui Text to Speech Library with pip install:
 https://pypi.org/project/TTS/
