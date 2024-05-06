@@ -13,7 +13,7 @@ https://www.youtube.com/watch?v=T7pGI5V1Soo
 https://www.youtube.com/watch?v=2IBPWCKCKjE
 
 **/voice /save as 0.24 DEMO, INSTALL, & SETUP VIDEO 3:**
-https:// COMING SOON, BEING FILMED
+https://www.youtube.com/watch?v=xfQSfTJcPpA
 
 <img
 src="Manual_Commands/rollcage.jpg"
