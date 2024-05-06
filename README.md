@@ -7,19 +7,15 @@
 **ollama_agent_roll_cage** (OARC) is a completely local python &amp; cmd toolset add-on for the **ollama command line interface**. The ollama_agent_roll_cage toolset automates the creation of **agents** giving the user more control over the likely output. Firstly ollama_agent_roll_cage provides **SYSTEM** **prompt** templates for each ./Modelfile, allowing the user to **design** and **deploy** **custom agents** quickly. Secondly, ollama_agent_roll_cage allows the user to **select which local model file is used** in **agent construction** with the desired system prompt. 
 
 **SPEECH TO SPEECH 0.2 DEMO VIDEO 1:**
-
 https://www.youtube.com/watch?v=T7pGI5V1Soo
 
 **/create shrek 0.212 DEMO VIDEO 2:**
-
 https://www.youtube.com/watch?v=2IBPWCKCKjE
 
 **/voice /save as 0.24 DEMO, INSTALL, & SETUP VIDEO 3:**
-
 https://www.youtube.com/watch?v=xfQSfTJcPpA
 
 ALSO CHECK OUT ATHENE LIVE's GEORGE CARLIN AI MADE WITH GPT4 API as a chatbot comparison to strive for when developing with ollama_agent_roll_cage, we are utilizing local modules and therefore suffer greatly in processing power capabilities and this optimization is key:
-
 https://www.youtube.com/watch?v=UMkZEQftZWA&t=100s
 
 <img
