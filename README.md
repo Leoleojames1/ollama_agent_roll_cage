@@ -19,7 +19,7 @@ https://www.youtube.com/watch?v=xfQSfTJcPpA
 src="Manual_Commands/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
-ALSO CHECK OUT ATHENE LIVE's GEORGE CARLIN AI MADE WITH GPT4 API as a chatbot comparison to strive for when developing with ollama_agent_roll_cage, we are utilizing local modules and therefore suffer greatly in processing power capabilities and this optimization is key:
+ALSO CHECK OUT ATHENE LIVE's GEORGE CARLIN AI MADE WITH GPT4 API as a chatbot comparison to strive for when developing with ollama_agent_roll_cage, we are utilizing local modules and therefore suffer greatly in processing power capabilities and in order to combat this optimization is the key:
 https://www.youtube.com/watch?v=UMkZEQftZWA&t=100s
 
 ## Installing Miniconda & Setting Up Python Virtual Environment
