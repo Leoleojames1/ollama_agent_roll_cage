@@ -147,6 +147,15 @@ https://pypi.org/project/SpeechRecognition/
 pip install SpeechRecognition
 ```
 
+## Installing Visual Studio and Visual Studio Code:
+Now download visual studio code this is where you can write new functions for ollama_agent_roll_cage:
+https://code.visualstudio.com/Download
+
+also download visual studio:
+https://visualstudio.microsoft.com/downloads/
+
+and upon installation download the Rust COmpiler as well as the C++ compiler:
+
 You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
 
 # Getting Started After Installation:
