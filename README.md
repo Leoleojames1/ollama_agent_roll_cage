@@ -470,18 +470,22 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /movie play "name" -> play back named movie mp4 file from library
 - /music play "name" -> play back named music mp3 file from library
   
-### Update 0.26: Google Search API & Ollama RAG integration, Prompt Query Boost, PDF Document Access 
-- /search {request} -> send search request to google api for context lookup
+### Update 0.26: DuckDuckGo Search API & Ollama RAG integration, Prompt Query Boost, PDF Document Access 
+- /search {request} -> send search request to DuckDuckGo freee api (no key required) for context lookup
 - /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
 - /PDF list -> list all pdfs stored in agent library
-- /latex -> run latex render automation for current conversation whenm using a latex tuned model such as borch/phi3_latex
+- /latex on/off -> run latex real time render automation for current conversation when using a latex tuned model such as borch/phi3_latex or utilizing regex to splice out the latex and render.
+- /latex save - save spliced and built latex file to .tex file
+- /latex run - run saved latex file with pdf generate command and open generated pdf
+- add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
 
 ### Update 0.27: ComfyUI Automation with custom LORA &/or SORA
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
 - /generate agent web cam -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
-- /recognize video - activate image recognition for video web cam input for functional utility
+- /recognize video - activate image recognition for video recording input for functional utility
+- /recognize webcam - activate image recognition for video web cam input for functional utility
 - Sora directed agent profile deepfake animation
 - https://github.com/Stability-AI/generative-models
 - Sora directed game animation for games such as "Rick and Morty" portal journey explore endless worlds with video generation.
@@ -495,13 +499,19 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ### Update 0.29: On startup run default command setup, create automation job set with cmd automations and mouse/keyboard macros
 - /preload command list - command_list.txt, run desired default commands on "/preload command list" call
-- /job set run {name} - create macro job set with cmd automations and automated keyboard output for mouse and key to automate specific tasks 
+- /job set run {name} - create macro job set with cmd automations and automated keyboard output for mouse and key to automate specific tasks
+- /macro on - enabled keyboard macro mode, allowing the agent to exute jobs from voice commands or saved job lists, to automate tasks
+- add program spacial recognition view to splice programs into desired spacial locations for the decision model to navigate.
+- add agent decision automation for search, if search is relevant use search otherwise dont, then have /search on/off turn this on or off, so duck duck go doesnt return an error for people without internet connection.
 
 ## Future Optimization Plans: *** Updates 0.XX - UNKNOW, some likely soon ***
 ### Mojo - install
 Download and install mojo, replace python setup with mojo for up to 68,000% efficiency increase.
-### coqui text to speech - audio wave file live conversation generation
-- Fix issues with Multithreading & Multiprocessessing Pickling Error for Coqui TTS either in ollama_agent_roll_cage or in coqui TTS.
+
+### coqui text to speech - xtts model training with xtts-finetune-webui
+- train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
+- RCV - add audio to audio model for text to speech RVC voice audio tuning
+
   
 ### sentence parser - comprehensive filter
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
