@@ -154,7 +154,7 @@ https://code.visualstudio.com/Download
 also download visual studio:
 https://visualstudio.microsoft.com/downloads/
 
-and upon installation download the Rust COmpiler as well as the C++ compiler:
+and upon installation download the Rust compiler as well as the C++ compiler:
 
 You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
 
