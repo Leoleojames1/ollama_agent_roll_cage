@@ -471,10 +471,14 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /load as -> user input & voice? -> "name" -> load selected conversation, spaces are replaces with underscores during voice command name save
 
 ### Update 0.25: Custom Xtts Model Training
-- coqui text to speech - xtts model training with xtts-finetune-webui, train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
+- coqui text to speech -> xtts model training with xtts-finetune-webui, train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
 - custom xtts webui: https://github.com/aitrepreneur/xtts-finetune-webui
 - borch/phi3_latex -> modified system prompt for smart latex document output for simpler regex parsing of the model response tokens.
+  
 - /latex on/off -> run latex real time render automation for current conversation when using a latex tuned model such as borch/phi3_latex or utilizing regex to splice out the latex and render the current formula document. This will be updated as the conversation continues and will contain the current prompts latex, where as the .tex file will contain the entire latex conversation history.
+- /latex save -> save spliced and built latex file to .tex file
+- /latex run -> run saved latex file with pdf generate command and open generated pdf
+- add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
   
 ### Update 0.26: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
 - /clone voice -> call record, save and call /voice to swap voice instantly for instant voice clone transformation from library
@@ -484,7 +488,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /book audio -> load a book pdf or audiobook wav for playback
 - /movie play "name" -> play back named movie mp4 file from library
 - /music play "name" -> play back named music mp3 file from library
-- RCV - add audio to audio model for text to speech RVC voice audio tuning
+- RCV -> add audio to audio model for text to speech RVC voice audio tuning
  
 ### Update 0.27: DuckDuckGo Search API & Ollama RAG integration, Prompt Query Boost, PDF Document Access 
 - /search {request} -> send search request to DuckDuckGo freee api (no key required) for context lookup
@@ -493,17 +497,13 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
 - /PDF list -> list all pdfs stored in agent library
 
-- /latex save - save spliced and built latex file to .tex file
-- /latex run - run saved latex file with pdf generate command and open generated pdf
-- add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
-
 ### Update 0.28: ComfyUI Automation with custom LORA &/or SORA
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
 - 
 - /generate agent web cam -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
-- /recognize video - activate image recognition for video recording input for functional utility
-- /recognize webcam - activate image recognition for video web cam input for functional utility
+- /recognize video -> activate image recognition for video recording input for functional utility
+- /recognize webcam -> activate image recognition for video web cam input for functional utility
   
 - Sora directed agent profile deepfake animation
 - https://github.com/Stability-AI/generative-models
@@ -517,8 +517,8 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /yo llama pull that up -> a copy of jamie from joe rogan using C3PO voice clone audio reference w/ google api search finds: youtube clips, wiki pedia google results, and explains the point, also screen shares macros with keyboard and/or google youtube wiki search browser. preferably with macro moves for opening complex task and managing operations. -> send to joe rogan and jamie? xD
 
 ### Update 0.3: On startup run default command setup, create automation job set with cmd automations and mouse/keyboard macros
-- /preload command list - command_list.txt, run desired default commands on "/preload command list" call
-- /job set run {name} - create macro job set with cmd automations and automated keyboard output for mouse and key to automate specific tasks
+- /preload command list -> command_list.txt, run desired default commands on "/preload command list" call
+- /job set run {name} -> create macro job set with cmd automations and automated keyboard output for mouse and key to automate specific tasks
 - /macro on - enabled keyboard macro mode, allowing the agent to exute jobs from voice commands or saved job lists, to automate tasks
 - add program spacial recognition view to splice programs into desired spacial locations for the decision model to navigate.
 - add agent decision automation for search, if search is relevant use search otherwise dont, then have /search on/off turn this on or off, so duck duck go doesnt return an error for people without internet connection.
