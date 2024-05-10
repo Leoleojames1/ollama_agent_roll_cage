@@ -476,6 +476,9 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /load as -> user input & voice? -> "name" -> load selected conversation, spaces are replaces with underscores during voice command name save
 
 ### Update 0.25: Custom Xtts Model Training, Real Time Latex Rendering, & DuckDuckGo API search
+```diff
+@@ ***NEXT UPDATE*** @@
+```
 - coqui text to speech -> xtts model training with xtts-finetune-webui, train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
 - custom xtts webui: https://github.com/aitrepreneur/xtts-finetune-webui
 - borch/phi3_latex -> modified system prompt for smart latex document output for simpler regex parsing of the model response tokens.
