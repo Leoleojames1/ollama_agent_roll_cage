@@ -430,11 +430,13 @@ This error means that you tried to run the program but the program is already ru
 and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ## Updates 0.21 -> 0.3 - Development Cycle - New Commands, Features, & Optimizations:
-***UPCOMING SOON***
+```diff
+- ***UPCOMING SOON***
+```
 
 ### Update 0.199: Chatbot script, TTS processor class, Model /Swap
 ```diff
-- ***PUSHED TO GITHUB***
++ ***PUSHED TO GITHUB***
 ```
 - /save - save current conversation to main history file
 - /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
@@ -442,23 +444,32 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /swap - swap the current model with the specified model
   
 ### Update 0.21: Custom Agent /Create Automation 
-***PUSHED TO GITHUB***
+```diff
++ ***PUSHED TO GITHUB***
+```
 - /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
 
-### Update 0.22: Speech Optimization ***PUSHED TO GITHUB***
+### Update 0.22: Speech Optimization
+```diff
++ ***PUSHED TO GITHUB***
+```
 - "Smart Wait Length Timer": add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
 - "Wave File Storage Library": Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
 - filter unique strings such as `` , also manage bullet points for 1. 2. 3. 4., as these are not the end of sentence periods, maybe send the response to another llm for query boost and sentence filtering
 
 ### Update 0.23: Speech modes leap, listen, speech on/off 
-***PUSHED TO GITHUB***
+```diff
++ ***PUSHED TO GITHUB***
+```
 - /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
 - /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
 - /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
   
 ### Update 0.24: Agent voice swap & Conversation History Library 
-***PUSHED TO GITHUB***
+```diff
++ ***PUSHED TO GITHUB***
+```
 - /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
