@@ -432,13 +432,15 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 ## Updates 0.21 -> 0.3 - Development Cycle - New Commands, Features, & Optimizations:
 ***UPCOMING SOON***
 
-### Update 0.199: Chatbot script, TTS processor class, Model /Swap ***PUSHED TO GITHUB***
+### Update 0.199: Chatbot script, TTS processor class, Model /Swap
+- ![#f03c15](***PUSHED TO GITHUB***) `#f03c15`
 - /save - save current conversation to main history file
 - /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
 - /quit - break the main python loop and return to command line
 - /swap - swap the current model with the specified model
   
-### Update 0.21: Custom Agent /Create Automation ***PUSHED TO GITHUB***
+### Update 0.21: Custom Agent /Create Automation 
+***PUSHED TO GITHUB***
 - /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
 
 ### Update 0.22: Speech Optimization ***PUSHED TO GITHUB***
@@ -447,18 +449,20 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
 - filter unique strings such as `` , also manage bullet points for 1. 2. 3. 4., as these are not the end of sentence periods, maybe send the response to another llm for query boost and sentence filtering
 
-### Update 0.23: Speech modes leap, listen, speech on/off ***PUSHED TO GITHUB***
+### Update 0.23: Speech modes leap, listen, speech on/off 
+***PUSHED TO GITHUB***
 - /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
 - /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
 - /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
   
-### Update 0.24: Agent voice swap & Conversation History Library ***PUSHED TO GITHUB***
+### Update 0.24: Agent voice swap & Conversation History Library 
+***PUSHED TO GITHUB***
 - /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
 - /load as -> user input & voice? -> "name" -> load selected conversation, spaces are replaces with underscores during voice command name save
 
-### Update 0.25: Custom Xtts Model Training
+### Update 0.25: Custom Xtts Model Training, Real Time Latex Rendering, & DuckDuckGo API search
 - coqui text to speech -> xtts model training with xtts-finetune-webui, train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
 - custom xtts webui: https://github.com/aitrepreneur/xtts-finetune-webui
 - borch/phi3_latex -> modified system prompt for smart latex document output for simpler regex parsing of the model response tokens.
@@ -467,29 +471,48 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /latex save -> save spliced and built latex file to .tex file
 - /latex run -> run saved latex file with pdf generate command and open generated pdf
 - add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
+
+- /search {request} -> send search request to DuckDuckGo free api (no key required) for context lookup
+- search query boost automatic
+- search query runs on serperate thread and returns the results to the current model.
+- add search query digester and summarization model as a preprocessor before prompting the main model.
+- /boost -> activate model prompt query boost utilizing secondary model to improve user input requests as an ingest preprocess before prompting the model, call secondary prompt method and run on seperate thread.
   
 ### Update 0.26: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
-- /clone voice -> call record, save and call /voice to swap voice instantly for instant voice clone transformation from library
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /record as -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
+- /clone voice -> call record, save and call /voice to swap voice instantly for instant voice clone transformation from library
+  
 - /playback -> playback any stored wav file in wav library
 - /book audio -> load a book pdf or audiobook wav for playback
 - /movie play "name" -> play back named movie mp4 file from library
 - /music play "name" -> play back named music mp3 file from library
+
 - RCV -> add audio to audio model for text to speech RVC voice audio tuning
- 
-### Update 0.27: DuckDuckGo Search API & Ollama RAG integration, Prompt Query Boost, PDF Document Access 
-- /search {request} -> send search request to DuckDuckGo freee api (no key required) for context lookup
-- /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
   
+### Update 0.27: PDF Document Access 
+
+- PDF to data convert, pdf to latex, pdf to code, pdf image recognition? latex only?
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
 - /PDF list -> list all pdfs stored in agent library
 
 ### Update 0.28: ComfyUI Automation with custom LORA &/or SORA
+- comfyUI workflow library
+- workflows for:
+- text to img
+- img to vid
+- img to img
+- portrait casting
+- lipsync deepfake generation
+  
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
-- 
-- /generate agent web cam -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
+- /story board -> generate an image for each prompt in the conversation to visualize the content of the conversation
+- /generate movie -> generate an mp4 video for each prompt in the conversation to visualize the content of the conversation/story/game
+
+- /generate agent portrait -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
+- allow for combination of /generate movie & /generate agent portrait to generate movies with the deepfakes of the agent matching up to the audio generation.
+  
 - /recognize video -> activate image recognition for video recording input for functional utility
 - /recognize webcam -> activate image recognition for video web cam input for functional utility
   
