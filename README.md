@@ -520,7 +520,8 @@ Download and install mojo, replace python setup with mojo for up to 68,000% effi
 ### coqui text to speech - xtts model training with xtts-finetune-webui
 - train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
 - RCV - add audio to audio model for text to speech RVC voice audio tuning
-
+- Train custom xtts webui:
+https://github.com/aitrepreneur/xtts-finetune-webui
   
 ### sentence parser - comprehensive filter
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
