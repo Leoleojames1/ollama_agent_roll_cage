@@ -475,7 +475,7 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
 - /load as -> user input & voice? -> "name" -> load selected conversation, spaces are replaces with underscores during voice command name save
 
-### Update 0.25: Custom Xtts Model Training, Real Time Latex Rendering, & DuckDuckGo API search
+### Update 0.25: Custom Xtts Model Training, Real Time Latex Rendering
 ```diff
 @@ ***NEXT UPDATE*** @@
 ```
@@ -488,13 +488,16 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /latex run -> run saved latex file with pdf generate command and open generated pdf
 - add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
 
+### Update 0.26: DuckDuckGo API search & voice command function call model
 - /search {request} -> send search request to DuckDuckGo free api (no key required) for context lookup
 - search query boost automatic
 - search query runs on serperate thread and returns the results to the current model.
 - add search query digester and summarization model as a preprocessor before prompting the main model.
 - /boost -> activate model prompt query boost utilizing secondary model to improve user input requests as an ingest preprocess before prompting the model, call secondary prompt method and run on seperate thread.
+
+- /automatically assume all /{keyword} commands via a function call mediator model
   
-### Update 0.26: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
+### Update 0.27: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /record as -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /clone voice -> call record, save and call /voice to swap voice instantly for instant voice clone transformation from library
@@ -506,9 +509,13 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 
 - RCV -> add audio to audio model for text to speech RVC voice audio tuning
   
-### Update 0.27: PDF Document Access 
-
+### Update 0.28: PDF Document Access via RAG implementation
+- /rag file on/off -> enable disable pdf & tex rag
+- /rag model on/off -> enable disable rag access for model data
+  
 - PDF to data convert, pdf to latex, pdf to code, pdf image recognition? latex only?
+- file & data conversion automations with read write symbol collector
+  
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
 - /PDF list -> list all pdfs stored in agent library
 
@@ -518,8 +525,9 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - text to img
 - img to vid
 - img to img
-- portrait casting
-- lipsync deepfake generation
+  
+- SD & SD XL base model selection
+- lora model library selection
   
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
@@ -528,6 +536,8 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 
 - /generate agent portrait -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
 - allow for combination of /generate movie & /generate agent portrait to generate movies with the deepfakes of the agent matching up to the audio generation.
+- portrait casting
+- lipsync deepfake generation
   
 - /recognize video -> activate image recognition for video recording input for functional utility
 - /recognize webcam -> activate image recognition for video web cam input for functional utility
