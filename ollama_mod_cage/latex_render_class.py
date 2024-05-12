@@ -26,13 +26,24 @@ class latex_render_class:
         self.new_latex = False  # Add a flag to indicate whether new LaTeX has come in
         self.root.after(100, self.check_queue)
 
+        # self.scrollbar = Scrollbar(self.root, command=self.canvas.yview)
+        # self.scrollable_frame = tk.Frame(self.canvas)
+
+        # # Configure the canvas to be scrollable
+        # self.scrollable_frame.bind(
+        #     "<Configure>",
+        #     lambda e: self.canvas.configure(
+        #         scrollregion=self.canvas.bbox("all")
+        #     )
+        # )
+
     def add_latex_code(self, latex_response):
         """Add LaTeX code to the document."""
         self.new_latex = True  # Set the flag to True when new LaTeX comes in
         latex_blocks = self.parse_latex_code(latex_response)
         latex_blocks = latex_blocks.split('\n')
-        # Add each LaTeX block to the queue separately
-        for block in latex_blocks:
+        # Add each unique LaTeX block to the queue separately
+        for block in set(latex_blocks):  # Convert the list to a set to remove duplicates
             if block.strip():  # Skip empty strings
                 self.queue.put(block)
 
@@ -66,33 +77,26 @@ class latex_render_class:
             args: input_latex_prompt
             returns: output_parsed_latex
         """
-        # Define the pattern for the LaTeX code block
-        pattern = r"(\\\[(.*?)\\\])|(\\\((.*?)\\\\\))|(\$\$(.*?)\$\$)|(\$(.*?)\$)"
+        # Define the patterns for the LaTeX code blocks
+        pattern1 = r"\\\[(.*?)\\\]"
+        pattern2 = r"\\begin{align\*}(.*?)\\end{align\*}"
 
-        # Use re.findall to find all matches for the pattern
-        matches = re.findall(pattern, input_latex_prompt, re.DOTALL)
+        # Use re.findall to find all matches for the patterns
+        matches1 = re.findall(pattern1, input_latex_prompt, re.DOTALL)
+        matches2 = re.findall(pattern2, input_latex_prompt, re.DOTALL)
 
         # Initialize an empty list to hold the parsed lines
         parsed_lines = []
 
-        if matches:
-            # If matches are found, extract the LaTeX code
-            formulas = []
-            for match in matches:
-                # Extract the LaTeX code
-                latex = ''.join(filter(None, match))
-                if latex.strip():  # Skip empty strings
-                    # Remove the delimiters
-                    latex = re.sub(r"\\\[|\\\]|\$\$|\$", "", latex)
-                    # Split the LaTeX code at '\\]' and add each part as a separate formula
-                    for part in latex.split('\\]'):
-                        if part.strip():  # Skip empty strings
-                            formulas.append(part.strip())
-            # Join all formulas into a single string, with each formula on a new line
-            parsed_line = "\n".join(formulas)
-        else:
-            # If no match is found, add LaTeX delimiters to the English text
-            parsed_line = f"{input_latex_prompt}" if input_latex_prompt.strip() else ""
+        # If matches are found, extract the LaTeX code
+        formulas = []
+        for match in matches1 + matches2:
+            # Extract the LaTeX code
+            latex = match.strip()
+            if latex:  # Skip empty strings
+                formulas.append(latex)
+        # Join all formulas into a single string, with each formula on a new line
+        parsed_line = "\n".join(formulas)
 
         # Add the parsed line to the list of parsed lines
         parsed_lines.append(parsed_line)
