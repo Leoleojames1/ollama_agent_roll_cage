@@ -13,14 +13,18 @@ https://www.youtube.com/watch?v=T7pGI5V1Soo
 https://www.youtube.com/watch?v=2IBPWCKCKjE
 
 **/voice /save as 0.24 DEMO, INSTALL, & SETUP VIDEO 3:**
-https:// COMING SOON, BEING FILMED
+https://www.youtube.com/watch?v=xfQSfTJcPpA
 
 <img
 src="Manual_Commands/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
+ALSO CHECK OUT ATHENE LIVE's GEORGE CARLIN AI MADE WITH GPT4 API as a chatbot comparison to strive for when developing with ollama_agent_roll_cage, we are utilizing local modules and therefore suffer greatly in processing power capabilities and in order to combat this optimization is the key:
+https://www.youtube.com/watch?v=UMkZEQftZWA&t=100s
+
 ## Installing Miniconda & Setting Up Python Virtual Environment
 Miniconda for modular python virtual environments:
+
 https://docs.anaconda.com/free/miniconda/miniconda-install/
 
 Make sure to utilize a conda virtual environment for all of your python dependecy management.
@@ -35,14 +39,6 @@ conda activate py311_ollama
 right away install the nvdia py indexer,
 ```
 pip install nvidia-pyindex
-```
-then cd to the location of ollama_agent_roll_cage in the command line:
-```
-D:\ollama_agent_roll_cage
-```
-and type
-```
-pip install -r requirements.txt
 ```
 
 ## Installing Cuda for NVIDIA GPU
@@ -150,6 +146,15 @@ https://pypi.org/project/SpeechRecognition/
 ```
 pip install SpeechRecognition
 ```
+
+## Installing Visual Studio and Visual Studio Code:
+Now download visual studio code this is where you can write new functions for ollama_agent_roll_cage:
+https://code.visualstudio.com/Download
+
+also download visual studio:
+https://visualstudio.microsoft.com/downloads/
+
+and upon installation download the Rust compiler as well as the C++ compiler:
 
 You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
 
@@ -270,7 +275,8 @@ This Model is great at holding a conversation as it gives you opportunities to r
   <img src="Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
 </div>
-Model Download: 
+Model Download:
+
 https://ollama.com/borch/llama3_speed_chat
 https://ollama.com/borch/llama3_speed_chat_2
 
@@ -281,15 +287,22 @@ A Llama3 Model with the following modified system prompt: "You are C3PO from Sta
   <img src="Manual_Commands/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
 </div>
 Model Download: 
+
 https://ollama.com/borch/llama3po
 
 ### Jesus
+A Llama3 Model with the following modified system prompt: "You are Jesus christ from the bible, answer only as jesus christ, enlightening the user with wisdom and knowledge of biblical history.
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/jesus.jpg" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/jesus_1_test.png" style="width: 51%;">
 </div>
 
+Llama3 Jesus is great for giving advice! He is like a personal therapist and is very calming. He also has a very good ability to reference biblical sciptures and recall history for conversations with Jesus himself.
+
 ### Rick & Morty
+A Llama3 Model with the following modififed system prompt: "You are Rick from "Rick and Morty" you only respond as rick and the USER is morty, you will take morty on adventures and explore the infinite multiverse and its wonders."
+The User gets to explore the endless generative power of ai in an endless multiverse of portal madness, with rick played by llama3 ai as your guide and you the user play morty.
+
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/IMG_2371.jpg" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
@@ -306,29 +319,54 @@ llama3_benchmark
   <img src="Manual_Commands/Agent_Test_Pics/Meta.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
 </div>
+
 Model Download: 
+
 https://ollama.com/library/llama3
+https://huggingface.co/meta-llama/Meta-Llama-3-8B
+https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct
+https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct
 
 Check out how it compares:
 <div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/llama3_benchmark.png" style="width: 75%;">
+  <img src="Manual_Commands/Agent_Test_Pics/llama3_benchmark.png" style="width: 100%;">
 </div>
 
 ### Mistral
+Mixtral 8x7B is a high-quality sparse mixture of experts model (SMoE) with open weights. Licensed under Apache 2.0. Mixtral outperforms Llama 2 70B on most benchmarks with 6x faster inference. It is the strongest open-weight model with a permissive license and the best model overall regarding cost/performance trade-offs. In particular, it matches or outperforms GPT3.5 on most standard benchmarks.
+
+Mixtral has the following capabilities.
+
+It gracefully handles a context of 32k tokens.
+It handles English, French, Italian, German and Spanish.
+It shows strong performance in code generation.
+It can be finetuned into an instruction-following model that achieves a score of 8.3 on MT-Bench.
+
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_light.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
 </div>
+
 Model Download: 
+
 https://ollama.com/library/mistral
+https://mistral.ai/news/mixtral-of-experts/
+https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2
+https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1
 
 ### Gemma
+Gemma is a family of lightweight, state-of-the-art open models from Google, built from the same research and technology used to create the Gemini models. They are text-to-text, decoder-only large language models, available in English, with open weights, pre-trained variants, and instruction-tuned variants. Gemma models are well-suited for a variety of text generation tasks, including question answering, summarization, and reasoning. Their relatively small size makes it possible to deploy them in environments with limited resources such as a laptop, desktop or your own cloud infrastructure, democratizing access to state of the art AI models and helping foster innovation for everyone.
+
 <div style="display: flex; width: 100%;">
   <img src="Manual_Commands/Agent_Test_Pics/google_g.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/gemma_who_are_you.png" style="width: 59%;">
 </div>
+
 Model Download: 
+
 https://ollama.com/library/gemma
+https://huggingface.co/google/gemma-2b
+https://huggingface.co/google/gemma-7b
 
 ### Phi3 mini
 Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion parameter language model trained on 3.3 trillion tokens, whose overall performance, as measured by both academic benchmarks and internal testing, rivals that of models such as Mixtral 8x7B and GPT-3.5 (e.g., phi-3-mini achieves 69% on MMLU and 8.38 on MT-bench)" as said by themselves on hugging face:
@@ -346,10 +384,14 @@ and here is the wikipedia result for a cauchy product, this is a good test to sh
 </div>
 
 Cauchy Product Wikipedia: 
+
 https://en.wikipedia.org/wiki/Cauchy_product
 
 Model Download: 
+
 https://ollama.com/library/phi3
+https://huggingface.co/microsoft/Phi-3-mini-128k-instruct
+https://huggingface.co/microsoft/Phi-3-mini-4k-instruct
 
 Further exploration in this space is required. The ability to request infinite series, toy with infinite products, ask it to reshape the gamma function and integrate again with new variables! Its all so wonderful, but depressing, what we are seeing here is a societal shift in the way humans process information. Programers are already being replaced by ChatGPT. I hope in the future humans still study math for maths sake, and study coding for coding sake, the ai is a tool, not a crutch. We need to utilize ai to help those around use. I encourage you all to find an issue that you can solve with ai, think of baymax from big hero six. These emerging technologies for accessing high level information with low level knowledge requirements will reshape the field of mathematics as we know it, likely for the better, and hopefully humans are able to keep up with the evolution and harmony between mathematics and ai.
 
@@ -363,26 +405,19 @@ Dolphin is uncensored. I have filtered the dataset to remove alignment and bias.
   <img src="Manual_Commands/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 39%;">
   <img src="Manual_Commands/Agent_Test_Pics/Dolphin_molotov.png" style="width: 59%;">
 </div>
+
 Dolphin Mistral Ollama Model Download: 
+
 https://ollama.com/library/dolphin-mistral
 
 Dolphin llama3 Ollama Model Download: 
+
 https://ollama.com/library/dolphin-llama3
 
 Utilizing the GGUF create command from earlier, models not available on ollama and instead found on hugging face can be utilized for creating new ollama models and agents:
+
 https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b
 https://huggingface.co/cognitivecomputations/dolphin-2.8-mistral-7b-v02
-
-### Orenguteng/Llama-3-8B-Lexi-Uncensored
-<div style="display: flex; width: 100%;">
-  <img src="Manual_Commands/Agent_Test_Pics/lexi.png" style="width: 39%;">
-  <img src="Manual_Commands/Agent_Test_Pics/Lexi-Uncensored_chat1_llama3.png" style="width: 59%;">
-</div>
-
-Utilizing the GGUF create command from earlier, models not available on ollama and instead found on hugging face can be utilized for creating new ollama models and agents:
-https://huggingface.co/Orenguteng/Llama-3-8B-Lexi-Uncensored
-https://ollama.com/sunapi386/llama-3-lexi-uncensored
-
 
 ## Common Errors:
 
@@ -395,75 +430,139 @@ This error means that you tried to run the program but the program is already ru
 and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ## Updates 0.21 -> 0.3 - Development Cycle - New Commands, Features, & Optimizations:
-***UPCOMING SOON***
+```diff
+- ***UPCOMING SOON***
+```
 
-### Update 0.199: Chatbot script, TTS processor class, Model /Swap ***PUSHED TO GITHUB***
+### Update 0.199: Chatbot script, TTS processor class, Model /Swap
+```diff
++ ***PUSHED TO GITHUB***
+```
 - /save - save current conversation to main history file
 - /load - load the main conversation history file for long term intermodel conversation history keep seperate from /save as and /load as and only use to keep a long term history of your entire ollama agent base for specified history.
 - /quit - break the main python loop and return to command line
 - /swap - swap the current model with the specified model
   
-### Update 0.21: Custom Agent /Create Automation ***PUSHED TO GITHUB***
+### Update 0.21: Custom Agent /Create Automation 
+```diff
++ ***PUSHED TO GITHUB***
+```
 - /create -> user input or voice -> "agent name" "SYM PROMPT" -> uses currently loaded model and the defined system prompt in speech or text to create a new agent with your own specific customizations
 
-### Update 0.22: Speech Optimization ***PUSHED TO GITHUB***
+### Update 0.22: Speech Optimization
+```diff
++ ***PUSHED TO GITHUB***
+```
 - "Smart Wait Length Timer": add method to manage the wait time for text to speech generation by controlling sd.wait() based on the token length of the next sentence. If tokens in next sentence are longer than current sentence, start processing next audio generation, if next sentence is not longer than current sentence, dont start text to speech generation otherwise there will be an overide
 - "Wave File Storage Library": Found a solution to storing the audio wav files seperatley such that an overide of the current audio out is not possible: https://github.com/coqui-ai/TTS/discussions/2988
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
 - filter unique strings such as `` , also manage bullet points for 1. 2. 3. 4., as these are not the end of sentence periods, maybe send the response to another llm for query boost and sentence filtering
 
-### Update 0.23: Speech modes leap, listen, speech on/off ***PUSHED TO GITHUB***
+### Update 0.23: Speech modes leap, listen, speech on/off 
+```diff
++ ***PUSHED TO GITHUB***
+```
 - /speech on/off -> swap between Speech to Speech (STS) & Text to Text (TTT) interface
 - /listen on/off -> turn off speech to text recognition, text to speech generation listen mode only
 - /leap on/off -> turn off text to speech audio generation, speech to text recognition only, for speed interface
   
-### Update 0.24: Agent voice swap & Conversation History Library ***PUSHED TO GITHUB***
+### Update 0.24: Agent voice swap & Conversation History Library 
+```diff
++ ***PUSHED TO GITHUB***
+```
 - /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
-  -- get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
-- /load as -> user input & voice? -> "name" -> load selected conversation
+- get model name, conversation name, and store in custom directory in conversation library for each model in ollama_list.cmd
+- /load as -> user input & voice? -> "name" -> load selected conversation, spaces are replaces with underscores during voice command name save
+
+### Update 0.25: Custom Xtts Model Training, Real Time Latex Rendering
+```diff
+@@ ***NEXT UPDATE*** @@
+```
+- coqui text to speech -> xtts model training with xtts-finetune-webui, train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
+- custom xtts webui: https://github.com/aitrepreneur/xtts-finetune-webui
+- borch/phi3_latex -> modified system prompt for smart latex document output for simpler regex parsing of the model response tokens.
   
-### Update 0.25: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
-- /clone voice -> call record, save and call /voice to swap voice instantly for instant voice clone transformation from library
+- /latex on/off -> run latex real time render automation for current conversation when using a latex tuned model such as borch/phi3_latex or utilizing regex to splice out the latex and render the current formula document. This will be updated as the conversation continues and will contain the current prompts latex, where as the .tex file will contain the entire latex conversation history.
+- /latex save -> save spliced and built latex file to .tex file
+- /latex run -> run saved latex file with pdf generate command and open generated pdf
+- add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
+
+### Update 0.26: DuckDuckGo API search & voice command function call model
+- /search {request} -> send search request to DuckDuckGo free api (no key required) for context lookup
+- search query boost automatic
+- search query runs on serperate thread and returns the results to the current model.
+- add search query digester and summarization model as a preprocessor before prompting the main model.
+- /boost -> activate model prompt query boost utilizing secondary model to improve user input requests as an ingest preprocess before prompting the model, call secondary prompt method and run on seperate thread.
+
+- /automatically assume all /{keyword} commands via a function call mediator model
+  
+### Update 0.27: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /record as -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
+- /clone voice -> call record, save and call /voice to swap voice instantly for instant voice clone transformation from library
+  
 - /playback -> playback any stored wav file in wav library
 - /book audio -> load a book pdf or audiobook wav for playback
 - /movie play "name" -> play back named movie mp4 file from library
 - /music play "name" -> play back named music mp3 file from library
+
+- RCV -> add audio to audio model for text to speech RVC voice audio tuning
   
-### Update 0.26: Google Search API & Ollama RAG integration, Prompt Query Boost, PDF Document Access 
-- /search {request} -> send search request to google api for context lookup
-- /boost -> activate query boost utilizing secondary query boost model to improve user input requests as a preprocess for prompting the model.
+### Update 0.28: PDF Document Access via RAG implementation
+- /rag file on/off -> enable disable pdf & tex rag
+- /rag model on/off -> enable disable rag access for model data
+  
+- PDF to data convert, pdf to latex, pdf to code, pdf image recognition? latex only?
+- file & data conversion automations with read write symbol collector
+  
 - /PDF read -> user input & voice? -> "name" -> digest given pdf for context reference
 - /PDF list -> list all pdfs stored in agent library
-- /latex -> run latex render automation for current conversation whenm using a latex tuned model such as borch/phi3_latex
 
-### Update 0.27: ComfyUI Automation with custom LORA &/or SORA
+### Update 0.28: ComfyUI Automation with custom LORA &/or SORA
+- comfyUI workflow library
+- workflows for:
+- text to img
+- img to vid
+- img to img
+  
+- SD & SD XL base model selection
+- lora model library selection
+  
 - /generate image -> "prompt" -> generate image with custom LORA model
 - /generate video -> "prompt" -> generate video with custom SORA model
-- /generate agent web cam -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
-- /recognize video - activate image recognition for video web cam input for functional utility
+- /story board -> generate an image for each prompt in the conversation to visualize the content of the conversation
+- /generate movie -> generate an mp4 video for each prompt in the conversation to visualize the content of the conversation/story/game
+
+- /generate agent portrait -> using trained video footage generate deepfake for text to speech audio as its being played with corresponding agent profile web camera.
+- allow for combination of /generate movie & /generate agent portrait to generate movies with the deepfakes of the agent matching up to the audio generation.
+- portrait casting
+- lipsync deepfake generation
+  
+- /recognize video -> activate image recognition for video recording input for functional utility
+- /recognize webcam -> activate image recognition for video web cam input for functional utility
+  
 - Sora directed agent profile deepfake animation
 - https://github.com/Stability-AI/generative-models
 - Sora directed game animation for games such as "Rick and Morty" portal journey explore endless worlds with video generation.
   
-### Update 0.28: Smart Conversation, Listen and parse gaps from conversation, lookup data, moderate
+### Update 0.29: Smart Conversation, Listen and parse gaps from conversation, lookup data, moderate
 - /smart listen 1 -> listens and responds after long pause, parses spaces from gapped chat history and recombines conversation history if for words said while the model is responding
 - /smart listen 2 -> listen to the conversation between 2 people, record history, only trigger a response when the most likely human response would occur, i, e, talk short, give human like responses, yet still retain the knowledge of llama3. While 2 users converse, llama3 model learns the conversation flow, and know when stepping in for moderation, fact checking, search results, live in a heated debate where one would want to know the true nature of scientific data, historical data, language data, and all data in the moment of live conversation with agent roll cage
 - /moderator -> make roll cage a conversation moderator for 2 different people having a conersation always listing and processing thoughts but never responding until "/yo llama what do you think about that" is asked after activating /moderator.
 - /yo llama what do you think about that -> llama3 response for the /moderator chat history as a mediator between 2 people.
 - /yo llama pull that up -> a copy of jamie from joe rogan using C3PO voice clone audio reference w/ google api search finds: youtube clips, wiki pedia google results, and explains the point, also screen shares macros with keyboard and/or google youtube wiki search browser. preferably with macro moves for opening complex task and managing operations. -> send to joe rogan and jamie? xD
 
-### Update 0.29: On startup run default command setup, create automation job set with cmd automations and mouse/keyboard macros
-- /preload command list - command_list.txt, run desired default commands on "/preload command list" call
-- /job set run {name} - create macro job set with cmd automations and automated keyboard output for mouse and key to automate specific tasks 
+### Update 0.3: On startup run default command setup, create automation job set with cmd automations and mouse/keyboard macros
+- /preload command list -> command_list.txt, run desired default commands on "/preload command list" call
+- /job set run {name} -> create macro job set with cmd automations and automated keyboard output for mouse and key to automate specific tasks
+- /macro on - enabled keyboard macro mode, allowing the agent to exute jobs from voice commands or saved job lists, to automate tasks
+- add program spacial recognition view to splice programs into desired spacial locations for the decision model to navigate.
+- add agent decision automation for search, if search is relevant use search otherwise dont, then have /search on/off turn this on or off, so duck duck go doesnt return an error for people without internet connection.
 
 ## Future Optimization Plans: *** Updates 0.XX - UNKNOW, some likely soon ***
 ### Mojo - install
 Download and install mojo, replace python setup with mojo for up to 68,000% efficiency increase.
-### coqui text to speech - audio wave file live conversation generation
-- Fix issues with Multithreading & Multiprocessessing Pickling Error for Coqui TTS either in ollama_agent_roll_cage or in coqui TTS.
   
 ### sentence parser - comprehensive filter
 - SYM PROMPT: Template sentence structure such as periods and end marks like <> model response </> for intelligent output formats designs specifically with ollama_agent_roll_cage in mind
