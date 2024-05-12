@@ -30,9 +30,10 @@ import json
 import re
 import keyboard
 import time
-from tts_processor_class import tts_processor_class
 import speech_recognition as sr
+from tts_processor_class import tts_processor_class
 from directory_manager_class import directory_manager_class
+from latex_render_class import latex_render_class
 
 class ollama_chatbot_class:
     """ A class for accessing the ollama local serve api via python, and creating new custom agents.
@@ -238,6 +239,8 @@ class ollama_chatbot_class:
         user_input_prompt = re.sub(r"activate speech off", "/speech off", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate leap on", "/leap on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate leap off", "/leap off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
 
         # Search for the name after 'forward slash voice swap'
         match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
@@ -298,8 +301,9 @@ if __name__ == "__main__":
     WHITE = '\x1B[37m'
 
     # initialize command state flags
-    leap_flag = False
-    listen_flag = False
+    leap_flag = True
+    listen_flag = True
+    latex_flag = False
 
     # instantiate class calls
     tts_processor_class = tts_processor_class()
@@ -309,6 +313,7 @@ if __name__ == "__main__":
     ollama_chatbot_class.user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
     # new instance class
     ollama_chatbot_class = ollama_chatbot_class(ollama_chatbot_class.user_input_model_select)
+    latex_render_instance = None
 
     print(OKCYAN + "Press space bar to record audio:" + OKCYAN)
     print(GREEN + f"<<< USER >>> " + END)
@@ -379,12 +384,22 @@ if __name__ == "__main__":
             leap_flag = True
             listen_flag = True
             print(GREEN + f"<<< USER >>> " + OKGREEN)
+        elif user_input_prompt.lower() == "/latex on":
+            latex_flag = True
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
+        elif user_input_prompt.lower() == "/latex off":
+            latex_flag = False
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
 
         elif speech_done == True:
             print(YELLOW + f"{user_input_prompt}" + OKCYAN)
             # Send the prompt to the assistant
             response = ollama_chatbot_class.send_prompt(user_input_prompt)
             print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + END + f"{response}" + RED)
+
+            if latex_flag:
+                latex_render_instance = latex_render_class()
+                latex_render_instance.add_latex_code(response)
 
             # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
             # Clear speech cache and split the response into sentences for next TTS cache
@@ -394,6 +409,7 @@ if __name__ == "__main__":
                     tts_processor_class.process_tts_responses(response, ollama_chatbot_class.voice_name)
             elif leap_flag is None:
                 pass
+            
             print(GREEN + f"<<< USER >>> " + END)
 
             # DONE Add commands for 0.24: 
