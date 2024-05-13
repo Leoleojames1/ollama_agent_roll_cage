@@ -488,6 +488,11 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /latex run -> run saved latex file with pdf generate command and open generated pdf
 - add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
 
+### Update 0.25.5: Langchain, Function Caller, Ollama Chat Api with variable model delimiters
+ollama python package: https://pypi.org/project/ollama/
+RAG FROM SCRATCH: https://github.com/langchain-ai/rag-from-scratch
+design custom server and api for OARC, then plug api into Open Web UI, Big-AGI, etc
+
 ### Update 0.26: DuckDuckGo API search & voice command function call model
 - /search {request} -> send search request to DuckDuckGo free api (no key required) for context lookup
 - search query boost automatic
