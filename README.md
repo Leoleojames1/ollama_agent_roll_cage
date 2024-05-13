@@ -489,9 +489,25 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
 
 ### Update 0.25.5: Langchain, Function Caller, Ollama Chat Api with variable model delimiters
-ollama python package: https://pypi.org/project/ollama/
-RAG FROM SCRATCH: https://github.com/langchain-ai/rag-from-scratch
-design custom server and api for OARC, then plug api into Open Web UI, Big-AGI, etc
+ollama python package:
+
+https://pypi.org/project/ollama/
+
+RAG FROM SCRATCH: 
+
+https://github.com/langchain-ai/rag-from-scratch
+
+design custom server and api for OARC, then plug api into Open Web UI:
+
+https://docs.openwebui.com/
+
+train borch/phi3_latex model fine tune, with currated latex dataset for different math topic groups:
+https://github.com/unslothai/unsloth
+
+train sentiment detection for latex output to create custom math topic group analyizer model (calulus, complex analysis, vector analysis, etc):
+
+Implement sebdg emotion classifier for routing functions:
+https://huggingface.co/sebdg/emotions_classifier
 
 ### Update 0.26: DuckDuckGo API search & voice command function call model
 - /search {request} -> send search request to DuckDuckGo free api (no key required) for context lookup
