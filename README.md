@@ -489,9 +489,11 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
 
 ### Update 0.25.5: Langchain, Function Caller, Ollama Chat Api with variable model delimiters
-ollama python package:
+Optimized chat history, send prompt method, and model prompt template with the ollama python package:
 
 https://pypi.org/project/ollama/
+
+https://www.langchain.com/
 
 RAG FROM SCRATCH: 
 
