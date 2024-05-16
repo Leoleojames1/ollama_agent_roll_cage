@@ -4,7 +4,7 @@
 
 ollama discord community resource obsidian document:
 
-***[Borch obsidian tool reference table](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)***
+***[Borch obsidian ollama development guide](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)***
 
 ***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)***
 ## About
