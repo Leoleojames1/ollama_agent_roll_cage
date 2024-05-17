@@ -230,7 +230,8 @@ ollama_agent_roll_cage 0.24 currently supports the following commands:
 - /voice swap {name} -> user input & voice? -> swap the current audio reference wav file to modify the agent's reference voice
 - /save as -> user input & voice? -> "name" -> save the current conversation history with a name to the current model folder
 - /load as -> user input & voice? -> "name" -> load selected conversation
-
+-/convert tensor - safetensor gguf
+-/create gguf - create ollama model from gguf
 ### /swap -> enter model name
 Once you have created your own custom agent, you can now start accessing the chatbot loop commands. These commands automate the conversation flow and handle the model swaps.
 Swap out the current chatbot model for any other model, type /swap or say "activate swap" in STT.
