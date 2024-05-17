@@ -9,6 +9,9 @@ ping localhost -n 2 >nul
 :: Activate Conda environment
 call C:\Users\ADA\miniconda3\Scripts\activate.bat C:\Users\ADA\miniconda3\envs\py311_ollama
 
+export OLLAMA_NUM_PARALLEL=2
+:: export OLLAMA_MAX_LOADED_MODELS=2
+
 :: Run Python script
 :: start cmd.exe /k "python ollama_chatbot_class.py"
 start cmd.exe /k "python ollama_chatbot_class.py"

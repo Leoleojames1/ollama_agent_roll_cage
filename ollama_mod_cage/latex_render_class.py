@@ -50,7 +50,7 @@ class latex_render_class:
     def matplotlib_latex_render(self, ax, latex_response, y_position):
         # Wrap the LaTeX code with $$...$$
         latex_response = "$ " + latex_response + " $"
-        ax.text(0.5, y_position, r'%s' % latex_response, fontsize=17, ha='center', color='lightblue')
+        ax.text(0.5, y_position, r'%s' % latex_response, fontsize=21, ha='center', color='lightblue')
 
     def check_queue(self):
         """ a method for checking the latex formula render queue
