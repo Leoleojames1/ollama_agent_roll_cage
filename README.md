@@ -1,8 +1,12 @@
-***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)***
-
 ***NOTE: This tool is a culmination of many different pieces of software however I want to share how amazing bing chat has been for testing and deploying new functions for each class in the program. Just thank you microsoft bing is amazing now. (and a big thanks to OpenAI for helping them do that)***
 
 # ollama_agent_roll_cage (OARC) Version 0.24
+
+ollama discord community resource obsidian document:
+
+***[Borch obsidian ollama development guide](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)***
+
+***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)***
 ## About
 **ollama_agent_roll_cage** (OARC) is a completely local python &amp; cmd toolset add-on for the **ollama command line interface**. The ollama_agent_roll_cage toolset automates the creation of **agents** giving the user more control over the likely output. Firstly ollama_agent_roll_cage provides **SYSTEM** **prompt** templates for each ./Modelfile, allowing the user to **design** and **deploy** **custom agents** quickly. Secondly, ollama_agent_roll_cage allows the user to **select which local model file is used** in **agent construction** with the desired system prompt. 
 
@@ -487,6 +491,29 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
 - /latex save -> save spliced and built latex file to .tex file
 - /latex run -> run saved latex file with pdf generate command and open generated pdf
 - add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
+
+### Update 0.25.5: Langchain, Function Caller, Ollama Chat Api with variable model delimiters
+Optimized chat history, send prompt method, and model prompt template with the ollama python package:
+
+https://pypi.org/project/ollama/
+
+https://www.langchain.com/
+
+RAG FROM SCRATCH: 
+
+https://github.com/langchain-ai/rag-from-scratch
+
+design custom server and api for OARC, then plug api into Open Web UI:
+
+https://docs.openwebui.com/
+
+train borch/phi3_latex model fine tune, with currated latex dataset for different math topic groups:
+https://github.com/unslothai/unsloth
+
+train sentiment detection for latex output to create custom math topic group analyizer model (calulus, complex analysis, vector analysis, etc):
+
+Implement sebdg emotion classifier for routing functions:
+https://huggingface.co/sebdg/emotions_classifier
 
 ### Update 0.26: DuckDuckGo API search & voice command function call model
 - /search {request} -> send search request to DuckDuckGo free api (no key required) for context lookup
