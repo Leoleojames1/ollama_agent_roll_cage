@@ -585,9 +585,6 @@ if __name__ == "__main__":
 
             # Check for latex and add to queue
             if latex_flag:
-                # Destroy the old instance if it exists
-                if latex_render_instance is not None:
-                    latex_render_instance.root.destroy()
                 # Create a new instance
                 latex_render_instance = latex_render_class()
                 latex_render_instance.add_latex_code(response, ollama_chatbot_class.user_input_model_select)
