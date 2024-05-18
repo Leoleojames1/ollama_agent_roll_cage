@@ -48,24 +48,24 @@
 ```diff
 @@ ***NEXT UPDATE*** @@
 ```
-- coqui text to speech -> xtts model training with xtts-finetune-webui, train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
-- custom xtts webui: https://github.com/aitrepreneur/xtts-finetune-webui
 - borch/phi3_latex -> modified system prompt for smart latex document output for simpler regex parsing of the model response tokens.
   
 - /latex on/off -> run latex real time render automation for current conversation when using a latex tuned model such as borch/phi3_latex or utilizing regex to splice out the latex and render the current formula document. This will be updated as the conversation continues and will contain the current prompts latex, where as the .tex file will contain the entire latex conversation history.
 - /latex save -> save spliced and built latex file to .tex file
 - /latex run -> run saved latex file with pdf generate command and open generated pdf
 - add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
-
+- /convert tensor
 ### Update 0.26: DuckDuckGo API search & voice command function call model
 - /search {request} -> send search request to DuckDuckGo free api (no key required) for context lookup
 - search query boost automatic
 - search query runs on serperate thread and returns the results to the current model.
 - add search query digester and summarization model as a preprocessor before prompting the main model.
 - /boost -> activate model prompt query boost utilizing secondary model to improve user input requests as an ingest preprocess before prompting the model, call secondary prompt method and run on seperate thread.
-
 - /automatically assume all /{keyword} commands via a function call mediator model
   
+- coqui text to speech -> xtts model training with xtts-finetune-webui, train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
+- custom xtts webui: https://github.com/aitrepreneur/xtts-finetune-webui
+
 ### Update 0.27: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /record as -> user input & voice? -> "name" -> record wav file and save to agent or to wav library

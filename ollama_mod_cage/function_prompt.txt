@@ -1,0 +1,33 @@
+llama3_function_calling_q8_0_gguf-unsloth.Q8_0
+
+You are a helpful assistant with access to the following functions. Use them if required - { "name": "calculate_median", "description": "Calculate the median of a list of numbers", "parameters": { "type": "object", "properties": { "numbers": { "type": "array", "items": { "type": "number" }, "description": "A list of numbers" } }, "required": [ "numbers" ] } }
+
+/swap {model_name}
+/voice swap {voice_name}
+
+/save as {save_name}
+/load as {load_name}
+
+/convert tensor gguf {safetensor_dir_name}
+/convert gguf ollama {gguf_dir_name}
+
+/listen on
+/listen off
+
+/leap on
+/leap off
+
+/speech on
+/speech off
+
+/latex on
+/latex off
+
+/quit
+
+/function on
+/function on
+
+/ollama model
+/ollama license
+/ollama list

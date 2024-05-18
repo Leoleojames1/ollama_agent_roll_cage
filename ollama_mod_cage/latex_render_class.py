@@ -9,35 +9,47 @@ import shutil
 import threading
 import subprocess
 import tkinter as tk
+import customtkinter as ctk
+import random
+
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class latex_render_class:
     def __init__(self):
-        self.root = tk.Tk()
-        self.root.configure(bg='black')  # Set the background color of the Tkinter window to black
+        self.root = ctk.CTk()  # Use CTk instead of Tk
+        self.root.configure(bg='black')  # Set the background color of the CTk window to black
+
+        # Create a text widget for the chat history
+        self.chat_history = ctk.CTkTextbox(self.root)
+        self.chat_history.pack(side=ctk.LEFT, fill=ctk.BOTH, expand=1)
+
+        # Create a scrollbar and link it to the chat history
+        self.scrollbar = ctk.CTkScrollbar(self.root, command=self.chat_history.yview)
+        self.scrollbar.pack(side=ctk.RIGHT, fill=ctk.Y)
+
+        # Link the chat history to the scrollbar
+        self.chat_history.configure(yscrollcommand=self.scrollbar.set)
+
         self.fig = Figure(figsize=(5, 5), dpi=100)
         self.fig.patch.set_facecolor('black')  # Set the background color of the figure to black
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.draw()
-        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        self.canvas.get_tk_widget().pack(side=ctk.TOP, fill=ctk.BOTH, expand=1)  # Use CTk constants instead of Tk constants
         self.latex_response = ""
         self.queue = queue.Queue()
         self.new_latex = False  # Add a flag to indicate whether new LaTeX has come in
         self.root.after(100, self.check_queue)
+        self.latex_color = 'lightblue'  # Initialize the LaTeX color
+        self.root.after(100, self.check_queue)
+        self.latex_color = 'lightblue'  # Initialize the LaTeX color
 
-        # self.scrollbar = Scrollbar(self.root, command=self.canvas.yview)
-        # self.scrollable_frame = tk.Frame(self.canvas)
+    def change_color(self):
+        """Change the color of the LaTeX output."""
+        colors = ['lightblue', 'lightgreen', 'lightyellow', 'lightpink', 'lightgray']
+        self.latex_color = random.choice(colors)  # Choose a random color from the list
 
-        # # Configure the canvas to be scrollable
-        # self.scrollable_frame.bind(
-        #     "<Configure>",
-        #     lambda e: self.canvas.configure(
-        #         scrollregion=self.canvas.bbox("all")
-        #     )
-        # )
-
-    def add_latex_code(self, latex_response):
+    def add_latex_code(self, latex_response, model_name):
         """Add LaTeX code to the document."""
         self.new_latex = True  # Set the flag to True when new LaTeX comes in
         latex_blocks = self.parse_latex_code(latex_response)
@@ -46,17 +58,20 @@ class latex_render_class:
         for block in set(latex_blocks):  # Convert the list to a set to remove duplicates
             if block.strip():  # Skip empty strings
                 self.queue.put(block)
+        # Insert the model name into the chat history
+        self.chat_history.insert(ctk.END, f"<<< {model_name} >>>\n")
+        self.root.mainloop()  # Start the GUI
 
     def matplotlib_latex_render(self, ax, latex_response, y_position):
         # Wrap the LaTeX code with $$...$$
         latex_response = "$ " + latex_response + " $"
-        ax.text(0.5, y_position, r'%s' % latex_response, fontsize=21, ha='center', color='lightblue')
+        ax.text(0.5, y_position, r'%s' % latex_response, fontsize=21, ha='center', color=self.latex_color)  # Use the current LaTeX color
 
     def check_queue(self):
         """ a method for checking the latex formula render queue
         """
         if self.new_latex:  # Only clear the figure if new LaTeX has come in
-            self.fig.clear()
+            self.fig.clear()  # Clear the figure
             self.new_latex = False  # Reset the flag
         ax = self.fig.add_subplot(111)  # Add a new subplot for each formula
         ax.axis('off')  # Hide the axes

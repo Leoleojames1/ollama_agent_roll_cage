@@ -32,6 +32,7 @@ import time
 import speech_recognition as sr
 import ollama
 import shutil
+import threading
 
 from tts_processor_class import tts_processor_class
 from directory_manager_class import directory_manager_class
@@ -284,7 +285,7 @@ class ollama_chatbot_class:
                 try:
                     mic_audio = tts_processor_class.get_audio()
                     self.user_create_agent_name = tts_processor_class.recognize_speech(mic_audio)
-                    self.user_create_agent_name = tts_processor_class.file_name_conversation_history_filter(user_create_agent_name)
+                    self.user_create_agent_name = tts_processor_class.file_name_conversation_history_filter(self.user_create_agent_name)
                 except sr.UnknownValueError:
                     print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
                 except sr.RequestError as e:
@@ -411,10 +412,10 @@ class ollama_chatbot_class:
         else:
             self.load_name = None
 
-        # Search for the name after 'forward slash voice swap'
-        match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.tensor_name = match.group(2)
+        # # Search for the name after 'forward slash voice swap'
+        # match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
+        # if match:
+        #     self.tensor_name = match.group(2)
 
         return user_input_prompt 
         
@@ -503,18 +504,11 @@ if __name__ == "__main__":
             print(f"Chat history loaded from {ollama_chatbot_class.load_name}.json")
             print(GREEN + f"<<< USER >>> " + OKGREEN)
 
-        elif re.match(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt.lower()):  
+        elif re.match(r"(activate convert tensor gguf|/convert tensor gguf) ([^\s]*)", user_input_prompt.lower()):  
             unsloth_train_instance.safe_tensor_gguf_convert(ollama_chatbot_class.tensor_name)
             print(GREEN + f"<<< USER >>> " + OKGREEN)
 
-        elif user_input_prompt.lower() == "/quit":
-            break
-
-        elif user_input_prompt.lower() == "/create":
-            ollama_chatbot_class.write_model_file_and_run_agent_create_ollama(listen_flag)
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/create gguf": 
+        elif user_input_prompt.lower() == "/convert gguf ollama": 
             ollama_chatbot_class.write_model_file_and_run_agent_create_gguf(listen_flag, unsloth_train_instance.model_git)
             print(GREEN + f"<<< USER >>> " + OKGREEN)
 
@@ -551,24 +545,36 @@ if __name__ == "__main__":
             latex_flag = False
             print(GREEN + f"<<< USER >>> " + OKGREEN)
 
-        elif user_input_prompt.lower() == "/function on":
-            pass
-            # FIXME
-            # ollama_chatbot_class.function_call_model_select
-            # function_call_chatbot_class = ollama_chatbot_class(ollama_chatbot_class.function_call_model_select)
-            # response = function_call_chatbot_class.send_prompt(user_input_prompt)
+        elif user_input_prompt.lower() == "/quit":
+            break
+
+        elif user_input_prompt.lower() == "/create":
+            ollama_chatbot_class.write_model_file_and_run_agent_create_ollama(listen_flag)
             print(GREEN + f"<<< USER >>> " + OKGREEN)
 
-        elif user_input_prompt.lower() == "/show model":
+        elif user_input_prompt.lower() == "/function on":
+            pass
+            ollama_chatbot_class.function_call_model_select
+            function_call_chatbot_class = ollama_chatbot_class(ollama_chatbot_class.function_call_model_select)
+            response = function_call_chatbot_class.send_prompt(user_input_prompt)
+            print(GREEN + f"<<< USER >>> " + OKGREEN)
+
+        elif user_input_prompt.lower() == "/ollama model":
             modelfile_data = ollama.show(f'{ollama_chatbot_class.user_input_model_select}')
             for key, value in modelfile_data.items():
                 if key != 'license':
                     print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
 
-        elif user_input_prompt.lower() == "/show license":
+        elif user_input_prompt.lower() == "/ollama license":
             modelfile_data = ollama.show(f'{ollama_chatbot_class.user_input_model_select}')
             for key, value in modelfile_data.items():
                 if key == 'license':
+                    print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
+
+        elif user_input_prompt.lower() == "/ollama list":
+            ollama_list = ollama.list()
+            for key, value in ollama_list.items():
+                if key != 'license':
                     print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
 
         elif speech_done == True:
@@ -577,9 +583,14 @@ if __name__ == "__main__":
             response = ollama_chatbot_class.send_prompt(user_input_prompt)
             print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + END + f"{response}" + RED)
 
+            # Check for latex and add to queue
             if latex_flag:
+                # Destroy the old instance if it exists
+                if latex_render_instance is not None:
+                    latex_render_instance.root.destroy()
+                # Create a new instance
                 latex_render_instance = latex_render_class()
-                latex_render_instance.add_latex_code(response)
+                latex_render_instance.add_latex_code(response, ollama_chatbot_class.user_input_model_select)
 
             # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
             # Clear speech cache and split the response into sentences for next TTS cache
@@ -589,18 +600,5 @@ if __name__ == "__main__":
                     tts_processor_class.process_tts_responses(response, ollama_chatbot_class.voice_name)
             elif leap_flag is None:
                 pass
-            
+            # Start the mainloop in the main thread
             print(GREEN + f"<<< USER >>> " + END)
-
-            # DONE Add commands for 0.24: 
-            # /voice
-             
-            #TODO 0.25 
-            #/record, /clone voice, /playback, /music play, /movie play
-
-            # TODO 0.26
-            # RAG AND GOOGLE API
-
-            # TODO 0.27  
-            # TODO LORA AND SORA STABLE DIFFUSION
-            # hey c3po! its me han solo, are you ready to go on this trip? were going to a space gas station/pawn shop
