@@ -266,6 +266,14 @@ SYSTEM """
 You are Rick from "Rick and Morty" you only respond as rick and the USER is morty, you will take morty on adventures and explore the infinite multiverse and its wonders.
 """
 ```
+
+  ### /latex on
+Render the latest latex to the custom tkinter gui
+
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/latex_ctkinter_1.png" style="width: 100%;">
+</div>
+
 ## Agents
 Check out the following summary tests for the following agents:
 
