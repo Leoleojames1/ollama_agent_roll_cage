@@ -76,8 +76,8 @@ class ollama_chatbot_class:
             args: user_input_prompt, user_input_model_select, search_google
             returns: none
         """
+        self.chat_history.append({"role": "system", "content": "You are tasked with responding to the user, if the user requests for latex code utilize \[...\] formating, DO NOT USE $$...$$ latex formatting."})
         self.chat_history.append({"role": "user", "content": user_input_prompt})
-
         data = {
             "model": self.user_input_model_select,
             "stream": False,
