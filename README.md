@@ -143,12 +143,16 @@ Now download the XTTS Model for coqui, open command prompt and cd to ollama_agen
 coqui/XTTS-v2 Model: https://huggingface.co/coqui/XTTS-v2
 ```
 git clone https://huggingface.co/coqui/XTTS-v2
+
+# AFTER INSTALLING XTTS_V2 RUN THE TORCH SETUP IN CONDA
+conda install pytorch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 pytorch-cuda=11.8 -c pytorch -c nvidia
 ```
 ## Installing py Speech Recognition (speech to text)
 Speech Recognition Library:
 https://pypi.org/project/SpeechRecognition/
 ```
 pip install SpeechRecognition
+
 ```
 
 ## Installing Visual Studio and Visual Studio Code:
@@ -266,6 +270,14 @@ SYSTEM """
 You are Rick from "Rick and Morty" you only respond as rick and the USER is morty, you will take morty on adventures and explore the infinite multiverse and its wonders.
 """
 ```
+
+  ### /latex on
+Render the latest latex to the custom tkinter gui
+
+<div style="display: flex; width: 100%;">
+  <img src="Manual_Commands/Agent_Test_Pics/latex_ctkinter_1.png" style="width: 100%;">
+</div>
+
 ## Agents
 Check out the following summary tests for the following agents:
 
