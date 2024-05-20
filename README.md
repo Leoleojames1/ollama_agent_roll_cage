@@ -143,12 +143,16 @@ Now download the XTTS Model for coqui, open command prompt and cd to ollama_agen
 coqui/XTTS-v2 Model: https://huggingface.co/coqui/XTTS-v2
 ```
 git clone https://huggingface.co/coqui/XTTS-v2
+
+# AFTER INSTALLING XTTS_V2 RUN THE TORCH SETUP IN CONDA
+conda install pytorch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 pytorch-cuda=11.8 -c pytorch -c nvidia
 ```
 ## Installing py Speech Recognition (speech to text)
 Speech Recognition Library:
 https://pypi.org/project/SpeechRecognition/
 ```
 pip install SpeechRecognition
+
 ```
 
 ## Installing Visual Studio and Visual Studio Code:
