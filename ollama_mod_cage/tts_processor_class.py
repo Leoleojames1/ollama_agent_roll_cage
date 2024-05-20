@@ -28,20 +28,34 @@ import speech_recognition as sr
 from directory_manager_class import directory_manager_class
 import numpy as np
 import scipy.io.wavfile as wav
+import sys
 
 class tts_processor_class:
     def __init__(self):
         """a method for initializing the class
         """
+        # self.current_dir = os.getcwd()
+        # self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+
+        # self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        # self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
+        # self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
+        # self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
+        # self.audio_queue = queue.Queue()
+
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
 
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        if not torch.cuda.is_available():
+            print("CUDA-compatible GPU is not available. Exiting.")
+            sys.exit()
+
+        self.device = "cuda"
         self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
         self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
         self.audio_queue = queue.Queue()
-
+        
     def get_audio(self):
         """ a method for collecting the audio from the microphone
             args: none
@@ -65,6 +79,8 @@ class tts_processor_class:
             args: response
             returns: none
         """
+        # Clear VRAM cache
+        torch.cuda.empty_cache()
         # Call Sentence Splitter
         tts_response_sentences = self.split_into_sentences(response)
         self.generate_play_audio_loop(tts_response_sentences, voice_name)

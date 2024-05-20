@@ -61,7 +61,7 @@ class ollama_chatbot_class:
         self.movie_name = None
         self.save_name = "default"
         self.load_name = "default"
-        # TODO
+        # TODO does this affect stt?
         self.url = "http://localhost:11434/api/chat"
         # self.url = "http://localhost:11434/api/generate"
         self.headers = {'Content-Type': 'application/json'}
@@ -77,7 +77,9 @@ class ollama_chatbot_class:
             args: user_input_prompt, user_input_model_select, search_google
             returns: none
         """
-        self.chat_history.append({"role": "system", "content": "You are tasked with responding to the user, if the user requests for latex code utilize \[...\] formating, DO NOT USE $$...$$ latex formatting."})
+        # self.chat_history.append({"role": "system", "content": "You are Rick, you are tasked with guiding morty from earth c137 on his adventures through the multiverse, here is morty. "})
+        # self.chat_history.append({"role": "system", "content": "You are tasked with responding to the user, if the user requests for latex code utilize \[...\] formating, DO NOT USE $$...$$ latex formatting, otherwise respond to the user."})
+                self.chat_history.append({"role": "system", "content": "You are tasked with responding to the user, if the user requests for latex code utilize \[...\] formating, DO NOT USE $$...$$ latex formatting, otherwise respond to the user."})
         self.chat_history.append({"role": "user", "content": user_input_prompt})
         data = {
             "model": self.user_input_model_select,
@@ -255,7 +257,8 @@ class ollama_chatbot_class:
         try:
             # Create the new directory
             os.makedirs(model_create_dir, exist_ok=True)
-
+            # Get current model template data
+            self.current_model_template()
             # Create the text file
             with open(model_create_file, 'w') as f:
                 f.write(f"FROM {self.user_input_model_select}\n")
@@ -263,6 +266,7 @@ class ollama_chatbot_class:
                 f.write(f"PARAMETER temperature {user_input_temperature}\n")
                 f.write(f"\n#Set the system prompt\n")
                 f.write(f"SYSTEM \"\"\"\n{system_prompt}\n\"\"\"\n")
+                f.write(f"TEMPLATE \"\"\"\n{self.template}\n\"\"\"\n")
 
             # Execute create_agent_cmd
             self.create_agent_cmd(self.user_create_agent_name, 'create_agent_automation_ollama.cmd')
@@ -418,6 +422,15 @@ class ollama_chatbot_class:
         #     self.tensor_name = match.group(2)
 
         return user_input_prompt 
+    
+    def current_model_template(self):
+        """ a method for getting the model template
+        """
+        modelfile_data = ollama.show(f'{self.user_input_model_select}')
+        for key, value in modelfile_data.items():
+            if key == 'template':
+                self.template = value
+        return
         
 if __name__ == "__main__":
     """ 
@@ -444,7 +457,7 @@ if __name__ == "__main__":
     WHITE = '\x1B[37m'
 
     # initialize command state flags
-    leap_flag = True
+    leap_flag = False
     listen_flag = True
     latex_flag = False
 
@@ -472,9 +485,12 @@ if __name__ == "__main__":
             while keyboard.is_pressed('space'):  # user holds down the space bar
                 try:
                     # Record audio from microphone
+                    print(">>AUDIO SENDING<<")
                     audio = tts_processor_class.get_audio()
+                    print(">>AUDIO RECEIVED<<")
                     # Recognize speech to text from audio
                     user_input_prompt = tts_processor_class.recognize_speech(audio)
+                    print(f">>SPEECH RECOGNIZED<< >> {user_input_prompt} <<")
                     speech_done = True
                 except sr.UnknownValueError:
                     print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
@@ -559,10 +575,16 @@ if __name__ == "__main__":
             response = function_call_chatbot_class.send_prompt(user_input_prompt)
             print(GREEN + f"<<< USER >>> " + OKGREEN)
 
-        elif user_input_prompt.lower() == "/ollama model":
+        elif user_input_prompt.lower() == "/ollama show":
             modelfile_data = ollama.show(f'{ollama_chatbot_class.user_input_model_select}')
             for key, value in modelfile_data.items():
                 if key != 'license':
+                    print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
+
+        elif user_input_prompt.lower() == "/ollama template":
+            modelfile_data = ollama.show(f'{ollama_chatbot_class.user_input_model_select}')
+            for key, value in modelfile_data.items():
+                if key == 'template':
                     print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
 
         elif user_input_prompt.lower() == "/ollama license":
@@ -573,9 +595,10 @@ if __name__ == "__main__":
 
         elif user_input_prompt.lower() == "/ollama list":
             ollama_list = ollama.list()
-            for key, value in ollama_list.items():
-                if key != 'license':
-                    print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
+            for model_info in ollama_list.get('models', []):
+                model_name = model_info.get('name')
+                model = model_info.get('model')
+                print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{model_name}" + RED + " <<< ")
 
         elif speech_done == True:
             print(YELLOW + f"{user_input_prompt}" + OKCYAN)

@@ -30,3 +30,9 @@ class unsloth_train_class:
         # Call the command
         subprocess.run(cmd, shell=True)
         return
+    
+    def safetensor_ollama_convert(self):
+        """ a method for converting safetensor model to ollama model
+        """
+        #TODO
+        return
