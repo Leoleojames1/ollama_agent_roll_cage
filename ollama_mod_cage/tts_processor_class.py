@@ -29,30 +29,28 @@ from directory_manager_class import directory_manager_class
 import numpy as np
 import scipy.io.wavfile as wav
 import sys
+import shutil
+import time
 
 class tts_processor_class:
     def __init__(self):
         """a method for initializing the class
-        """
-        # self.current_dir = os.getcwd()
-        # self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-
-        # self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        # self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
-        # self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
-        # self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
-        # self.audio_queue = queue.Queue()
+        """ 
 
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-
-        if not torch.cuda.is_available():
-            print("CUDA-compatible GPU is not available. Exiting.")
-            sys.exit()
-
-        self.device = "cuda"
+        self.speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library")
+        self.recognize_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library\\recognize_speech")
+        self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library\\generate_speech")
         self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
         self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
+
+        if torch.cuda.is_available():
+            self.device = "cuda"
+        else:
+            self.device = "cpu"
+            print("CUDA-compatible GPU is not available. Using CPU instead. If you believe this should not be the case, reinstall torch-audio with the correct version.")
+
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
         self.audio_queue = queue.Queue()
         
@@ -69,6 +67,8 @@ class tts_processor_class:
     
     def recognize_speech(self, audio):
         """ a method for calling the speech recognizer
+            args: audio
+            returns: speech_str
         """
         speech_str = sr.Recognizer().recognize_google(audio)
         print(f">>{speech_str}<<")
@@ -76,22 +76,37 @@ class tts_processor_class:
     
     def process_tts_responses(self, response, voice_name):
         """a method for managing the response preprocessing methods
-            args: response
+            args: response, voice_name
             returns: none
         """
         # Clear VRAM cache
         torch.cuda.empty_cache()
         # Call Sentence Splitter
         tts_response_sentences = self.split_into_sentences(response)
+        
+        # Clear the directories
+        self.clear_directory(self.recognize_speech_dir)
+        self.clear_directory(self.generate_speech_dir)
+
         self.generate_play_audio_loop(tts_response_sentences, voice_name)
         return
 
-    def play_audio_thread(self):
-        """A separate thread for audio playback."""
-        while True:
-            audio_data, sample_rate = self.audio_queue.get()
+    def play_audio_from_file(self, filename):
+        """A method for audio playback from file."""
+        # Check if the file exists
+        if not os.path.isfile(filename):
+            print(f"File {filename} does not exist.")
+            return
+
+        try:
+            # Load the audio file
+            audio_data, sample_rate = sf.read(filename)
+
+            # Play the audio file
             sd.play(audio_data, sample_rate)
             sd.wait()
+        except Exception as e:
+            print(f"Failed to play audio from file {filename}. Reason: {e}")
 
     def generate_audio(self, sentence, voice_name_path, ticker):
         """ a method to generate the audio for the chatbot
@@ -105,9 +120,10 @@ class tts_processor_class:
         # Convert to NumPy array (adjust dtype as needed)
         tts_audio = np.array(tts_audio, dtype=np.float32)
 
-        # Add the audio data to the queue
-        self.audio_queue.put((tts_audio, 22050))
-
+        # Save the audio with a unique name
+        filename = os.path.join(self.generate_speech_dir, f"audio_{ticker}.wav")
+        sf.write(filename, tts_audio, 22050)
+        
     def generate_play_audio_loop(self, tts_response_sentences, voice_name):
         """ a method to generate and play the audio for the chatbot
             args: tts_sentences
@@ -116,19 +132,40 @@ class tts_processor_class:
         ticker = 0  # Initialize ticker
         voice_name_path = os.path.join(self.tts_voice_ref_wav_pack_path, f"{voice_name}\\clone_speech.wav")
 
-        # Start the audio playback thread
-        audio_thread = threading.Thread(target=self.play_audio_thread)
-        audio_thread.start()
-
         for sentence in tts_response_sentences:
             ticker += 1
 
             # Generate the audio in a separate thread
-            audio_thread = threading.Thread(target=self.generate_audio, args=(sentence, voice_name_path, ticker))
+            audio_thread = threading.Thread(target=self.generate_audio(sentence, voice_name_path, ticker))
             audio_thread.start()
 
             # Wait for the audio generation to finish before moving on to the next sentence
             audio_thread.join()
+
+            # Construct the filename
+            filename = os.path.join(self.generate_speech_dir, f"audio_{ticker}.wav")
+
+            # Wait until the file is done being written
+            while not os.path.isfile(filename):
+                time.sleep(0.1)  # Sleep for a short time to avoid busy waiting
+
+            # Play the audio from file
+            self.play_audio_from_file(filename)
+
+    def clear_directory(self, directory):
+        """ a method for clearing the directory
+            args: directory
+            returns: none
+        """
+        for filename in os.listdir(directory):
+            file_path = os.path.join(directory, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print(f'Failed to delete {file_path}. Reason: {e}')
 
     def split_into_sentences(self, text: str) -> list[str]:
         """A method for splitting the LLAMA response into sentences.

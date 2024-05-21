@@ -27,3 +27,4 @@ class crew_ai_class_base:
         # Call the command
         subprocess.run(cmd, shell=True)
         return
+    
