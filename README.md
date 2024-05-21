@@ -166,6 +166,8 @@ and upon installation download the Rust compiler as well as the C++ compiler:
 
 You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
 
+you likely need to edit this cmd file and replace my ADA username with your own username
+
 # Getting Started After Installation:
 ## Manual Agent Creation Guide:
 Next Navigate to the ollama_agent_roll_cage/AgentFiles directory, here you will find the Modelfile for each Model agent.
@@ -638,7 +640,7 @@ Download and install mojo, replace python setup with mojo for up to 68,000% effi
 
 If you have found this software helpful, and would like to support the developement of open source tools by yours truly, you can contribute by donating BTC or ETH to one of my wallet addresses, thx and have a great day:
 
-**BTC Address:** bc1q6s6e8hgw2ewyqd5u3adjme0rp0r23caf53qjhf
+**BTC Address:** bc1q98q4yn0ea9cvuthgam7lt250ct3vln65zytfae
 
-**ETH Address:** 0x51a530f0c2b24e834bB5C5e740e1170C6a1521Cc
+**ETH Address:** 0x0Ce35988F785524697AE11D28cdd4A1b97123f11
 
