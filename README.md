@@ -642,5 +642,5 @@ If you have found this software helpful, and would like to support the developem
 
 **BTC Address:** bc1q98q4yn0ea9cvuthgam7lt250ct3vln65zytfae
 
-**ETH Address:** 0x51a530f0c2b24e834bB5C5e740e1170C6a1521Cc
+**ETH Address:** 0x0Ce35988F785524697AE11D28cdd4A1b97123f11
 
