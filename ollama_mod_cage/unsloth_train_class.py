@@ -14,22 +14,6 @@ class unsloth_train_class:
         """
         self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
         self.current_dir = os.getcwd()
-
-
-    def safe_tensor_gguf_convert(self, safe_tensor_input_name):
-        """ a method for converting safetensors to GGUF
-            args: safe_tensor_input_name: str
-            returns: None
-        """
-        # Construct the full path
-        full_path = os.path.join(self.current_dir, 'safetensors_to_GGUF.cmd')
-
-        # Define the command to be executed
-        cmd = f'call {full_path} {self.model_git} {safe_tensor_input_name}'
-
-        # Call the command
-        subprocess.run(cmd, shell=True)
-        return
     
     def safetensor_ollama_convert(self):
         """ a method for converting safetensor model to ollama model

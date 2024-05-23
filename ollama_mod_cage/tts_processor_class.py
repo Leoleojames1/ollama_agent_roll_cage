@@ -132,25 +132,34 @@ class tts_processor_class:
         ticker = 0  # Initialize ticker
         voice_name_path = os.path.join(self.tts_voice_ref_wav_pack_path, f"{voice_name}\\clone_speech.wav")
 
-        for sentence in tts_response_sentences:
-            ticker += 1
+        # Generate the audio for the first sentence
+        audio_thread = threading.Thread(target=self.generate_audio, args=(tts_response_sentences[0], voice_name_path, ticker))
+        audio_thread.start()
 
-            # Generate the audio in a separate thread
-            audio_thread = threading.Thread(target=self.generate_audio(sentence, voice_name_path, ticker))
-            audio_thread.start()
-
-            # Wait for the audio generation to finish before moving on to the next sentence
+        for sentence in tts_response_sentences[1:]:
+            # Wait for the audio file to be generated
             audio_thread.join()
 
             # Construct the filename
             filename = os.path.join(self.generate_speech_dir, f"audio_{ticker}.wav")
 
-            # Wait until the file is done being written
-            while not os.path.isfile(filename):
-                time.sleep(0.1)  # Sleep for a short time to avoid busy waiting
+            # Play the audio from file in a separate thread
+            play_thread = threading.Thread(target=self.play_audio_from_file, args=(filename,))
+            play_thread.start()
 
-            # Play the audio from file
-            self.play_audio_from_file(filename)
+            ticker += 1  # Increment ticker
+
+            # Start generating the audio for the next sentence
+            audio_thread = threading.Thread(target=self.generate_audio, args=(sentence, voice_name_path, ticker))
+            audio_thread.start()
+
+            # Wait for the audio to finish playing before moving on to the next sentence
+            play_thread.join()
+
+        # Handle the last sentence
+        audio_thread.join()
+        filename = os.path.join(self.generate_speech_dir, f"audio_{ticker}.wav")
+        self.play_audio_from_file(filename)
 
     def clear_directory(self, directory):
         """ a method for clearing the directory

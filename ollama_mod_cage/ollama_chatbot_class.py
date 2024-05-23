@@ -24,6 +24,7 @@
 
 """
 import os
+import sys
 import subprocess
 import json
 import re
@@ -33,6 +34,10 @@ import speech_recognition as sr
 import ollama
 import shutil
 import threading
+import pyautogui
+import glob
+from PIL import Image
+import base64
 
 from tts_processor_class import tts_processor_class
 from directory_manager_class import directory_manager_class
@@ -54,155 +59,89 @@ class ollama_chatbot_class:
         """
         # User Input
         self.user_input_model_select = user_input_model_select
-
-        # Default Agent Voice Reference
-        self.voice_name = "C3PO"
-        # Default Movie None
-        self.movie_name = None
-        self.save_name = "default"
-        self.load_name = "default"
-        # TODO does this affect stt?
+        # Connect api
         self.url = "http://localhost:11434/api/chat"
-        # self.url = "http://localhost:11434/api/generate"
+        # Setup chat_history
         self.headers = {'Content-Type': 'application/json'}
         self.chat_history = []
+        self.llava_history = []
+        # Default Agent Voice Reference
+        self.voice_name = "C3PO"
+        # Default conversation name
+        self.save_name = "default"
+        self.load_name = "default"
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
         self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles\\Ignored_Agents\\") 
         self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
         self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\pipeline\\conversation_library\\{self.user_input_model_select}\\{self.save_name}.json")
-    
+        self.llava_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\llava_library")
+
+        # TODO developer_tools.txt file for custom path library
+        self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
+
+        #Initialize tool flags
+        self.leap_flag = True
+        self.listen_flag = True
+        self.latex_flag = False
+        self.llava_flag = False
+
     def send_prompt(self, user_input_prompt):
         """ a method for prompting the model
             args: user_input_prompt, user_input_model_select, search_google
             returns: none
         """
-        # TODO OPTIONAL, SET SYSTEM PROMPT (DOES NOT EDIT MODEL, JUST TEMPORARY PROMPT)
-        if user_input_prompt == "RicknMorty" or user_input_prompt == "RicknMorty:latest":
-            self.chat_history.append({"role": "system", "content": "You are Rick, you are tasked with guiding morty from earth c137 on his adventures through the multiverse, here is morty. "})
-        # self.chat_history.append({"role": "system", "content": "You are tasked with responding to the user, if the user requests for latex code utilize \[...\] formating, DO NOT USE $$...$$ latex formatting, otherwise respond to the user."})
-        if user_input_prompt == "phi3" or user_input_prompt == "phi3:latest":
-            self.chat_history.append({"role": "system", "content": "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been tuned to respond in a more quick and conversational manner. Answer in short responses, unless long response is requested, the user is using speech to text for communication, its also okay to be fun an wild as a phi3 ai assistant. Its also okay to respond with a question, or think twice about a response during conversation to refine the experience but not always, if directed to do something just do it but to direct a conversation while it flows realize that not everything needs to be said before listening to the users response. (if the user decides to request a latex math code output, use \[...\] instead of $$...$$ notation)"})
-
-        # TODO DEFAULT TO MODEL SYSTEM PROMPT
         self.chat_history.append({"role": "user", "content": user_input_prompt})
+        self.screenshot_path = os.path.join(self.llava_library, "screenshot.png")
+        # Get the llava response and append it to the chat history only if an image is provided
+        if self.llava_flag is True:
+            # Load the screenshot and convert it to a base64 string
+            with open(f'{self.screenshot_path}', 'rb') as f:
+                user_screenshot_raw2 = base64.b64encode(f.read()).decode('utf-8')
+                self.user_screenshot_raw = user_screenshot_raw2
+            llava_response = self.llava_prompt(user_screenshot_raw2)
+            self.chat_history.append({"role": "assistant", "content": f"LLAVA_DATA: {llava_response}"})
 
         try:
-            # print(f"{self.chat_history}")
             response = ollama.chat(model=self.user_input_model_select, messages=(self.chat_history), stream=False )
-            # print(response)
-
+            if isinstance(response, dict) and "message" in response:
+                llama_response = response.get("message")
+                self.chat_history.append(llama_response)
+                return llama_response["content"]
+            else:
+                return "Error: Response from model is not in the expected format"
         except Exception as e:
             return f"Error: {e}"
 
-        # try:
-        #     response_data = json.loads(response.text)
-        # except json.JSONDecodeError:
-        #     return "Error: Unable to parse response from model"
+    
+    def llava_prompt(self, user_screenshot_raw2):
+        """ a method for prompting the model
+            args: user_input_prompt, user_input_model_select, search_google
+            returns: none
+        """
+        message = {"role": "user", "content": "what objects are in this screen share image?"}
+        if user_screenshot_raw2 is not None:
+            # Assuming user_input_image is a base64 encoded image
+            message["images"] = [user_screenshot_raw2]
+        self.llava_history.append(message["content"])
+
+        try:
+            response = ollama.chat(model="llava", messages=(self.llava_history), stream=False )
+        except Exception as e:
+            return f"Error: {e}"
 
         if "message" in response:
             llama_response = response.get("message")
-            self.chat_history.append(llama_response)
+            self.llava_history.append(llama_response)
+            print(f"LLAVA HISTORY: {self.llava_history}")
+
+            # Keep only the last 2 responses in llava_history
+            self.llava_history = self.llava_history[-2:]
+
             return llama_response["content"]
         else:
             return "Error: Response from model is not in the expected format"
-
-    # def send_prompt(self, user_input_prompt):
-    #     """ a method for prompting the model
-    #         args: user_input_prompt, user_input_model_select, search_google
-    #         returns: none
-    #     """
-    #     self.chat_history.append({"user_name": "User", "message": user_input_prompt})
-
-    #     # join chat history, 3 turns
-    #     history = " ".join([message["message"] for message in self.chat_history[-3:]])
-
-    #     # Use only the most recent user input as the prompt
-    #     prompt = self.chat_history[-1]["message"]
-
-    #     # Combine history and prompt
-    #     full_prompt = history + "\n\nThis is the current prompt in the conversation. Do not respond to past conversation history only refer to it in the past tense, and certainly do not respond to yourself only respond to the User's current prompt here: " + prompt
-
-    #     data = {
-    #         "model": self.user_input_model_select,
-    #         "stream": False,
-    #         "prompt": full_prompt,
-    #     }
-
-    #     try:
-    #         # Post the request to the model
-    #         response = requests.post(self.url, headers=self.headers, data=json.dumps(data))
-    #         response.raise_for_status()  # Raise an exception if the status code is not 200
-    #     except requests.RequestException as e:
-    #         return f"Error: {e}"
-
-    #     try:
-    #         response_data = json.loads(response.text)
-    #     except json.JSONDecodeError:
-    #         return "Error: Unable to parse response from model"
-
-    #     if "response" in response_data:
-    #         llama_response = response_data.get("response")
-            
-    #         # Analyze the sentiment of the generated text
-    #         sentiment = sentiment_model.predict([llama_response])
-            
-    #         # Combine the Llama response and sentiment analysis with a space
-    #         combined_response = f"{llama_response} {sentiment}"
-            
-    #         self.chat_history.append({"model_name": f"{self.user_input_model_select}", "message": combined_response})
-    #         return combined_response
-    #     else:
-    #         return "Error: Response from model is not in the expected format"
-            
-    def save_to_json(self):
-        """ a method for saving the current agent conversation history
-            Args: filename
-            Returns: none
-        """
-        file_save_path_dir = os.path.join(self.conversation_library, f"{self.user_input_model_select}")
-        file_save_path_str = os.path.join(file_save_path_dir, f"{self.save_name}.json")
-        directory_manager_class.create_directory_if_not_exists(file_save_path_dir)
         
-        print(f"file path 1:{file_save_path_dir} \n")
-        print(f"file path 2:{file_save_path_str} \n")
-        with open(file_save_path_str, "w") as json_file:
-            json.dump(self.chat_history, json_file, indent=2)
-
-    def load_from_json(self):
-        """ a method for loading the directed conversation history to the current agent, mis matching
-        agents and history may be bizarre
-            Args: filename
-            Returns: none
-        """
-        # Check if user_input_model_select contains a slash
-        if "/" in self.user_input_model_select:
-            user_dir, model_dir = self.user_input_model_select.split("/")
-            file_load_path_dir = os.path.join(self.conversation_library, user_dir, model_dir)
-        else:
-            file_load_path_dir = os.path.join(self.conversation_library, self.user_input_model_select)
-
-        file_load_path_str = os.path.join(file_load_path_dir, f"{self.load_name}.json")
-        directory_manager_class.create_directory_if_not_exists(file_load_path_dir)
-        print(f"file path 1:{file_load_path_dir} \n")
-        print(f"file path 2:{file_load_path_str} \n")
-        with open(file_load_path_str, "r") as json_file:
-            self.chat_history = json.load(json_file)
-
-    def create_agent_cmd(self, user_create_agent_name, cmd_file_name):
-        """Executes the create_agent_automation.cmd file with the specified agent name.
-            Args: 
-            Returns: None
-        """
-        try:
-            # Construct the path to the create_agent_automation.cmd file
-            batch_file_path = os.path.join(self.current_dir, cmd_file_name)
-
-            # Call the batch file
-            subprocess.run(f"call {batch_file_path} {user_create_agent_name}", shell=True)
-        except Exception as e:
-            print(f"Error executing create_agent_cmd: {str(e)}")
-    
     def write_model_file_and_run_agent_create_ollama(self, listen_flag):
         """ a method to automatically generate a new agent via commands
             args: listen_flag
@@ -215,9 +154,9 @@ class ollama_chatbot_class:
                 time.sleep(0.1)
             # Now start recording
             try:
-                mic_audio = tts_processor_class.get_audio()
-                self.user_create_agent_name = tts_processor_class.recognize_speech(mic_audio)
-                self.user_create_agent_name = tts_processor_class.file_name_conversation_history_filter(self.user_create_agent_name)
+                mic_audio = tts_processor_instance.get_audio()
+                self.user_create_agent_name = tts_processor_instance.recognize_speech(mic_audio)
+                self.user_create_agent_name = tts_processor_instance.file_name_conversation_history_filter(self.user_create_agent_name)
             except sr.UnknownValueError:
                 print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
             except sr.RequestError as e:
@@ -228,8 +167,8 @@ class ollama_chatbot_class:
                 time.sleep(0.1)
             # Now start recording
             try:
-                mic_audio = tts_processor_class.get_audio()
-                user_input_temperature = tts_processor_class.recognize_speech(mic_audio)
+                mic_audio = tts_processor_instance.get_audio()
+                user_input_temperature = tts_processor_instance.recognize_speech(mic_audio)
             except sr.UnknownValueError:
                 print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
             except sr.RequestError as e:
@@ -240,8 +179,8 @@ class ollama_chatbot_class:
                 time.sleep(0.1)
             # Now start recording
             try:        
-                mic_audio = tts_processor_class.get_audio()
-                system_prompt = tts_processor_class.recognize_speech(mic_audio)
+                mic_audio = tts_processor_instance.get_audio()
+                system_prompt = tts_processor_instance.recognize_speech(mic_audio)
             except sr.UnknownValueError:
                 print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
             except sr.RequestError as e:
@@ -288,9 +227,9 @@ class ollama_chatbot_class:
                     time.sleep(0.1)
                 # Now start recording
                 try:
-                    mic_audio = tts_processor_class.get_audio()
-                    self.user_create_agent_name = tts_processor_class.recognize_speech(mic_audio)
-                    self.user_create_agent_name = tts_processor_class.file_name_conversation_history_filter(self.user_create_agent_name)
+                    mic_audio = tts_processor_instance.get_audio()
+                    self.user_create_agent_name = tts_processor_instance.recognize_speech(mic_audio)
+                    self.user_create_agent_name = tts_processor_instance.file_name_conversation_history_filter(self.user_create_agent_name)
                 except sr.UnknownValueError:
                     print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
                 except sr.RequestError as e:
@@ -301,8 +240,8 @@ class ollama_chatbot_class:
                     time.sleep(0.1)
                 # Now start recording
                 try:
-                    mic_audio = tts_processor_class.get_audio()
-                    user_input_temperature = tts_processor_class.recognize_speech(mic_audio)
+                    mic_audio = tts_processor_instance.get_audio()
+                    user_input_temperature = tts_processor_instance.recognize_speech(mic_audio)
                 except sr.UnknownValueError:
                     print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
                 except sr.RequestError as e:
@@ -313,8 +252,8 @@ class ollama_chatbot_class:
                     time.sleep(0.1)
                 # Now start recording
                 try:        
-                    mic_audio = tts_processor_class.get_audio()
-                    system_prompt = tts_processor_class.recognize_speech(mic_audio)
+                    mic_audio = tts_processor_instance.get_audio()
+                    system_prompt = tts_processor_instance.recognize_speech(mic_audio)
                 except sr.UnknownValueError:
                     print(OKCYAN + "Google Speech Recognition could not understand audio" + OKCYAN)
                 except sr.RequestError as e:
@@ -362,6 +301,171 @@ class ollama_chatbot_class:
         shutil.copy(self.gguf_path, self.create_ollama_model_dir)
         return
     
+    def command_auto_select_list_generate(self):
+        """ a method to generate a command list to be executed by the function call model
+        """
+        return
+
+    def command_function_call_model(self):
+        """ a method to call the command list produced by command_auto_select_list_generate
+        """
+        return
+    
+    def swap(self):
+        """ a method to call when swapping models
+        """
+        self.chat_history = []
+        self.user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME TO SWAP >>> " + OKBLUE)
+        print(f"Model changed to {self.user_input_model_select}")
+        return
+    
+    def voice_swap(self):
+        """ a method to call when swapping voices
+        """
+        # Search for the name after 'forward slash voice swap'
+        print(f"Agent voice swapped to {self.voice_name}")
+        print(GREEN + f"<<< USER >>> " + OKGREEN)
+        return
+
+    def save_to_json(self):
+        """ a method for saving the current agent conversation history
+            Args: filename
+            Returns: none
+        """
+        file_save_path_dir = os.path.join(self.conversation_library, f"{self.user_input_model_select}")
+        file_save_path_str = os.path.join(file_save_path_dir, f"{self.save_name}.json")
+        directory_manager_class.create_directory_if_not_exists(file_save_path_dir)
+        
+        print(f"file path 1:{file_save_path_dir} \n")
+        print(f"file path 2:{file_save_path_str} \n")
+        with open(file_save_path_str, "w") as json_file:
+            json.dump(self.chat_history, json_file, indent=2)
+
+    def load_from_json(self):
+        """ a method for loading the directed conversation history to the current agent, mis matching
+        agents and history may be bizarre
+            Args: filename
+            Returns: none
+        """
+        # Check if user_input_model_select contains a slash
+        if "/" in self.user_input_model_select:
+            user_dir, model_dir = self.user_input_model_select.split("/")
+            file_load_path_dir = os.path.join(self.conversation_library, user_dir, model_dir)
+        else:
+            file_load_path_dir = os.path.join(self.conversation_library, self.user_input_model_select)
+
+        file_load_path_str = os.path.join(file_load_path_dir, f"{self.load_name}.json")
+        directory_manager_class.create_directory_if_not_exists(file_load_path_dir)
+        print(f"file path 1:{file_load_path_dir} \n")
+        print(f"file path 2:{file_load_path_str} \n")
+        with open(file_load_path_str, "r") as json_file:
+            self.chat_history = json.load(json_file)
+    
+    def listen(self, flag):
+        """ a method for changing the listen flag """
+        self.listen_flag = flag
+        return
+    
+    def leap(self, flag):
+        """ a method for changing the leap flag """
+        self.leap_flag = flag
+        return
+    
+    def speech(self, flag):
+        """ a method for changing the speech flags """
+        self.listen_flag = flag
+        self.leap_flag = flag
+        return
+    
+    def latex(self, flag):
+        """ a method for changing the latex flag """
+        self.latex_flag = flag
+        return
+    
+    def llava_flow(self, flag):
+        """ a method for changing the listen flag """
+        self.llava_flag = flag
+        return
+    
+    def auto_commands(self, flag):
+        """ a method for auto_command flag """
+        self.auto_commands_flag = flag
+        return
+    
+    def quit(self):
+        """ a method for quitting the program """
+        sys.exit()
+
+    def ollama_show_template(self):
+        """ a method for getting the model template """
+        modelfile_data = ollama.show(f'{self.user_input_model_select}')
+        for key, value in modelfile_data.items():
+            if key == 'template':
+                self.template = value
+        return
+    
+    def ollama_show_license(self):
+        """ a method for showing the model license """
+        modelfile_data = ollama.show(f'{self.user_input_model_select}')
+        for key, value in modelfile_data.items():
+            if key == 'license':
+                print(RED + f"<<< {self.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
+        return
+
+    def ollama_show_modelfile(self):
+        """ a method for showing the modelfile """
+        modelfile_data = ollama.show(f'{self.user_input_model_select}')
+        for key, value in modelfile_data.items():
+            if key != 'license':
+                print(RED + f"<<< {self.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
+        return
+
+    def ollama_list(self):
+        """ a method for showing the ollama model list """
+        ollama_list = ollama.list()
+        for model_info in ollama_list.get('models', []):
+            model_name = model_info.get('name')
+            model = model_info.get('model')
+            print(RED + f"<<< {self.user_input_model_select} >>> " + OKBLUE + f"{model_name}" + RED + " <<< ")
+        return
+    
+    def ollama_create(self):
+        """ a method for running the ollama create command across the current agent """
+        ollama_chatbot_class.write_model_file_and_run_agent_create_ollama(self.listen_flag)
+        print(GREEN + f"<<< USER >>> " + OKGREEN)
+        return
+    
+    def safe_tensor_gguf_convert(self, safe_tensor_input_name):
+        """ a method for converting safetensors to GGUF
+            args: safe_tensor_input_name: str
+            returns: None
+        """
+        # Construct the full path
+        full_path = os.path.join(self.current_dir, 'safetensors_to_GGUF.cmd')
+
+        # Define the command to be executed
+        cmd = f'call {full_path} {self.model_git} {safe_tensor_input_name}'
+
+        # Call the command
+        subprocess.run(cmd, shell=True)
+        print(RED + f"CONVERTED: {safe_tensor_input_name}" + OKGREEN)
+        print(GREEN + f"<<< USER >>> " + OKGREEN)
+        return
+    
+    def create_agent_cmd(self, user_create_agent_name, cmd_file_name):
+        """Executes the create_agent_automation.cmd file with the specified agent name.
+            Args: 
+            Returns: None
+        """
+        try:
+            # Construct the path to the create_agent_automation.cmd file
+            batch_file_path = os.path.join(self.current_dir, cmd_file_name)
+
+            # Call the batch file
+            subprocess.run(f"call {batch_file_path} {user_create_agent_name}", shell=True)
+        except Exception as e:
+            print(f"Error executing create_agent_cmd: {str(e)}")
+
     def voice_command_select_filter(self, user_input_prompt):
         """ a method for managing the voice command selection
             Args: user_input_prompt
@@ -389,13 +493,13 @@ class ollama_chatbot_class:
         match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.voice_name = match.group(2)
-            self.voice_name = tts_processor_class.file_name_conversation_history_filter(self.voice_name)
+            self.voice_name = tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
 
         # Search for the name after 'forward slash movie'
         match = re.search(r"(activate movie|/movie) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.movie_name = match.group(2)
-            self.movie_name = tts_processor_class.file_name_conversation_history_filter(self.movie_name)
+            self.movie_name = tts_processor_instance.file_name_conversation_history_filter(self.movie_name)
         else:
             self.movie_name = None
 
@@ -403,7 +507,7 @@ class ollama_chatbot_class:
         match = re.search(r"(activate save as|/save as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.save_name = match.group(2)
-            self.save_name = tts_processor_class.file_name_conversation_history_filter(self.save_name)
+            self.save_name = tts_processor_instance.file_name_conversation_history_filter(self.save_name)
             print(f"save_name string: {self.save_name}")
         else:
             self.save_name = None
@@ -412,27 +516,100 @@ class ollama_chatbot_class:
         match = re.search(r"(activate load as|/load as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.load_name = match.group(2)
-            self.load_name = tts_processor_class.file_name_conversation_history_filter(self.load_name)
+            self.load_name = tts_processor_instance.file_name_conversation_history_filter(self.load_name)
             print(f"load_name string: {self.load_name}")
         else:
             self.load_name = None
 
-        # # Search for the name after 'forward slash voice swap'
-        # match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
-        # if match:
-        #     self.tensor_name = match.group(2)
+        # Search for the name after 'forward slash voice swap'
+        match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.tensor_name = match.group(2)
 
         return user_input_prompt 
     
-    def current_model_template(self):
-        """ a method for getting the model template
+    def command_select(self, command_str):
+        """ a method for selecting the command to execute
+            Args: command_str
+            Returns: command_library[command_str]
         """
-        modelfile_data = ollama.show(f'{self.user_input_model_select}')
-        for key, value in modelfile_data.items():
-            if key == 'template':
-                self.template = value
-        return
+        command_library = {
+            "/swap": lambda: self.swap(),
+            "/voice swap": lambda: self.voice_swap(),
+            "/save as": lambda: self.save_to_json(),
+            "/load as": lambda: self.load_from_json(),
+            "/convert tensor": lambda: self.safe_tensor_gguf_convert(self.tensor_name),
+            "/convert gguf": lambda: self.write_model_file_and_run_agent_create_gguf(self.listen_flag, self.model_git),
+            "/listen on": lambda: self.listen(True),
+            "/listen off": lambda: self.listen(False),
+            "/leap on": lambda: self.leap(True),
+            "/leap off": lambda: self.leap(False),
+            "/speech on": lambda: self.speech(True),
+            "/speech off": lambda: self.speech(False),
+            "/latex on": lambda: self.latex(True),
+            "/latex off": lambda: self.latex(False),
+            "/command auto on": lambda: self.auto_commands(True),
+            "/command auto off": lambda: self.auto_commands(False),
+            "/quit": lambda: self.quit(),
+            "/ollama create": lambda: self.ollama_create(),
+            "/ollama show": lambda: self.ollama_show_modelfile(),
+            "/ollama template": lambda: self.ollama_show_template(),
+            "/ollama license": lambda: self.ollama_show_license(),
+            "/ollama list": lambda: self.ollama_list(),
+            "/llava flow": lambda: self.llava_flow(True),
+            "/llava freeze": lambda: self.llava_flow(False)
+        }
+
+        # Find the command in the command string
+        command = next((cmd for cmd in command_library.keys() if command_str.startswith(cmd)), None)
+
+        # If a command is found, split it from the arguments
+        if command:
+            args = command_str[len(command):].strip()
+        else:
+            args = None
+
+        # Check if the command is in the library, if not return None
+        if command in command_library:
+            command_library[command]()
+            cmd_run_flag = True
+            return cmd_run_flag
+        else:
+            cmd_run_flag = False
+            return cmd_run_flag
         
+    def get_screenshot(self):
+        """ a method for taking a screenshot
+            args: none
+            returns: none
+        """
+        # Clear the llava_library directory
+        files = glob.glob(os.path.join(self.llava_library, '*'))
+        for f in files:
+            os.remove(f)
+
+        # Take a screenshot using PyAutoGUI
+        user_screen = pyautogui.screenshot()
+
+        # Create a path for the screenshot in the llava_library directory
+        self.screenshot_path = os.path.join(self.llava_library, 'screenshot.png')
+
+        # Save the screenshot to the file
+        user_screen.save(self.screenshot_path)
+
+        # Add a delay to ensure the screenshot is saved before it is read
+        time.sleep(1)  # delay for 1 second
+        screen_shot_flag = True
+        return screen_shot_flag
+    
+    # def instancer(self, tts_processor_instance, directory_manager_class, unsloth_train_instance, ollama_chatbot_class, latex_render_instance):
+    #     self.tts_processor_instance = tts_processor_instance
+    #     self.directory_manager_class = directory_manager_class
+    #     self.unsloth_train_instance = unsloth_train_instance
+    #     self.ollama_chatbot_class = ollama_chatbot_class
+    #     self.latex_render_instance = latex_render_instance
+    #     return
+    
 if __name__ == "__main__":
 
     """ 
@@ -457,41 +634,41 @@ if __name__ == "__main__":
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
     WHITE = '\x1B[37m'
-
-    # initialize command state flags
-    leap_flag = False
-    listen_flag = False
-    latex_flag = False
+    
+    screen_shot_flag = False
 
     # instantiate class calls
-    tts_processor_class = tts_processor_class()
+    tts_processor_instance = tts_processor_class()
     directory_manager_class = directory_manager_class()
     unsloth_train_instance = unsloth_train_class()
 
-    # begin chatbot loop
+    # select agent name
     ollama_chatbot_class.user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
     # new instance class
     ollama_chatbot_class = ollama_chatbot_class(ollama_chatbot_class.user_input_model_select)
     latex_render_instance = None
+
+    # ollama_chatbot_class.instancer(tts_processor_instance, directory_manager_class, unsloth_train_instance, ollama_chatbot_class, latex_render_instance)
 
     print(OKCYAN + "Press space bar to record audio:" + OKCYAN)
     print(GREEN + f"<<< USER >>> " + END)
     while True:
         user_input_prompt = ""
         speech_done = False
-        if listen_flag == True:  # listen_flag is True
+        cmd_run_flag = False
+        if ollama_chatbot_class.listen_flag == True:  # listen_flag is True
             print(OKCYAN + "Please type your selected prompt:" + OKCYAN)
             user_input_prompt = input(GREEN + f"<<< USER >>> " + END)
             speech_done = True
-        elif listen_flag == False:
+        elif ollama_chatbot_class.listen_flag == False:
             while keyboard.is_pressed('space'):  # user holds down the space bar
                 try:
                     # Record audio from microphone
                     print(">>AUDIO SENDING<<")
-                    audio = tts_processor_class.get_audio()
+                    audio = tts_processor_instance.get_audio()
                     print(">>AUDIO RECEIVED<<")
                     # Recognize speech to text from audio
-                    user_input_prompt = tts_processor_class.recognize_speech(audio)
+                    user_input_prompt = tts_processor_instance.recognize_speech(audio)
                     print(f">>SPEECH RECOGNIZED<< >> {user_input_prompt} <<")
                     speech_done = True
                 except sr.UnknownValueError:
@@ -501,126 +678,36 @@ if __name__ == "__main__":
 
         # Use re.sub to replace "forward slash cmd" with "/cmd"
         user_input_prompt = ollama_chatbot_class.voice_command_select_filter(user_input_prompt)
+        cmd_run_flag = ollama_chatbot_class.command_select(user_input_prompt)
 
-        # if cmd call desired cmd functions
-        if user_input_prompt.lower() == "/swap":
-            ollama_chatbot_class.chat_history = []
-            ollama_chatbot_class.user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME TO SWAP >>> " + OKBLUE)
-            print(f"Model changed to {ollama_chatbot_class.user_input_model_select}")
-
-        elif re.match(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt.lower()):
-            print(f"Agent voice swapped to {ollama_chatbot_class.voice_name}")
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif re.match(r"(activate save as|/save as) ([^/.]*)", user_input_prompt.lower()):
-            ollama_chatbot_class.save_to_json()
-            print(f"Chat history saved to {ollama_chatbot_class.save_name}.json")
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif re.match(r"(activate load as|/load as) ([^/.]*)", user_input_prompt.lower()):
-            ollama_chatbot_class.load_from_json()
-            print(f"Chat history loaded from {ollama_chatbot_class.load_name}.json")
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif re.match(r"(activate convert tensor gguf|/convert tensor gguf) ([^\s]*)", user_input_prompt.lower()):  
-            unsloth_train_instance.safe_tensor_gguf_convert(ollama_chatbot_class.tensor_name)
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/convert gguf ollama": 
-            ollama_chatbot_class.write_model_file_and_run_agent_create_gguf(listen_flag, unsloth_train_instance.model_git)
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/listen on":
-            listen_flag = True
-
-        elif user_input_prompt.lower() == "/listen off":
-            listen_flag = False
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-            
-        elif user_input_prompt.lower() == "/leap on":
-            leap_flag = True
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/leap off":
-            leap_flag = False
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/speech on":
-            leap_flag = False
-            listen_flag = False
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/speech off":
-            leap_flag = True
-            listen_flag = True
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/latex on":
-            latex_flag = True
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/latex off":
-            latex_flag = False
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/quit":
-            break
-
-        elif user_input_prompt.lower() == "/create":
-            ollama_chatbot_class.write_model_file_and_run_agent_create_ollama(listen_flag)
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/function on":
-            pass
-            ollama_chatbot_class.function_call_model_select
-            function_call_chatbot_class = ollama_chatbot_class(ollama_chatbot_class.function_call_model_select)
-            response = function_call_chatbot_class.send_prompt(user_input_prompt)
-            print(GREEN + f"<<< USER >>> " + OKGREEN)
-
-        elif user_input_prompt.lower() == "/ollama show":
-            modelfile_data = ollama.show(f'{ollama_chatbot_class.user_input_model_select}')
-            for key, value in modelfile_data.items():
-                if key != 'license':
-                    print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
-
-        elif user_input_prompt.lower() == "/ollama template":
-            modelfile_data = ollama.show(f'{ollama_chatbot_class.user_input_model_select}')
-            for key, value in modelfile_data.items():
-                if key == 'template':
-                    print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
-
-        elif user_input_prompt.lower() == "/ollama license":
-            modelfile_data = ollama.show(f'{ollama_chatbot_class.user_input_model_select}')
-            for key, value in modelfile_data.items():
-                if key == 'license':
-                    print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{key}: {value}")
-
-        elif user_input_prompt.lower() == "/ollama list":
-            ollama_list = ollama.list()
-            for model_info in ollama_list.get('models', []):
-                model_name = model_info.get('name')
-                model = model_info.get('model')
-                print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + OKBLUE + f"{model_name}" + RED + " <<< ")
-
-        elif speech_done == True:
+        if cmd_run_flag == False and speech_done == True:
             print(YELLOW + f"{user_input_prompt}" + OKCYAN)
+
+            # Get Screenshot
+            if ollama_chatbot_class.llava_flag is True:
+                screen_shot_flag = ollama_chatbot_class.get_screenshot()
+
             # Send the prompt to the assistant
-            response = ollama_chatbot_class.send_prompt(user_input_prompt)
+            if screen_shot_flag is True:
+                response = ollama_chatbot_class.send_prompt(user_input_prompt)
+                screen_shot_flag = False
+            else:
+                response = ollama_chatbot_class.send_prompt(user_input_prompt)
+            
             print(RED + f"<<< {ollama_chatbot_class.user_input_model_select} >>> " + END + f"{response}" + RED)
 
             # Check for latex and add to queue
-            if latex_flag:
+            if ollama_chatbot_class.latex_flag:
                 # Create a new instance
                 latex_render_instance = latex_render_class()
                 latex_render_instance.add_latex_code(response, ollama_chatbot_class.user_input_model_select)
 
             # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
             # Clear speech cache and split the response into sentences for next TTS cache
-            if leap_flag is not None and isinstance(leap_flag, bool):
-                if leap_flag != True:
-                    # directory_manager_class.clear_directory(tts_processor_class.agent_voice_gen_dump)
-                    tts_processor_class.process_tts_responses(response, ollama_chatbot_class.voice_name)
-            elif leap_flag is None:
+            if ollama_chatbot_class.leap_flag is not None and isinstance(ollama_chatbot_class.leap_flag, bool):
+                if ollama_chatbot_class.leap_flag != True:
+                    tts_processor_instance.process_tts_responses(response, ollama_chatbot_class.voice_name)
+            elif ollama_chatbot_class.leap_flag is None:
                 pass
             # Start the mainloop in the main thread
             print(GREEN + f"<<< USER >>> " + END)
