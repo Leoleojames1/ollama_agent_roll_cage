@@ -6,17 +6,15 @@
     python llama.cpp\convert-hf-to-gguf.py --outtype q8_0 --model-name Phi-3-mini-4k-instruct-q8_0 --outfile converted\Phi-3-mini-4k-instruct-q8_0.gguf Phi-3-mini-4k-instruct
 """
 import os
-import subprocess
+from moviepy.editor import VideoFileClip
+from PIL import Image
 
-class unsloth_train_class:
+class ollama_command:
     def __init__(self):
         """a method for initializing the class
         """
-        self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
         self.current_dir = os.getcwd()
-    
-    def safetensor_ollama_convert(self):
-        """ a method for converting safetensor model to ollama model
-        """
-        #TODO
+        self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+
+    def generate_image_data(self):
         return

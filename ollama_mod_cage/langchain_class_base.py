@@ -1,29 +1,26 @@
-""" crew_ai_class_base.py
+from langchain import hub
+from langchain.callbacks.tracers.evaluation import EvaluatorCallbackHandler
+from langchain.callbacks.tracers.schemas import Run
+from langchain.schema import (
+    AIMessage,
+    BaseMessage,
+    HumanMessage,
+    StrOutputParser,
+    get_buffer_string,
+)
+from langchain_community.chat_models import ChatOpenAI
+from langchain_core.output_parsers.openai_functions import JsonOutputFunctionsParser
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain_core.runnables import Runnable
+from langsmith.evaluation import EvaluationResult, RunEvaluator
+from langsmith.schemas import Example
 
-"""
-import os
-import subprocess
-
-class langchain_class_base:
+class MyNewClass:
     def __init__(self):
-        """a method for initializing the class
-        """
-        self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
-        self.current_dir = os.getcwd()
-        # TODO IF AUTOMATING CMD FILE GENERATION, STORE CMD FILE IN LIBRARY
-        self.gen_cmd_lib = "path_here"
+        # Initialize your class here
+        pass
 
-    def test_cmd(self, safe_tensor_input_name):
-        """ a method for converting safetensors to GGUF
-            args: safe_tensor_input_name: str
-            returns: None
-        """
-        # Construct the full path
-        full_path = os.path.join(self.current_dir, 'test.cmd')
-
-        # Define the command to be executed
-        cmd = f'call {full_path} {self.model_git} {safe_tensor_input_name}'
-
-        # Call the command
-        subprocess.run(cmd, shell=True)
-        return
+    def my_method(self):
+        # Implement your methods here
+        pass

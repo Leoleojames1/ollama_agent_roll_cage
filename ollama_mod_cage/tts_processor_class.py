@@ -31,6 +31,7 @@ import scipy.io.wavfile as wav
 import sys
 import shutil
 import time
+import pyaudio
 
 class tts_processor_class:
     def __init__(self):
@@ -54,15 +55,23 @@ class tts_processor_class:
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
         self.audio_queue = queue.Queue()
         
-    def get_audio(self):
-        """ a method for collecting the audio from the microphone
-            args: none
-            returns: audio
-        """
-        r = sr.Recognizer()
-        with sr.Microphone() as source:
-            print("Listening...")
-            audio = r.listen(source)
+    def get_audio(self, ollama_chatbot_class):
+        print(">>AUDIO SENDING<<")
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
+        frames = []
+
+        while not ollama_chatbot_class.chunk_flag:
+            data = stream.read(1024)
+            frames.append(data)
+
+        print(">>AUDIO RECEIVED<<")
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        # Convert the audio data to an AudioData object
+        audio = sr.AudioData(b''.join(frames), 16000, 2)
         return audio
     
     def recognize_speech(self, audio):
