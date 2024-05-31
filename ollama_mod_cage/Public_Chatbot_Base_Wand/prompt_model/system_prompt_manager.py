@@ -1,4 +1,8 @@
-class YourClass:
+""" tts_processor.py
+    A class for processing the response sentences and audio generation for the ollama_chat_bot_class
+"""
+
+class system_prompt_manager:
     def __init__(self):
         self.chat_history = []
         self.prompts = {

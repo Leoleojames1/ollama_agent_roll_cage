@@ -55,6 +55,14 @@ class tts_processor_class:
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
         self.audio_queue = queue.Queue()
         
+    def voice_swap(self):
+        """ a method to call when swapping voices
+        """
+        # Search for the name after 'forward slash voice swap'
+        print(f"Agent voice swapped to {self.voice_name}")
+        print(GREEN + f"<<< USER >>> " + OKGREEN)
+        return
+    
     def get_audio(self, ollama_chatbot_class):
         print(">>AUDIO SENDING<<")
         p = pyaudio.PyAudio()

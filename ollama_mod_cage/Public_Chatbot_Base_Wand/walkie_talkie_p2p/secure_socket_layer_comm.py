@@ -1,8 +1,13 @@
+"""
+#TODO Import python peer 2 peer pyp2p, for decentralized
+encrypted nodes
+"""
+
 # server.py
 import socket
 import ssl
 
-class Server:
+class secure_socket_layer_server_example:
     def __init__(self, host='localhost', port=48956):
         self.server_address = (host, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,11 +47,11 @@ class Server:
             print('No connection to send message')
 
 if __name__ == "__main__":
-    server = Server()
+    server = secure_socket_layer_server_example()
     server.start()
 
 
-class AnotherClass:
+class class_usage_example:
     def __init__(self, server):
         self.server = server
 
@@ -55,7 +60,7 @@ class AnotherClass:
         self.server.send_message("Hello from AnotherClass!")
 
 if __name__ == "__main__":
-    server = Server()
-    another_class = AnotherClass(server)
+    server = secure_socket_layer_server_example()
+    another_class = class_usage_example(server)
     another_class.do_something()
     server.start()

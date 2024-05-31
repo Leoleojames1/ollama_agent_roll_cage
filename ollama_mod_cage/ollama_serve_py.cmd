@@ -8,7 +8,7 @@ ping localhost -n 2 >nul
 
 :: Activate Conda environment
 @REM TODO ADD VARIABLE USER NAME
-call C:\Users\ADA\miniconda3\Scripts\activate.bat C:\Users\ADA\miniconda3\envs\py311_ollama
+call C:\Users\%USERNAME%\miniconda3\Scripts\activate.bat C:\Users\%USERNAME%\miniconda3\envs\py311_ollama
 
 export OLLAMA_NUM_PARALLEL=2
 export OLLAMA_MAX_LOADED_MODELS=2
