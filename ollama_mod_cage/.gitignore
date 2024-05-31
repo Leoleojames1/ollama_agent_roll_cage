@@ -1,4 +1,5 @@
 !.gitignore
 __pycache__/
-long_chat_history.json
-
+/long_chat_history.json
+/developer_path_library.json
+/developer_switch_board.json

@@ -1,2 +1,2 @@
-/__init__.py
-/function_flow.py
+__init__.py
+from . import function_flow

@@ -47,22 +47,21 @@ from Public_Chatbot_Base_Wand.latex_render import latex_render_class
 from Public_Chatbot_Base_Wand.data_set_manipulator import data_set_constructor
 from Public_Chatbot_Base_Wand.write_modelfile import model_write_class
 from Public_Chatbot_Base_Wand.chat_history import json_chat_history
+from Public_Chatbot_Base_Wand.read_write_symbol_collector import read_write_symbol_collector
 
 # from tensorflow.keras.models import load_model
 # sentiment_model = load_model('D:\\CodingGit_StorageHDD\\model_git\\emotions_classifier\\emotions_classifier.keras')
 
+# -------------------------------------------------------------------------------------------------
 class ollama_chatbot_class:
     """ A class for accessing the ollama local serve api via python, and creating new custom agents.
     The ollama_chatbot_class is also used for accessing Speech to Text transcription/Text to Speech Generation methods via a speedy
     low level, command line interface and the Tortoise TTS model.
     """
-    def __init__(self, user_input_model_select):
-        """ a method for initializing the class
-        """
-        """ a method for initializing the class
-        """
-        # User Input
-        self.user_input_model_select = user_input_model_select
+
+    # -------------------------------------------------------------------------------------------------
+    def __init__(self, ):
+        """ a method for initializing the class """
         # Connect api
         self.url = "http://localhost:11434/api/chat"
         # Setup chat_history
@@ -95,16 +94,12 @@ class ollama_chatbot_class:
         self.auto_speech_flag = False #TODO KEEP OFF BY DEFAULT FOR MINECRAFT, TURN ON TO START
         self.splice_flag = False
 
-    def instance_tts_processor(self):
-        if not hasattr(self, 'tts_processor_instance') or self.tts_processor_instance is None:
-            self.tts_processor_instance = tts_processor_class()
-        return self.tts_processor_instance
+    # -------------------------------------------------------------------------------------------------
+    def select_model(self, user_input_model_select):
+        self.user_input_model_select = user_input_model_select
+        return user_input_model_select
 
-    def instance_latex_render(self):
-        if not hasattr(self, 'latex_render_instance') or self.latex_render_instance is None:
-            self.latex_render_instance = latex_render_class()
-        return self.latex_render_instance
-    
+    # -------------------------------------------------------------------------------------------------
     def voice_command_select_filter(self, user_input_prompt):
         """ a method for managing the voice command selection
             Args: user_input_prompt
@@ -167,6 +162,7 @@ class ollama_chatbot_class:
 
         return user_input_prompt 
     
+    # -------------------------------------------------------------------------------------------------
     def command_select(self, command_str):
         """ a method for selecting the command to execute
             Args: command_str
@@ -174,14 +170,12 @@ class ollama_chatbot_class:
         """
         command_library = {
             "/swap": lambda: ollama_command_instance.swap(),
-
             "/voice swap": lambda: tts_processor_instance.voice_swap(),
             "/save as": lambda: json_chat_history_instance.save_to_json(),
             "/load as": lambda: json_chat_history_instance.load_from_json(),
             "/write modelfile": lambda: model_write_class_instance.write_model_file(),
             "/convert tensor": lambda: model_write_class_instance.safe_tensor_gguf_convert(self.tensor_name),
             "/convert gguf": lambda: model_write_class_instance.write_model_file_and_run_agent_create_gguf(self.listen_flag, self.model_git),
-
             "/listen on": lambda: flag_manager_instance.listen(True, ollama_chatbot_class_instance),
             "/listen off": lambda: flag_manager_instance.listen(False, ollama_chatbot_class_instance),
             "/leap on": lambda: flag_manager_instance.leap(True, ollama_chatbot_class_instance),
@@ -192,20 +186,18 @@ class ollama_chatbot_class:
             "/latex off": lambda: flag_manager_instance.latex(False, ollama_chatbot_class_instance),
             "/command auto on": lambda: flag_manager_instance.auto_commands(True, ollama_chatbot_class_instance),
             "/command auto off": lambda: flag_manager_instance.auto_commands(False, ollama_chatbot_class_instance),
-
             "/llava flow": lambda: flag_manager_instance.llava_flow(True),
             "/llava freeze": lambda: flag_manager_instance.llava_flow(False),
             "/auto on": lambda: flag_manager_instance.auto_speech_set(True),
             "/auto off": lambda: flag_manager_instance.auto_speech_set(False),
-
             "/quit": lambda: ollama_command_instance.quit(),
             "/ollama create": lambda: ollama_command_instance.ollama_create(ollama_chatbot_class_instance),
             "/ollama show": lambda: ollama_command_instance.ollama_show_modelfile(ollama_chatbot_class_instance),
             "/ollama template": lambda: ollama_command_instance.ollama_show_template(self, ollama_chatbot_class_instance),
             "/ollama license": lambda: ollama_command_instance.ollama_show_license(ollama_chatbot_class_instance),
             "/ollama list": lambda: ollama_command_instance.ollama_list(ollama_chatbot_class_instance),
-
-            "/splice video": lambda: data_set_video_process_instance.generate_image_data()()
+            "/splice video": lambda: data_set_video_process_instance.generate_image_data(),
+            "/developer new" : lambda: read_write_symbol_collector_instance.developer_tools_generate()
         }
 
         # Find the command in the command string
@@ -225,116 +217,3 @@ class ollama_chatbot_class:
         else:
             cmd_run_flag = False
             return cmd_run_flag
-    
-if __name__ == "__main__":
-
-    """ 
-    The main loop for the ollama_chatbot_class, utilizing a state machine for user command injection during command line prompting,
-    all commands start with /, and are named logically.
-    """
-    colors = ollama_chatbot_class.get_colors()
-    flag_manager_instance = flag_manager()
-    ollama_command_instance = ollama_commands()
-    json_chat_history_instance = json_chat_history()
-    model_write_class_instance = model_write_class()
-
-    screen_shot_flag = False
-    
-    # select agent name
-    ollama_chatbot_class.user_input_model_select = input(colors["HEADER"] + "<<< PROVIDE AGENT NAME >>> " + colors["OKBLUE"])
-    # new instance class
-    ollama_chatbot_class_instance = ollama_chatbot_class(ollama_chatbot_class.user_input_model_select)
-    latex_render_instance = None
-    data_set_video_process_instance = data_set_constructor()
-
-    print(colors["OKCYAN"] + "Press space bar to record audio:" + colors["OKCYAN"])
-    print(colors["GREEN"] + f"<<< USER >>> " + colors["END"])
-    # keyboard.add_hotkey('ctrl+a+d', print, args=('triggered', 'begin speech'))
-    # keyboard.add_hotkey('ctrl+a+d', print, args=('triggered', 'begin speech'))
-
-    # def chunk_speach(value):
-    #     ollama_chatbot_class.chunk_flag = value
-    #     print(f"CHUNK FLAG STATE: {ollama_chatbot_class.listen_flag}")
-
-    keyboard.add_hotkey('ctrl+a+d', ollama_chatbot_class_instance.auto_speech_set, args=(True,))
-    keyboard.add_hotkey('ctrl+s+w', ollama_chatbot_class_instance.chunk_speech, args=(True,))
-
-    while True:
-        user_input_prompt = ""
-        speech_done = False
-        cmd_run_flag = False
-        
-        # print(f"WHILE LOOP WAY TOP LISTEN: {ollama_chatbot_class.listen_flag}")
-        # print(f"WHILE LOOP WAY TOP AUTO: {ollama_chatbot_class.auto_speech_flag}")
-        # print(f"WHILE LOOP WAY TOP CHUNK: {ollama_chatbot_class.chunk_flag}")
-
-        if ollama_chatbot_class_instance.listen_flag | ollama_chatbot_class_instance.auto_speech_flag is True:
-            tts_processor_instance = ollama_chatbot_class_instance.get_tts_processor()
-            # print(f"ENTER IF LISTEN TRUE LISTEN: {ollama_chatbot_class.listen_flag}") 
-            # print(f"ENTER IF LISTEN TRUE AUTO: {ollama_chatbot_class.auto_speech_flag}") 
-            # print(f"ENTER IF LISTEN TRUE CHUNK: {ollama_chatbot_class.chunk_flag}")
-            while ollama_chatbot_class_instance.auto_speech_flag is True:  # user holds down the space bar
-                try:
-                    # Record audio from microphone
-                    audio = tts_processor_instance.get_audio(ollama_chatbot_class_instance)
-
-                    if ollama_chatbot_class_instance.listen_flag is True:
-                        # Recognize speech to text from audio
-                        user_input_prompt = tts_processor_instance.recognize_speech(audio)
-                        print(f">>SPEECH RECOGNIZED<< >> {user_input_prompt} <<")
-                        speech_done = True
-                        ollama_chatbot_class_instance.chunk_flag = False
-                        print(f"CHUNK FLAG STATE: {ollama_chatbot_class_instance.chunk_flag}")
-                        ollama_chatbot_class_instance.auto_speech_flag = False
-
-                except sr.UnknownValueError:
-                    print(colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + colors["OKCYAN"])
-                except sr.RequestError as e:
-                    print(colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + colors["OKCYAN"])
-        elif ollama_chatbot_class_instance.listen_flag is False:
-            print(colors["OKCYAN"] + "Please type your selected prompt:" + colors["OKCYAN"])
-            user_input_prompt = input(colors["GREEN"] + f"<<< USER >>> " + colors["END"])
-            speech_done = True
-
-        # Use re.sub to replace "forward slash cmd" with "/cmd"
-        # print(f"MID ELIF LISTEN: {ollama_chatbot_class.listen_flag}")
-        # print(f"MID ELIF AUTO: {ollama_chatbot_class.auto_speech_flag}")
-        # print(f"MID ELIF CHUNK: {ollama_chatbot_class.chunk_flag}")
-
-        user_input_prompt = ollama_chatbot_class_instance.voice_command_select_filter(user_input_prompt)
-        cmd_run_flag = ollama_chatbot_class_instance.command_select(user_input_prompt, flag_manager_instance, ollama_chatbot_class_instance)
-        
-        # get screenshot
-        if ollama_chatbot_class_instance.llava_flag is True:
-            screen_shot_flag = ollama_chatbot_class_instance.get_screenshot()
-        # splice videos
-        if ollama_chatbot_class_instance.splice_flag == True:
-            data_set_video_process_instance.generate_image_data()
-
-        if cmd_run_flag == False and speech_done == True:
-            print(colors["YELLOW"] + f"{user_input_prompt}" + colors["OKCYAN"])
-
-            # Send the prompt to the assistant
-            if screen_shot_flag is True:
-                response = ollama_chatbot_class_instance.send_prompt(user_input_prompt)
-                screen_shot_flag = False
-            else:
-                response = ollama_chatbot_class_instance.send_prompt(user_input_prompt)
-            
-            print(colors["RED"] + f"<<< {ollama_chatbot_class_instance.user_input_model_select} >>> " + colors["RED"] + f"{response}" + colors["RED"])
-
-            # Check for latex and add to queue
-            if ollama_chatbot_class_instance.latex_flag:
-                # Create a new instance
-                latex_render_instance = latex_render_class()
-                latex_render_instance.add_latex_code(response, ollama_chatbot_class_instance.user_input_model_select)
-
-            # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
-            # Clear speech cache and split the response into sentences for next TTS cache
-            if ollama_chatbot_class_instance.leap_flag is not None and isinstance(ollama_chatbot_class_instance.leap_flag, bool):
-                if ollama_chatbot_class_instance.leap_flag != True:
-                    tts_processor_instance.process_tts_responses(response, ollama_chatbot_class_instance.voice_name)
-            elif ollama_chatbot_class_instance.leap_flag is None:
-                pass
-            # Start the mainloop in the main thread
-            print(colors["GREEN"] + f"<<< USER >>> " + colors["END"])

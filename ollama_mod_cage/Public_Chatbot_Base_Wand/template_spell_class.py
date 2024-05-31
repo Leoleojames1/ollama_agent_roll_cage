@@ -4,7 +4,7 @@
 import os
 import subprocess
 
-class template_class:
+class template_spell_class:
     def __init__(self):
         """a method for initializing the class
         """

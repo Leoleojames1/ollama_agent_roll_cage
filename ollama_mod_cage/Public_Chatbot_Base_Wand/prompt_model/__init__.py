@@ -1,3 +1,3 @@
-/__init__.py
-/prompt_base_methods.py
-/system_prompt_manager.py
+__init__.py
+from . import prompt_base_methods
+from . import system_prompt_manager

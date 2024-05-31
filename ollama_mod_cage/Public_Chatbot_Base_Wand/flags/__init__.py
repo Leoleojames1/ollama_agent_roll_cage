@@ -1,2 +1,2 @@
-/__init__.py
-/flag_manager.py
+__init__.py
+from . import flag_manager

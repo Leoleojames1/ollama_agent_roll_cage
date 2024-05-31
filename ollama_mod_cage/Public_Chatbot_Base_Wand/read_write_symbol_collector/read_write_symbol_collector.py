@@ -15,7 +15,7 @@ import os
 from ollama_chatbot_class import ollama_chatbot_class
 
 # -------------------------------------------------------------------------------------------------
-class ReadWriteSymbolCollector:
+class read_write_symbol_collector:
     '''
     A class capable of reading & writing symbol table json files when called with various modes.
     '''
@@ -52,7 +52,7 @@ class ReadWriteSymbolCollector:
             "developer_tools" : f"{self.developer_tools}"
         }
 
-        self.WriteStorageDictJson(writeJsonPath=self.developer_tools, portionOneDict=dev_dict, portionTwoDict=None, fileName="developer_tools.txt")
+        self.WriteStorageDictJson(writeJsonPath=self.developer_tools, portionOneDict=dev_dict, portionTwoDict=None, fileName="developer_path_library.txt")
 
         return dev_dict
     

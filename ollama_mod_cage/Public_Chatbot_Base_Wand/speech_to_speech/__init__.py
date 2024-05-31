@@ -1,2 +1,2 @@
-/__init__.py
-/tts_processor_class.py
+__init__.py
+from . import tts_processor_class

@@ -1,2 +1,2 @@
-/__init__.py
-/secure_socket_layer_comm.py
+__init__.py
+from . import secure_socket_layer_comm
