@@ -25,7 +25,8 @@ import re
 import queue
 from TTS.api import TTS
 import speech_recognition as sr
-from directory_manager_class import directory_manager_class
+from Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
+from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
 import numpy as np
 import scipy.io.wavfile as wav
 import sys
@@ -45,7 +46,8 @@ class tts_processor_class:
         self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library\\generate_speech")
         self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
         self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
-
+        self.colors = ollama_commands.get_colors()
+        
         if torch.cuda.is_available():
             self.device = "cuda"
         else:
@@ -60,7 +62,7 @@ class tts_processor_class:
         """
         # Search for the name after 'forward slash voice swap'
         print(f"Agent voice swapped to {self.voice_name}")
-        print(GREEN + f"<<< USER >>> " + OKGREEN)
+        print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
         return
     
     def get_audio(self, ollama_chatbot_class):

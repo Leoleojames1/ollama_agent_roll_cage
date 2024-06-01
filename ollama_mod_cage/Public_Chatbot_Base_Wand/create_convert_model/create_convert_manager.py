@@ -5,6 +5,8 @@ import glob
 import pyautogui
 import time
 import subprocess
+from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
+import shutil
 
 class create_convert_manager:
     def __init__(self):
@@ -13,16 +15,13 @@ class create_convert_manager:
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
         self.pipeline = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\")
+        self.colors = ollama_commands.get_colors()
 
     def safe_tensor_gguf_convert(self, safe_tensor_input_name):
         """ a method for converting safetensors to GGUF
             args: safe_tensor_input_name: str
             returns: None
         """
-        RED = '\033[91m'
-        OKGREEN = '\033[92m'
-        GREEN = '\033[92m'
-        
         # Construct the full path
         full_path = os.path.join(self.current_dir, 'safetensors_to_GGUF.cmd')
 
@@ -31,8 +30,8 @@ class create_convert_manager:
 
         # Call the command
         subprocess.run(cmd, shell=True)
-        print(RED + f"CONVERTED: {safe_tensor_input_name}" + OKGREEN)
-        print(GREEN + f"<<< USER >>> " + OKGREEN)
+        print(self.colors['RED'] + f"CONVERTED: {safe_tensor_input_name}" + self.colors['OKGREEN'])
+        print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
         return
     
     def create_agent_cmd(self, user_create_agent_name, cmd_file_name):

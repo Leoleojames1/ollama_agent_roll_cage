@@ -12,8 +12,6 @@ Created on Nov 2, 2022
 import re
 import os
 
-from ollama_chatbot_class import ollama_chatbot_class
-
 # -------------------------------------------------------------------------------------------------
 class read_write_symbol_collector:
     '''

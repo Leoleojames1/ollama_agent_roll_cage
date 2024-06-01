@@ -12,7 +12,8 @@ call C:\Users\%USERNAME%\miniconda3\Scripts\activate.bat C:\Users\%USERNAME%\min
 
 export OLLAMA_NUM_PARALLEL=2
 export OLLAMA_MAX_LOADED_MODELS=2
+export OLLAMA_FLASH_ATTENTION=1
 
 :: Run Python script
 :: start cmd.exe /k "python ollama_chatbot_class.py"
-start cmd.exe /k "python ollama_chatbot_class.py"
+start cmd.exe /k "python wizard_chatbot_class.py"

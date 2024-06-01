@@ -7,7 +7,7 @@ import time
 import subprocess
 import json
 
-from directory_manager import directory_manager_class
+from Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
 
 class json_chat_history:
     def __init__(self):

@@ -15,9 +15,9 @@ class ollama_commands:
         """
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        
-    @staticmethod
-    def get_colors():
+        self.colors = self.get_colors()
+
+    def get_colors(self):
         return {
             "YELLOW": '\033[93m',
             "GREEN": '\033[92m',
@@ -40,7 +40,7 @@ class ollama_commands:
         """ a method to call when swapping models
         """
         self.chat_history = []
-        self.user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME TO SWAP >>> " + OKBLUE)
+        self.user_input_model_select = input(self.colors['HEADER']+ "<<< PROVIDE AGENT NAME TO SWAP >>> " + self.colors['OKBLUE'])
         print(f"Model changed to {self.user_input_model_select}")
         return
     
@@ -61,7 +61,7 @@ class ollama_commands:
         modelfile_data = ollama.show(f'{ollama_chatbot_class_instance.user_input_model_select}')
         for key, value in modelfile_data.items():
             if key == 'license':
-                print(self.RED + f"<<< {ollama_chatbot_class_instance.user_input_model_select} >>> " + self.OKBLUE + f"{key}: {value}")
+                print(self.colors['RED'] + f"<<< {ollama_chatbot_class_instance.user_input_model_select} >>> " + self.colors['OKBLUE'] + f"{key}: {value}")
         return
 
     def ollama_show_modelfile(self, ollama_chatbot_class_instance):
@@ -69,7 +69,7 @@ class ollama_commands:
         modelfile_data = ollama.show(f'{ollama_chatbot_class_instance.user_input_model_select}')
         for key, value in modelfile_data.items():
             if key != 'license':
-                print(self.RED + f"<<< {ollama_chatbot_class_instance.user_input_model_select} >>> " + self.OKBLUE + f"{key}: {value}")
+                print(self.colors['RED'] + f"<<< {ollama_chatbot_class_instance.user_input_model_select} >>> " + self.colors['OKBLUE'] + f"{key}: {value}")
         return
 
     def ollama_list(self, ollama_chatbot_class_instance):
@@ -78,11 +78,11 @@ class ollama_commands:
         for model_info in ollama_list.get('models', []):
             model_name = model_info.get('name')
             model = model_info.get('model')
-            print(self.RED + f"<<< {ollama_chatbot_class_instance.user_input_model_select} >>> " + self.OKBLUE + f"{model_name}" + RED + " <<< ")
+            print(self.colors['RED'] + f"<<< {ollama_chatbot_class_instance.user_input_model_select} >>> " + self.colors['OKBLUE'] + f"{model_name}" + self.colors['RED'] + " <<< ")
         return
     
     def ollama_create(self, ollama_chatbot_class_instance):
         """ a method for running the ollama create command across the current agent """
         ollama_chatbot_class_instance.write_model_file_and_run_agent_create_ollama(ollama_chatbot_class_instance.listen_flag)
-        print(self.GREEN + f"<<< USER >>> " + self.OKGREEN)
+        print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
         return
