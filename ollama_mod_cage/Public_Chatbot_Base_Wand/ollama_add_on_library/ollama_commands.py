@@ -1,9 +1,5 @@
-""" tts_processor.py
-    A class for processing the response sentences and audio generation for the ollama_chat_bot_class
+""" ollama_commands.py
 
-
-    python llama.cpp\convert-hf-to-gguf.py --outtype q8_0 --model-name Phi-3-mini-4k-instruct-q8_0 Phi-3-mini-4k-instruct
-    python llama.cpp\convert-hf-to-gguf.py --outtype q8_0 --model-name Phi-3-mini-4k-instruct-q8_0 --outfile converted\Phi-3-mini-4k-instruct-q8_0.gguf Phi-3-mini-4k-instruct
 """
 import os
 import ollama
@@ -15,10 +11,12 @@ class ollama_commands:
         """
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
+        
         self.colors = self.get_colors()
 
     def get_colors(self):
-        return {
+        self.colors = {
             "YELLOW": '\033[93m',
             "GREEN": '\033[92m',
             "RED": '\033[91m',
@@ -35,7 +33,8 @@ class ollama_commands:
             "UNDERLINE": '\033[4m',
             "WHITE": '\x1B[37m'
         }
-
+        return self.colors
+    
     def swap(self):
         """ a method to call when swapping models
         """

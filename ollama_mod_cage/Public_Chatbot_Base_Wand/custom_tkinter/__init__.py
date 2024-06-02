@@ -1,3 +1,3 @@
 #__init__.py
-from . import chatbot_gui
-from . import customtkinter_manager
+from .chatbot_gui import chatbot_gui
+from .customtkinter_manager import customtkinter_manager

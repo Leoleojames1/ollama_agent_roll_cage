@@ -1,3 +1,3 @@
 #__init__.py
-from . import data_set_constructor
-from . import screen_shot_collector
+from .data_set_constructor import data_set_constructor
+from .screen_shot_collector import screen_shot_collector

@@ -1,2 +1,2 @@
 #__init__.py
-from . import directory_manager_class
+from .directory_manager_class import directory_manager_class

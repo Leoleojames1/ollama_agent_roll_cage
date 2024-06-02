@@ -27,9 +27,13 @@
 import keyboard
 import speech_recognition as sr
 import multiprocessing
+from multiprocessing import Process, Queue
+
+import tkinter as tk
+from tkinter import scrolledtext
+from tkinter import ttk
 
 from ollama_chatbot_base import ollama_chatbot_base
-from Public_Chatbot_Base_Wand.flags import flag_manager
 from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
 from Public_Chatbot_Base_Wand.speech_to_speech import tts_processor_class
 from Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
@@ -44,43 +48,44 @@ class wizard_chatbot_class( ollama_chatbot_base ):
     """ a class for setting up the class tool instances and mod tool instances for the defined chatbot instances
     """
     # -------------------------------------------------------------------------------------------------
-    def __init__(self, instance_name):
-        self.instance_name = instance_name  # Add an instance name attribute
-        self.user_input_model_select = None  # Add this line before calling super().__init__()
-        super().__init__()  # Call the parent class's initializer if necessary
+    def __init__(self, instance_name, user_input_model_select):
+        super().__init__(instance_name)
+        self.instance_name = instance_name
+        self.user_input_model_select = user_input_model_select
+        self.colors = self.colors  # Access colors directly
+        self.ollama_chatbot_base_instance = None
+
+    # -------------------------------------------------------------------------------------------------
+    def get_agent_model_name(self):
+        self.user_input_model_select = input(self.colors["HEADER"] + "<<< PROVIDE AGENT NAME >>> " + self.colors["OKBLUE"])
+        return self.user_input_model_select
+    
+    # -------------------------------------------------------------------------------------------------
+    def instantiate_ollama_chatbot_base(self):
+        self.ollama_chatbot_base_instance = ollama_chatbot_base(self.user_input_model_select) # Instantiate the ollama_chatbot_base class
+
+    # -------------------------------------------------------------------------------------------------
+    def start_chatbot_main(self):
+        self.instantiate_ollama_chatbot_base()
+        self.user_input_model_select = self.user_input_model_select
+        self.ollama_chatbot_base_instance.chatbot_main() 
+    
+    # -------------------------------------------------------------------------------------------------
+    def instance_latex_render(self):
+        if not hasattr(self, 'latex_render_instance') or self.latex_render_instance is None:
+            self.latex_render_instance = latex_render_class()
+        return self.latex_render_instance
         
-    def main(self):
-        # Call the main method of the parent class
-        super().main()
-
-    @staticmethod
-    def run_instance(instance_name):
-        chatbot_instance = wizard_chatbot_class(instance_name)
-        ollama_chatbot_base.main(chatbot_instance)
-
 # -------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
     """ 
     The main loop for the ollama_chatbot_class, utilizing a state machine for user command injection during command line prompting,
     all commands start with /, and are named logically.
     """
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
+    chatbot_instance = wizard_chatbot_class('gandalf', user_input_model_select)
+    chatbot_instance.start_chatbot_main()
 
-    # instance_sets = {
-    #     "speech": ["main", "gandalf_speech", "merlin_speech"],
-    #     # Add more utilities and instance names as needed
-    # }
 
-    instance_sets = {
-        "speech": ["main_speech"],
-        # Add more utilities and instance names as needed
-    }
-
-    processes = []
-    for utility, instance_names in instance_sets.items():
-        for name in instance_names:
-            p = multiprocessing.Process(target=wizard_chatbot_class.run_instance, args=(name,))
-            processes.append(p)
-            p.start()
-
-    for p in processes:
-        p.join()

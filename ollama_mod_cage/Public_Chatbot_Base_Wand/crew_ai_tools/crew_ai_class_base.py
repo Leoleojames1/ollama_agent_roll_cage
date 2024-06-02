@@ -10,6 +10,8 @@ class crew_ai_class_base:
         """
         self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
         self.current_dir = os.getcwd()
+        self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
         # TODO IF AUTOMATING CMD FILE GENERATION, STORE CMD FILE IN LIBRARY
         self.gen_cmd_lib = "path_here"
 

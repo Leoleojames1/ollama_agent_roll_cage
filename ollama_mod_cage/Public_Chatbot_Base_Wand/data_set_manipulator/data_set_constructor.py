@@ -15,6 +15,7 @@ class data_set_constructor:
         """
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
         self.pipeline = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\")
         self.image_dir = os.path.join(self.pipeline, "data_constructor\\image_set")
         self.video_dir = os.path.join(self.pipeline, "data_constructor\\video_set")

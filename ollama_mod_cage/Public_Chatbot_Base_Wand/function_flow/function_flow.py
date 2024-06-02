@@ -12,6 +12,7 @@ class function_flow:
         """
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
         self.pipeline = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\")
         #TODO GET function_prompt.txt, command list data and prompt model
         

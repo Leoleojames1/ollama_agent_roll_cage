@@ -8,8 +8,12 @@ class model_write_class:
     def __init__(self):
         """a method for initializing the class
         """
+        self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.colors = ollama_commands.get_colors()
+        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
+        
+        ollama_commands_instance = ollama_commands()
+        self.colors = ollama_commands_instance.get_colors()
         
     def write_model_file(self):
         """ a method to write a model file based on user inputs

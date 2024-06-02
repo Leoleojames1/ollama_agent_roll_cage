@@ -9,13 +9,14 @@ from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
 import shutil
 
 class create_convert_manager:
-    def __init__(self):
+    def __init__(self, colors):
         """a method for initializing the class
         """
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
         self.pipeline = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\")
-        self.colors = ollama_commands.get_colors()
+        self.colors = colors
 
     def safe_tensor_gguf_convert(self, safe_tensor_input_name):
         """ a method for converting safetensors to GGUF

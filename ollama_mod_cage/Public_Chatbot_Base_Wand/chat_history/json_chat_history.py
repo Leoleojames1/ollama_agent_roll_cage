@@ -15,6 +15,7 @@ class json_chat_history:
         """
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
         self.pipeline = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\")
 
     def save_to_json(self):

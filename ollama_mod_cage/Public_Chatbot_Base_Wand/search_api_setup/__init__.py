@@ -1,4 +1,4 @@
 #__init__.py
-from . import duckduckgo_search_api
-from . import google_search_api
-from . import search_api_manager
+from .duckduckgo_search_api import duckduckgo_search_api
+from .google_search_api import google_search_api
+from .search_api_manager import search_api_manager

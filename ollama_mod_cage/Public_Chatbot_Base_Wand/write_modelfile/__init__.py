@@ -1,2 +1,2 @@
 #__init__.py
-from . import model_write_class
+from .model_write_class import model_write_class

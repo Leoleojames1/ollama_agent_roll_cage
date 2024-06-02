@@ -1,2 +1,2 @@
 #__init__.py
-from . import langchain_class_base
+from .langchain_class_base import langchain_class_base

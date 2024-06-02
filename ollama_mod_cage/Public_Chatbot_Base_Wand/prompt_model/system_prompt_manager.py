@@ -1,4 +1,4 @@
-""" tts_processor.py
+""" system_prompt_manager.py
     A class for processing the response sentences and audio generation for the ollama_chat_bot_class
 """
 

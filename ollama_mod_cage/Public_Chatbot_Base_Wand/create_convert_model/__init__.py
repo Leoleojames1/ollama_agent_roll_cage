@@ -1,2 +1,2 @@
 #__init__.py
-from . import create_convert_manager
+from .create_convert_manager import create_convert_manager

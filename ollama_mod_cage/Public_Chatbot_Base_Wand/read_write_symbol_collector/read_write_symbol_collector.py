@@ -29,15 +29,19 @@ class read_write_symbol_collector:
         self.public_wand = os.path.abspath(os.path.join(self.current_dir, os.pardir))
         self.ollama_mod_cage = os.path.abspath(os.path.join(self.public_wand, os.pardir))
         self.developer_tools = os.path.join(self.ollama_mod_cage, "developer_tools.json")
-
+        
+        self.current_dir = os.getcwd()
+        self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
+        
         self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles\\Ignored_Agents\\") 
         self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
-        self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\pipeline\\conversation_library\\{ollama_chatbot_class.user_input_model_select}\\{ollama_chatbot_class.save_name}.json")
-        self.llava_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\llava_library")
-
         self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
 
         return None
+    
+    def user_paths_template_combine():
+        return
 
     def developer_tools_generate(self):
         """ a method for generating the developer_tools.txt from the given dict

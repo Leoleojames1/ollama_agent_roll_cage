@@ -35,18 +35,19 @@ import time
 import pyaudio
 
 class tts_processor_class:
-    def __init__(self):
+    def __init__(self, colors):
         """a method for initializing the class
         """ 
 
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
+        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
         self.speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library")
         self.recognize_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library\\recognize_speech")
         self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library\\generate_speech")
         self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
         self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
-        self.colors = ollama_commands.get_colors()
+        self.colors = colors
         
         if torch.cuda.is_available():
             self.device = "cuda"
@@ -57,14 +58,6 @@ class tts_processor_class:
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
         self.audio_queue = queue.Queue()
         
-    def voice_swap(self):
-        """ a method to call when swapping voices
-        """
-        # Search for the name after 'forward slash voice swap'
-        print(f"Agent voice swapped to {self.voice_name}")
-        print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
-        return
-    
     def get_audio(self, ollama_chatbot_class):
         print(">>AUDIO SENDING<<")
         p = pyaudio.PyAudio()

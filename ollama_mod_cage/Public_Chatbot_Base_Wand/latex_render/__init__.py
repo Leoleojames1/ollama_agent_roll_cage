@@ -1,2 +1,2 @@
 #__init__.py
-from . import latex_render_class
+from .latex_render_class import latex_render_class

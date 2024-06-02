@@ -1,2 +1,2 @@
 #__init__.py
-from . import secure_socket_layer_comm
+from .secure_socket_layer_comm import secure_socket_layer_comm

@@ -1,2 +1,2 @@
 #__init__.py
-from . import crew_ai_class_base
+from .crew_ai_class_base import crew_ai_class_base

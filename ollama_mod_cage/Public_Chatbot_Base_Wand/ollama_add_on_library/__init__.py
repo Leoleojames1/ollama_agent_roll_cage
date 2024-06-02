@@ -1,2 +1,2 @@
 #__init__.py
-from . import ollama_commands
+from .ollama_commands import ollama_commands

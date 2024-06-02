@@ -1,2 +1,2 @@
 #__init__.py
-from . import json_chat_history
+from .json_chat_history import json_chat_history
