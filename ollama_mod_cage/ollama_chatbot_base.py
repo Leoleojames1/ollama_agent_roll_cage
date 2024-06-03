@@ -122,6 +122,97 @@ class ollama_chatbot_base:
         self.model_write_class_instance = model_write_class(self.colors)
         self.create_convert_manager_instance = create_convert_manager(self.colors)
 
+    # -------------------------------------------------------------------------------------------------      
+    def system_prompt_manager(self, sys_prompt_select):
+        if sys_prompt_select in self.prompts:
+            self.chat_history.append({"role": "system", "content": self.prompts[sys_prompt_select]})
+        else:
+            print("Invalid choice. Please select a valid prompt.")
+        return sys_prompt_select
+
+    # -------------------------------------------------------------------------------------------------   
+    def llava_prompt_manager(self, sys_prompt_select):
+        if sys_prompt_select in self.prompts:
+            self.chat_history.append({"role": "system", "content": self.prompts[sys_prompt_select]})
+        else:
+            print("Invalid choice. Please select a valid prompt.")
+        return sys_prompt_select
+    
+    # -------------------------------------------------------------------------------------------------   
+    def send_prompt(self, user_input_prompt):
+        """ a method for prompting the model
+            args: user_input_prompt, user_input_model_select, search_google
+            returns: none
+        """
+        #TODO ADD IF MEM OFF CLEAR HISTORY
+        self.chat_history = []
+        self.screenshot_path = os.path.join(self.llava_library, "screenshot.png")
+
+        #TODO ADD SYSTEM PROMP MANAGER FOR DIFFERENT MODES
+        # Minecraft
+        # self.chat_history.append({"role": "system", "content": "You are a helpful minecraft assistant, given the provided screenshot data please direct the user immediatedly, prioritize the order in which to inform the player, hostile mobs should be avoided or terminated, danger is a top priority, but so is crafting and building, if they require help quickly guide them to a solution in real time. Please respond in a quick conversational voice, do not read off of documentation, you need to directly explain quickly and effectively whats happening, for example if there is a zombie say something like, watch out thats a Zombie hurry up and kill it or run away, they are dangerous. The recognized Objects around the perimeter are usually items, health, hunger, breath, gui elements, or status affects, please differentiate these objects in the list from 3D objects in the forward facing perspective with hills trees, mobs etc, the items are held by the player and due to the perspective take up the warped edge of the image on the sides. the sky is typically up with a sun or moon and stars, with the dirt below, there is also the nether which is a firey wasteland and cave systems with ore. Please stick to whats relevant to the current user prompt and llava data:"})
+        # phi3 speed chat
+        # self.chat_history.append({"role": "system", "content": "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been tuned to respond in a more quick and conversational manner, the user is using speech to text for communication, its also okay to be fun and wild as a phi3 ai assistant. Its also okay to respond with a question, if directed to do something just do it, and realize that not everything needs to be said in one shot, have a back and forth listening to the users response. If the user decides to request a latex math code output, use \[...\] instead of $$...$$ notation, if the user does not request latex, refrain from using latex unless necessary. Do not re-explain your response in a parend or bracketed note: the response... this is annoying and users dont like it."})
+        
+        # append user prompt
+        self.chat_history.append({"role": "user", "content": user_input_prompt})
+
+        # get the llava response and append it to the chat history only if an image is provided
+        if self.llava_flag is True:
+            # load the screenshot and convert it to a base64 string
+            with open(f'{self.screenshot_path}', 'rb') as f:
+                user_screenshot_raw2 = base64.b64encode(f.read()).decode('utf-8')
+                self.user_screenshot_raw = user_screenshot_raw2
+            llava_response = self.llava_prompt(user_screenshot_raw2, user_input_prompt)
+            print(f"LLAVA SOURCE: {llava_response}")
+            self.chat_history.append({"role": "assistant", "content": f"LLAVA_DATA: {llava_response}"})
+            self.chat_history.append({"role": "user", "content": "Based on the information in LLAVA_DATA please direct the user immediatedly, prioritize the order in which to inform the player of the identified objects, items, hills, trees and passive and hostile mobs etc. Do not output the dictionary list, instead conversationally express what the player needs to do quickly so that they can ask you more questions."})
+
+        try:
+            response = ollama.chat(model=self.user_input_model_select, messages=(self.chat_history), stream=False )
+            if isinstance(response, dict) and "message" in response:
+                model_response = response.get("message")
+                self.chat_history.append(model_response)
+                return model_response["content"]
+            else:
+                return "Error: Response from model is not in the expected format"
+        except Exception as e:
+            return f"Error: {e}"
+        
+    # -------------------------------------------------------------------------------------------------   
+    def llava_prompt(self, user_screenshot_raw2, user_input_prompt):
+        """ a method for prompting the model
+            args: user_input_prompt, user_input_model_select, search_google
+            returns: none
+        """
+        self.llava_history = []
+        self.llava_history.append({"role": "system", "content": "You are a minecraft llava image recognizer, search for passive mobs, hostile mobs, trees, hills, blocks, and items, given the provided screenshot please provide a dictionary of the objects recognized paired with key attributed about each object, and only 1 sentence to describe anything else that is not captured by the dictionary, do not use more sentences, only list objects with which you have high confidence of recognizing and for low confidence describe shape and object type more heavily to gage hard recognitions. Objects around the perimeter are usually player held items like swords or food, gui elements like items, health, hunger, breath, or status affects, please differentiate these objects in the list from the 3D landscape objects in the forward facing perspective, the items are held by the player traversing the world and can place and remove blocks. Return dictionary and 1 summary sentence:"})
+        message = {"role": "user", "content": "given the provided screenshot please provide a dictionary of key value pairs for each object in with image with its relative position, do not use sentences, if you cannot recognize the enemy describe the color and shape as an enemy in the dictionary"}
+
+        image_message = None
+        if user_screenshot_raw2 is not None:
+            # Assuming user_input_image is a base64 encoded image
+            message["images"] = [user_screenshot_raw2]
+            image_message = message
+        try:
+            response_llava = ollama.chat(model="llava", messages=(self.llava_history + [image_message]), stream=False )
+        except Exception as e:
+            return f"Error: {e}"
+
+        if "message" in response_llava:
+            
+            # print(f"LAVA_RECOGNITION: {message}")
+            model_response = response_llava.get("message")
+            self.llava_history.append({"role": "assistant", "content": model_response["content"]})
+            # print(f"LLAVA HISTORY: {self.llava_history}")
+
+            # Keep only the last 2 responses in llava_history
+            self.llava_history = self.llava_history[-2:]
+
+            return model_response["content"]
+        else:
+            return "Error: Response from model is not in the expected format"
+        
     # -------------------------------------------------------------------------------------------------
     def voice_command_select_filter(self, user_input_prompt):
         """ a method for managing the voice command selection
@@ -242,96 +333,120 @@ class ollama_chatbot_base:
             cmd_run_flag = False
             return cmd_run_flag
 
-    # -------------------------------------------------------------------------------------------------      
-    def system_prompt_manager(self, sys_prompt_select):
-        if sys_prompt_select in self.prompts:
-            self.chat_history.append({"role": "system", "content": self.prompts[sys_prompt_select]})
-        else:
-            print("Invalid choice. Please select a valid prompt.")
-        return sys_prompt_select
-
     # -------------------------------------------------------------------------------------------------   
-    def llava_prompt_manager(self, sys_prompt_select):
-        if sys_prompt_select in self.prompts:
-            self.chat_history.append({"role": "system", "content": self.prompts[sys_prompt_select]})
-        else:
-            print("Invalid choice. Please select a valid prompt.")
-        return sys_prompt_select
+    def get_audio(self, ):
+        print(">>AUDIO RECORDING<<")
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
+        frames = []
+
+        while self.auto_speech_flag and not self.chunk_flag:
+            data = stream.read(1024)
+            frames.append(data)
+
+        print(">>AUDIO RECEIVED<<")
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        # Convert the audio data to an AudioData object
+        audio = sr.AudioData(b''.join(frames), 16000, 2)
+        self.chunk_flag = False  # Set chunk_flag to False here to indicate that the audio has been received
+        return audio
     
     # -------------------------------------------------------------------------------------------------   
-    def send_prompt(self, user_input_prompt):
-        """ a method for prompting the model
-            args: user_input_prompt, user_input_model_select, search_google
-            returns: none
+    def recognize_speech(self, audio):
+        """ a method for calling the speech recognizer
+            args: audio
+            returns: speech_str
         """
-        #TODO ADD IF MEM OFF CLEAR HISTORY
-        self.chat_history = []
-        self.screenshot_path = os.path.join(self.llava_library, "screenshot.png")
+        speech_str = sr.Recognizer().recognize_google(audio)
+        print(f">>{speech_str}<<")
+        return speech_str
+    
+    # -------------------------------------------------------------------------------------------------
+    def chatbot_main(self):
+        """ a method for managing the current chatbot instance loop """
+        # wait to load tts & latex until needed
+        self.latex_render_instance = None
+        self.tts_processor_instance = None
 
-        #TODO ADD SYSTEM PROMP MANAGER FOR DIFFERENT MODES
-        # Minecraft
-        # self.chat_history.append({"role": "system", "content": "You are a helpful minecraft assistant, given the provided screenshot data please direct the user immediatedly, prioritize the order in which to inform the player, hostile mobs should be avoided or terminated, danger is a top priority, but so is crafting and building, if they require help quickly guide them to a solution in real time. Please respond in a quick conversational voice, do not read off of documentation, you need to directly explain quickly and effectively whats happening, for example if there is a zombie say something like, watch out thats a Zombie hurry up and kill it or run away, they are dangerous. The recognized Objects around the perimeter are usually items, health, hunger, breath, gui elements, or status affects, please differentiate these objects in the list from 3D objects in the forward facing perspective with hills trees, mobs etc, the items are held by the player and due to the perspective take up the warped edge of the image on the sides. the sky is typically up with a sun or moon and stars, with the dirt below, there is also the nether which is a firey wasteland and cave systems with ore. Please stick to whats relevant to the current user prompt and llava data:"})
-        # phi3 speed chat
-        # self.chat_history.append({"role": "system", "content": "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been tuned to respond in a more quick and conversational manner, the user is using speech to text for communication, its also okay to be fun and wild as a phi3 ai assistant. Its also okay to respond with a question, if directed to do something just do it, and realize that not everything needs to be said in one shot, have a back and forth listening to the users response. If the user decides to request a latex math code output, use \[...\] instead of $$...$$ notation, if the user does not request latex, refrain from using latex unless necessary. Do not re-explain your response in a parend or bracketed note: the response... this is annoying and users dont like it."})
-        
-        # append user prompt
-        self.chat_history.append({"role": "user", "content": user_input_prompt})
+        print(self.colors["OKCYAN"] + "Press space bar to record audio:" + self.colors["OKCYAN"])
+        print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
 
-        # get the llava response and append it to the chat history only if an image is provided
-        if self.llava_flag is True:
-            # load the screenshot and convert it to a base64 string
-            with open(f'{self.screenshot_path}', 'rb') as f:
-                user_screenshot_raw2 = base64.b64encode(f.read()).decode('utf-8')
-                self.user_screenshot_raw = user_screenshot_raw2
-            llava_response = self.llava_prompt(user_screenshot_raw2, user_input_prompt)
-            print(f"LLAVA SOURCE: {llava_response}")
-            self.chat_history.append({"role": "assistant", "content": f"LLAVA_DATA: {llava_response}"})
-            self.chat_history.append({"role": "user", "content": "Based on the information in LLAVA_DATA please direct the user immediatedly, prioritize the order in which to inform the player of the identified objects, items, hills, trees and passive and hostile mobs etc. Do not output the dictionary list, instead conversationally express what the player needs to do quickly so that they can ask you more questions."})
+        keyboard.add_hotkey('ctrl+a+d', self.auto_speech_set, args=(True,))
+        keyboard.add_hotkey('ctrl+s+w', self.chunk_speech, args=(True,))
 
-        try:
-            response = ollama.chat(model=self.user_input_model_select, messages=(self.chat_history), stream=False )
-            if isinstance(response, dict) and "message" in response:
-                model_response = response.get("message")
-                self.chat_history.append(model_response)
-                return model_response["content"]
-            else:
-                return "Error: Response from model is not in the expected format"
-        except Exception as e:
-            return f"Error: {e}"
-        
+        while True:
+            user_input_prompt = ""
+            speech_done = False
+            cmd_run_flag = False
+
+            if self.listen_flag | self.auto_speech_flag is True:
+                self.tts_processor_instance = self.instance_tts_processor()
+                while self.auto_speech_flag is True:  # user holds down the space bar
+                    try:
+                        # Record audio from microphone
+                        audio = self.get_audio()
+                        if self.listen_flag is True:
+                            # Recognize speech to text from audio
+                            user_input_prompt = self.recognize_speech(audio)
+                            print(f">>SPEECH RECOGNIZED<< >> {user_input_prompt} <<")
+                            speech_done = True
+                            self.chunk_flag = False
+                            print(f"CHUNK FLAG STATE: {self.chunk_flag}")
+                            self.auto_speech_flag = False
+                    except sr.UnknownValueError:
+                        print(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
+                    except sr.RequestError as e:
+                        print(self.colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + self.colors["OKCYAN"])
+            elif self.listen_flag is False:
+                print(self.colors["OKCYAN"] + "Please type your selected prompt:" + self.colors["OKCYAN"])
+                user_input_prompt = input(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
+                speech_done = True
+            user_input_prompt = self.voice_command_select_filter(user_input_prompt)
+            cmd_run_flag = self.command_select(user_input_prompt)
+            # get screenshot
+            if self.llava_flag is True:
+                self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
+            # splice videos
+            if self.splice_flag == True:
+                self.data_set_video_process_instance.generate_image_data()
+            if cmd_run_flag == False and speech_done == True:
+                print(self.colors["YELLOW"] + f"{user_input_prompt}" + self.colors["OKCYAN"])
+                # Send the prompt to the assistant
+                if self.screen_shot_flag is True:
+                    response = self.send_prompt(user_input_prompt)
+                    self.screen_shot_flag = False
+                else:
+                    response = self.send_prompt(user_input_prompt)
+                print(self.colors["RED"] + f"<<< {self.user_input_model_select} >>> " + self.colors["RED"] + f"{response}" + self.colors["RED"])
+                # Check for latex and add to queue
+                if self.latex_flag:
+                    # Create a new instance
+                    latex_render_instance = latex_render_class()
+                    latex_render_instance.add_latex_code(response, self.user_input_model_select)
+                # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
+                # Clear speech cache and split the response into sentences for next TTS cache
+                if self.leap_flag is not None and isinstance(self.leap_flag, bool):
+                    if self.leap_flag != True:
+                        self.tts_processor_instance.process_tts_responses(response, self.voice_name)
+                elif self.leap_flag is None:
+                    pass
+                # Start the mainloop in the main thread
+                print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
+
     # -------------------------------------------------------------------------------------------------   
-    def llava_prompt(self, user_screenshot_raw2, user_input_prompt):
-        """ a method for prompting the model
-            args: user_input_prompt, user_input_model_select, search_google
-            returns: none
-        """
-        self.llava_history = []
-        self.llava_history.append({"role": "system", "content": "You are a minecraft llava image recognizer, search for passive mobs, hostile mobs, trees, hills, blocks, and items, given the provided screenshot please provide a dictionary of the objects recognized paired with key attributed about each object, and only 1 sentence to describe anything else that is not captured by the dictionary, do not use more sentences, only list objects with which you have high confidence of recognizing and for low confidence describe shape and object type more heavily to gage hard recognitions. Objects around the perimeter are usually player held items like swords or food, gui elements like items, health, hunger, breath, or status affects, please differentiate these objects in the list from the 3D landscape objects in the forward facing perspective, the items are held by the player traversing the world and can place and remove blocks. Return dictionary and 1 summary sentence:"})
-        message = {"role": "user", "content": "given the provided screenshot please provide a dictionary of key value pairs for each object in with image with its relative position, do not use sentences, if you cannot recognize the enemy describe the color and shape as an enemy in the dictionary"}
+    def chunk_speech(self, value):
+        # time.sleep(1)
+        self.chunk_flag = value
+        print(f"chunk_flag FLAG STATE: {self.chunk_flag}")
 
-        image_message = None
-        if user_screenshot_raw2 is not None:
-            # Assuming user_input_image is a base64 encoded image
-            message["images"] = [user_screenshot_raw2]
-            image_message = message
-        try:
-            response_llava = ollama.chat(model="llava", messages=(self.llava_history + [image_message]), stream=False )
-        except Exception as e:
-            return f"Error: {e}"
-
-        if "message" in response_llava:
-            
-            # print(f"LAVA_RECOGNITION: {message}")
-            model_response = response_llava.get("message")
-            self.llava_history.append({"role": "assistant", "content": model_response["content"]})
-            # print(f"LLAVA HISTORY: {self.llava_history}")
-
-            # Keep only the last 2 responses in llava_history
-            self.llava_history = self.llava_history[-2:]
-
-            return model_response["content"]
-        else:
-            return "Error: Response from model is not in the expected format"
+    # -------------------------------------------------------------------------------------------------   
+    def auto_speech_set(self, value):
+        self.auto_speech_flag = value
+        self.chunk_flag = False
+        print(f"auto_speech_flag FLAG STATE: {self.auto_speech_flag}")
 
     # -------------------------------------------------------------------------------------------------
     def instance_tts_processor(self):
@@ -371,13 +486,6 @@ class ollama_chatbot_base:
         return
     
     # -------------------------------------------------------------------------------------------------   
-    def auto_commands(self, flag):
-        """ a method for auto_command flag """
-        self.auto_commands_flag = flag
-        print(f"auto_commands FLAG STATE: {self.auto_commands_flag}")
-        return
-    
-    # -------------------------------------------------------------------------------------------------   
     def voice_swap(self):
         """ a method to call when swapping voices
         """
@@ -394,143 +502,10 @@ class ollama_chatbot_base:
         self.listen_flag = flag
         print(f"listen_flag FLAG STATE: {self.listen_flag}")
         return
-    
-    # -------------------------------------------------------------------------------------------------   
-    def chunk_speech(self, value):
-        # time.sleep(1)
-        self.chunk_flag = value
-        print(f"chunk_flag FLAG STATE: {self.chunk_flag}")
 
     # -------------------------------------------------------------------------------------------------   
-    def auto_speech_set(self, value):
-        self.auto_speech_flag = value
-        self.chunk_flag = False
-        print(f"auto_speech_flag FLAG STATE: {self.auto_speech_flag}")
-    
-    # -------------------------------------------------------------------------------------------------   
-    def chatbot_main(self):
-        """ a method for managing the current chatbot instance loop """
-        self.initialize_instances()
-        self.initialize_hotkeys()
-
-        while True:
-            user_input_prompt, speech_done = self.handle_user_input()
-            cmd_run_flag = self.process_commands(user_input_prompt)
-            self.handle_flags()
-            self.handle_response(user_input_prompt, cmd_run_flag, speech_done)
-
-    # -------------------------------------------------------------------------------------------------
-    def process_commands(self, user_input_prompt):
-        user_input_prompt = self.voice_command_select_filter(user_input_prompt)
-        return self.command_select(user_input_prompt)
-    
-    # -------------------------------------------------------------------------------------------------
-    def initialize_instances(self):
-        self.latex_render_instance = None
-        self.tts_processor_instance = None
-
-    # -------------------------------------------------------------------------------------------------
-    def initialize_hotkeys(self):
-        keyboard.add_hotkey('ctrl+a+d', self.auto_speech_set, args=(True,))
-        keyboard.add_hotkey('ctrl+s+w', self.chunk_speech, args=(True,))
-
-    # -------------------------------------------------------------------------------------------------
-    def handle_user_input(self):
-        user_input_prompt = ""
-        speech_done = False
-
-        if self.listen_flag is True:
-            user_input_prompt, speech_done = self.handle_speech_input()
-        else:
-            user_input_prompt, speech_done = self.handle_text_input()
-
-        return user_input_prompt, speech_done
-    
-    # -------------------------------------------------------------------------------------------------   
-    def get_audio(self, ):
-        print(">>AUDIO RECORDING<<")
-        p = pyaudio.PyAudio()
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
-        frames = []
-
-        while self.auto_speech_flag and not self.chunk_flag:
-            data = stream.read(1024)
-            frames.append(data)
-
-        print(">>AUDIO RECEIVED<<")
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
-
-        # Convert the audio data to an AudioData object
-        audio = sr.AudioData(b''.join(frames), 16000, 2)
-        self.chunk_flag = False  # Set chunk_flag to False here to indicate that the audio has been received
-        return audio
-    
-    # -------------------------------------------------------------------------------------------------   
-    def recognize_speech(self, audio):
-        """ a method for calling the speech recognizer
-            args: audio
-            returns: speech_str
-        """
-        speech_str = sr.Recognizer().recognize_google(audio)
-        print(f">>{speech_str}<<")
-        return speech_str
-    
-    # -------------------------------------------------------------------------------------------------
-    def handle_speech_input(self):
-        user_input_prompt = ""
-        speech_done = False
-
-        while self.auto_speech_flag is True:  # user holds down the space bar
-            if self.chunk_flag:
-                break
-            try:
-                audio = self.get_audio()
-                if self.listen_flag is True:
-                    user_input_prompt = self.recognize_speech(audio)
-                    print(f">>SPEECH RECOGNIZED<< >> {user_input_prompt} <<")
-                    speech_done = True
-                    self.chunk_flag = False  # Set chunk_flag to False to indicate that the speech recognition is complete
-            except sr.UnknownValueError:
-                print(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
-            except sr.RequestError as e:
-                print(self.colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + self.colors["OKCYAN"])
-            except Exception as e:  # This line is added
-                print(self.colors["OKCYAN"] + f"An unexpected error occurred: {e}" + self.colors["OKCYAN"])
-
-        return user_input_prompt, speech_done
-    
-    # -------------------------------------------------------------------------------------------------
-    def handle_text_input(self):
-        print(self.colors["OKCYAN"] + "Please type your selected prompt:" + self.colors["OKCYAN"])
-        print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
-        user_input_prompt = input()  # Read from the Queue instead of using input()
-        return user_input_prompt, True
-    
-    # -------------------------------------------------------------------------------------------------
-    def handle_flags(self):
-        if self.llava_flag is True:
-            self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
-        if self.splice_flag == True:
-            self.data_set_video_process_instance.generate_image_data()
-    # -------------------------------------------------------------------------------------------------
-    def handle_response(self, user_input_prompt, cmd_run_flag, speech_done):
-        if cmd_run_flag == False and speech_done == True:
-            print(self.colors["YELLOW"] + f"{user_input_prompt}" + self.colors["OKCYAN"])
-            response = self.send_prompt(user_input_prompt)
-            print(self.colors["RED"] + f"<<< {self.user_input_model_select} >>> " + self.colors["OKGREEN"] + f"{response}" + self.colors["OKGREEN"])
-            self.handle_latex(response)
-            if not self.leap_flag:  # Check leap_flag before calling handle_tts
-                self.handle_tts(response)
-            print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["LIGHT_BLUE"])
-    # -------------------------------------------------------------------------------------------------
-    def handle_latex(self, response):
-        if self.latex_flag:
-            latex_render_instance = latex_render_class()
-            latex_render_instance.add_latex_code(response, self.user_input_model_select)
-    # -------------------------------------------------------------------------------------------------
-    def handle_tts(self, response):
-        if self.leap_flag is not None and isinstance(self.leap_flag, bool):
-            if self.leap_flag != True:
-                self.tts_processor_instance.process_tts_responses(response, self.voice_name)
+    def auto_commands(self, flag):
+        """ a method for auto_command flag """
+        self.auto_commands_flag = flag
+        print(f"auto_commands FLAG STATE: {self.auto_commands_flag}")
+        return

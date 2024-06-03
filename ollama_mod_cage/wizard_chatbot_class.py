@@ -69,12 +69,6 @@ class wizard_chatbot_class( ollama_chatbot_base ):
         self.instantiate_ollama_chatbot_base()
         self.user_input_model_select = self.user_input_model_select
         self.ollama_chatbot_base_instance.chatbot_main() 
-    
-    # -------------------------------------------------------------------------------------------------
-    def instance_latex_render(self):
-        if not hasattr(self, 'latex_render_instance') or self.latex_render_instance is None:
-            self.latex_render_instance = latex_render_class()
-        return self.latex_render_instance
         
 # -------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
