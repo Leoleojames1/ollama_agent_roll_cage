@@ -29,10 +29,7 @@ from Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
 from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
 import numpy as np
 import scipy.io.wavfile as wav
-import sys
 import shutil
-import time
-import pyaudio
 
 class tts_processor_class:
     def __init__(self, colors):
@@ -41,12 +38,11 @@ class tts_processor_class:
 
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
-        self.speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library")
-        self.recognize_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library\\recognize_speech")
-        self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\speech_library\\generate_speech")
-        self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\active_group\\Public_Voice_Reference_Pack")
-        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
+        self.speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library")
+        self.recognize_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\recognize_speech")
+        self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\generate_speech")
+        self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\public_speech\\Public_Voice_Reference_Pack")
+        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\conversation_library")
         self.colors = colors
         
         if torch.cuda.is_available():
@@ -57,34 +53,6 @@ class tts_processor_class:
 
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
         self.audio_queue = queue.Queue()
-        
-    def get_audio(self, ollama_chatbot_class):
-        print(">>AUDIO SENDING<<")
-        p = pyaudio.PyAudio()
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
-        frames = []
-
-        while not ollama_chatbot_class.chunk_flag:
-            data = stream.read(1024)
-            frames.append(data)
-
-        print(">>AUDIO RECEIVED<<")
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
-
-        # Convert the audio data to an AudioData object
-        audio = sr.AudioData(b''.join(frames), 16000, 2)
-        return audio
-    
-    def recognize_speech(self, audio):
-        """ a method for calling the speech recognizer
-            args: audio
-            returns: speech_str
-        """
-        speech_str = sr.Recognizer().recognize_google(audio)
-        print(f">>{speech_str}<<")
-        return speech_str
     
     def process_tts_responses(self, response, voice_name):
         """a method for managing the response preprocessing methods

@@ -33,6 +33,7 @@ import time
 import ollama
 import base64
 import keyboard
+import pyaudio
 import speech_recognition as sr
 
 from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
@@ -104,21 +105,21 @@ class ollama_chatbot_base:
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
         self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles\\Ignored_Agents\\") 
-        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
-        self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\pipeline\\conversation_library\\{self.user_input_model_select}\\{self.save_name}.json")
-        self.llava_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\llava_library")
+        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\conversation_library")
+        self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\Ignored_pipeline\\conversation_library\\{self.user_input_model_select}\\{self.save_name}.json")
+        self.llava_library = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\llava_library")
 
         # TODO developer_tools.txt file for custom path library
         self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
 
-        self.ollama_command_instance = ollama_commands()
+        self.ollama_command_instance = ollama_commands(user_input_model_select)
         self.colors = self.ollama_command_instance.colors
 
         self.screen_shot_collector_instance = screen_shot_collector()
         self.json_chat_history_instance = json_chat_history()
         self.read_write_symbol_collector_instance = read_write_symbol_collector()
         self.data_set_video_process_instance = data_set_constructor()
-        self.model_write_class_instance = model_write_class()
+        self.model_write_class_instance = model_write_class(self.colors)
         self.create_convert_manager_instance = create_convert_manager(self.colors)
 
     # -------------------------------------------------------------------------------------------------
@@ -203,8 +204,8 @@ class ollama_chatbot_base:
             "/listen off": lambda: self.listen(False),
             "/leap on": lambda: self.leap(True),
             "/leap off": lambda: self.leap(False),
-            "/speech on": lambda: self.speech(True),
-            "/speech off": lambda: self.speech(False),
+            "/speech on": lambda: self.speech(False, True),
+            "/speech off": lambda: self.speech(True, False),
             "/latex on": lambda: self.latex(True),
             "/latex off": lambda: self.latex(False),
             "/command auto on": lambda: self.auto_commands(True),
@@ -240,14 +241,16 @@ class ollama_chatbot_base:
         else:
             cmd_run_flag = False
             return cmd_run_flag
-        
+
+    # -------------------------------------------------------------------------------------------------      
     def system_prompt_manager(self, sys_prompt_select):
         if sys_prompt_select in self.prompts:
             self.chat_history.append({"role": "system", "content": self.prompts[sys_prompt_select]})
         else:
             print("Invalid choice. Please select a valid prompt.")
         return sys_prompt_select
-    
+
+    # -------------------------------------------------------------------------------------------------   
     def llava_prompt_manager(self, sys_prompt_select):
         if sys_prompt_select in self.prompts:
             self.chat_history.append({"role": "system", "content": self.prompts[sys_prompt_select]})
@@ -255,6 +258,7 @@ class ollama_chatbot_base:
             print("Invalid choice. Please select a valid prompt.")
         return sys_prompt_select
     
+    # -------------------------------------------------------------------------------------------------   
     def send_prompt(self, user_input_prompt):
         """ a method for prompting the model
             args: user_input_prompt, user_input_model_select, search_google
@@ -268,7 +272,7 @@ class ollama_chatbot_base:
         # Minecraft
         # self.chat_history.append({"role": "system", "content": "You are a helpful minecraft assistant, given the provided screenshot data please direct the user immediatedly, prioritize the order in which to inform the player, hostile mobs should be avoided or terminated, danger is a top priority, but so is crafting and building, if they require help quickly guide them to a solution in real time. Please respond in a quick conversational voice, do not read off of documentation, you need to directly explain quickly and effectively whats happening, for example if there is a zombie say something like, watch out thats a Zombie hurry up and kill it or run away, they are dangerous. The recognized Objects around the perimeter are usually items, health, hunger, breath, gui elements, or status affects, please differentiate these objects in the list from 3D objects in the forward facing perspective with hills trees, mobs etc, the items are held by the player and due to the perspective take up the warped edge of the image on the sides. the sky is typically up with a sun or moon and stars, with the dirt below, there is also the nether which is a firey wasteland and cave systems with ore. Please stick to whats relevant to the current user prompt and llava data:"})
         # phi3 speed chat
-        self.chat_history.append({"role": "system", "content": "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been tuned to respond in a more quick and conversational manner, the user is using speech to text for communication, its also okay to be fun and wild as a phi3 ai assistant. Its also okay to respond with a question, if directed to do something just do it, and realize that not everything needs to be said in one shot, have a back and forth listening to the users response. If the user decides to request a latex math code output, use \[...\] instead of $$...$$ notation, if the user does not request latex, refrain from using latex unless necessary. Do not re-explain your response in a parend or bracketed note: the response... this is annoying and users dont like it."})
+        # self.chat_history.append({"role": "system", "content": "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been tuned to respond in a more quick and conversational manner, the user is using speech to text for communication, its also okay to be fun and wild as a phi3 ai assistant. Its also okay to respond with a question, if directed to do something just do it, and realize that not everything needs to be said in one shot, have a back and forth listening to the users response. If the user decides to request a latex math code output, use \[...\] instead of $$...$$ notation, if the user does not request latex, refrain from using latex unless necessary. Do not re-explain your response in a parend or bracketed note: the response... this is annoying and users dont like it."})
         
         # append user prompt
         self.chat_history.append({"role": "user", "content": user_input_prompt})
@@ -295,6 +299,7 @@ class ollama_chatbot_base:
         except Exception as e:
             return f"Error: {e}"
         
+    # -------------------------------------------------------------------------------------------------   
     def llava_prompt(self, user_screenshot_raw2, user_input_prompt):
         """ a method for prompting the model
             args: user_input_prompt, user_input_model_select, search_google
@@ -327,58 +332,52 @@ class ollama_chatbot_base:
             return model_response["content"]
         else:
             return "Error: Response from model is not in the expected format"
-        
+
     # -------------------------------------------------------------------------------------------------
     def instance_tts_processor(self):
         if not hasattr(self, 'tts_processor_instance') or self.tts_processor_instance is None:
             self.tts_processor_instance = tts_processor_class(self.colors)
         return self.tts_processor_instance
     
+    # -------------------------------------------------------------------------------------------------   
     def leap(self, flag):
         """ a method for changing the leap flag """
         self.leap_flag = flag
+        print(f"leap_flag FLAG STATE: {self.leap_flag}")
         return
     
-    def speech(self, flag):
+    # -------------------------------------------------------------------------------------------------   
+    def speech(self, flag1, flag2):
         """ a method for changing the speech flags """
-        if flag == True:
+        if flag2 == True:
             self.tts_processor_instance = self.instance_tts_processor()
-        self.listen_flag = flag
-        self.leap_flag = flag
+        self.leap_flag = flag1
+        self.listen_flag = flag2
+        print(f"listen_flag FLAG STATE: {self.listen_flag}")
+        print(f"leap_flag FLAG STATE: {self.leap_flag}")
         return
-    
+    # -------------------------------------------------------------------------------------------------   
     def latex(self, flag):
         """ a method for changing the latex flag """
         self.latex_flag = flag
+        print(f"latex_flag FLAG STATE: {self.latex_flag}")        
         return
     
+    # -------------------------------------------------------------------------------------------------   
     def llava_flow(self, flag):
         """ a method for changing the listen flag """
         self.llava_flag = flag
+        print(f"llava_flag FLAG STATE: {self.llava_flag}")
         return
     
+    # -------------------------------------------------------------------------------------------------   
     def auto_commands(self, flag):
         """ a method for auto_command flag """
         self.auto_commands_flag = flag
+        print(f"auto_commands FLAG STATE: {self.auto_commands_flag}")
         return
     
-    def listen(self, flag):
-        """ a method for changing the listen flag """
-        if flag == True:
-            self.tts_processor_instance = self.instance_tts_processor()
-        self.listen_flag = flag
-        print(f"SET AUTO SPEECH FLAG STATE: {self.listen_flag}")
-        return
-    
-    def chunk_speech(self, value):
-        time.sleep(1)
-        self.chunk_flag = value
-        print(f"CHUNK FLAG STATE: {self.chunk_flag}")
-
-    def auto_speech_set(self, value):
-        self.auto_speech_flag = value
-        print(f"AUTO FLAG STATE: {self.auto_speech_flag}")
-
+    # -------------------------------------------------------------------------------------------------   
     def voice_swap(self):
         """ a method to call when swapping voices
         """
@@ -386,6 +385,27 @@ class ollama_chatbot_base:
         print(f"Agent voice swapped to {self.voice_name}")
         print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
         return
+    
+    # -------------------------------------------------------------------------------------------------   
+    def listen(self, flag):
+        """ a method for changing the listen flag """
+        if flag == True:
+            self.tts_processor_instance = self.instance_tts_processor()
+        self.listen_flag = flag
+        print(f"listen_flag FLAG STATE: {self.listen_flag}")
+        return
+    
+    # -------------------------------------------------------------------------------------------------   
+    def chunk_speech(self, value):
+        # time.sleep(1)
+        self.chunk_flag = value
+        print(f"chunk_flag FLAG STATE: {self.chunk_flag}")
+
+    # -------------------------------------------------------------------------------------------------   
+    def auto_speech_set(self, value):
+        self.auto_speech_flag = value
+        self.chunk_flag = False
+        print(f"auto_speech_flag FLAG STATE: {self.auto_speech_flag}")
     
     # -------------------------------------------------------------------------------------------------   
     def chatbot_main(self):
@@ -399,6 +419,11 @@ class ollama_chatbot_base:
             self.handle_flags()
             self.handle_response(user_input_prompt, cmd_run_flag, speech_done)
 
+    # -------------------------------------------------------------------------------------------------
+    def process_commands(self, user_input_prompt):
+        user_input_prompt = self.voice_command_select_filter(user_input_prompt)
+        return self.command_select(user_input_prompt)
+    
     # -------------------------------------------------------------------------------------------------
     def initialize_instances(self):
         self.latex_render_instance = None
@@ -414,32 +439,65 @@ class ollama_chatbot_base:
         user_input_prompt = ""
         speech_done = False
 
-        if self.listen_flag | self.auto_speech_flag is True:
+        if self.listen_flag is True:
             user_input_prompt, speech_done = self.handle_speech_input()
         else:
             user_input_prompt, speech_done = self.handle_text_input()
 
         return user_input_prompt, speech_done
+    
+    # -------------------------------------------------------------------------------------------------   
+    def get_audio(self, ):
+        print(">>AUDIO RECORDING<<")
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
+        frames = []
 
+        while self.auto_speech_flag and not self.chunk_flag:
+            data = stream.read(1024)
+            frames.append(data)
+
+        print(">>AUDIO RECEIVED<<")
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        # Convert the audio data to an AudioData object
+        audio = sr.AudioData(b''.join(frames), 16000, 2)
+        self.chunk_flag = False  # Set chunk_flag to False here to indicate that the audio has been received
+        return audio
+    
+    # -------------------------------------------------------------------------------------------------   
+    def recognize_speech(self, audio):
+        """ a method for calling the speech recognizer
+            args: audio
+            returns: speech_str
+        """
+        speech_str = sr.Recognizer().recognize_google(audio)
+        print(f">>{speech_str}<<")
+        return speech_str
+    
     # -------------------------------------------------------------------------------------------------
     def handle_speech_input(self):
         user_input_prompt = ""
         speech_done = False
 
         while self.auto_speech_flag is True:  # user holds down the space bar
+            if self.chunk_flag:
+                break
             try:
-                audio = self.tts_processor_instance.get_audio()
+                audio = self.get_audio()
                 if self.listen_flag is True:
-                    user_input_prompt = self.tts_processor_instance.recognize_speech(audio)
+                    user_input_prompt = self.recognize_speech(audio)
                     print(f">>SPEECH RECOGNIZED<< >> {user_input_prompt} <<")
                     speech_done = True
-                    self.chunk_flag = False
-                    print(f"CHUNK FLAG STATE: {self.chunk_flag}")
-                    self.auto_speech_flag = False
+                    self.chunk_flag = False  # Set chunk_flag to False to indicate that the speech recognition is complete
             except sr.UnknownValueError:
                 print(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
             except sr.RequestError as e:
                 print(self.colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + self.colors["OKCYAN"])
+            except Exception as e:  # This line is added
+                print(self.colors["OKCYAN"] + f"An unexpected error occurred: {e}" + self.colors["OKCYAN"])
 
         return user_input_prompt, speech_done
     
@@ -449,11 +507,6 @@ class ollama_chatbot_base:
         print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
         user_input_prompt = input()  # Read from the Queue instead of using input()
         return user_input_prompt, True
-    
-    # -------------------------------------------------------------------------------------------------
-    def process_commands(self, user_input_prompt):
-        user_input_prompt = self.voice_command_select_filter(user_input_prompt)
-        return self.command_select(user_input_prompt)
     
     # -------------------------------------------------------------------------------------------------
     def handle_flags(self):
@@ -466,10 +519,11 @@ class ollama_chatbot_base:
         if cmd_run_flag == False and speech_done == True:
             print(self.colors["YELLOW"] + f"{user_input_prompt}" + self.colors["OKCYAN"])
             response = self.send_prompt(user_input_prompt)
-            print(self.colors["RED"] + f"<<< {self.user_input_model_select} >>> " + self.colors["RED"] + f"{response}" + self.colors["RED"])
+            print(self.colors["RED"] + f"<<< {self.user_input_model_select} >>> " + self.colors["OKGREEN"] + f"{response}" + self.colors["OKGREEN"])
             self.handle_latex(response)
-            self.handle_tts(response)
-            print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
+            if not self.leap_flag:  # Check leap_flag before calling handle_tts
+                self.handle_tts(response)
+            print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["LIGHT_BLUE"])
     # -------------------------------------------------------------------------------------------------
     def handle_latex(self, response):
         if self.latex_flag:
