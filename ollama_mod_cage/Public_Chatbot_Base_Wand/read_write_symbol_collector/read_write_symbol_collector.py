@@ -26,37 +26,56 @@ class read_write_symbol_collector:
         self.url = "http://localhost:11434/api/chat"
         
         self.current_dir = os.getcwd()
-        self.public_wand = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.ollama_mod_cage = os.path.abspath(os.path.join(self.public_wand, os.pardir))
-        self.developer_tools = os.path.join(self.ollama_mod_cage, "developer_tools.json")
-        
-        self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
-        
+        self.public_wand = os.path.join(self.current_dir, "Public_Chatbot_Base_Wand")
+        self.ignored_wand = os.path.join(self.current_dir, "Public_Chatbot_Base_Wand")
+
+        self.ollama_mod_cage = os.path.abspath(os.path.join(self.public_wand, os.pardir))
+        self.developer_tools = os.path.join(self.current_dir, "developer_tools.json")
+        self.developer_custom = os.path.join(self.current_dir, "developer_custom.json")
+        self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles") 
         self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles\\Ignored_Agents\\") 
-        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library")
+        self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles\\pipeline") 
+        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library\\")
         self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
+        
+        self.path_dict = {}
 
-        return None
-    
-    def user_paths_template_combine():
-        return
+    # -------------------------------------------------------------------------------------------------
+    def ReadJsonDict(self, readJsonPath):
+        """ A function for reading the data from the template json file which contains the default hex header data,
+        variable data values are replaced later.
 
-    def developer_tools_generate(self):
-        """ a method for generating the developer_tools.txt from the given dict
+        #TODO Create modular regular expression based on the character occurence rate, ex:
+            def readRandomFile (randomFilePath):
+                with open randomFilePath :
+                    for line in randomFilePath count all ascii characters, for highest occuring, or most
+
+        Args:
+            writeJsonPath
+        Returns:
+            readFileDict
         """
-        dev_dict = {
-            "API_KEY_TEST" : "A38ASSC3210AWKNT345",
-            "current_dir" : f"{self.current_dir}",
-            "public_wand" : f"{self.public_wand}",
-            "ollama_mod_cage" : f"{self.ollama_mod_cage}",
-            "developer_tools" : f"{self.developer_tools}"
-        }
+        # initialize dictionary
+        readFileDict = {}
 
-        self.WriteStorageDictJson(writeJsonPath=self.developer_tools, portionOneDict=dev_dict, portionTwoDict=None, fileName="developer_path_library.txt")
+        # read json file key value pairs & store in dictionary
+        with open(f"{readJsonPath}", "r") as readJsonObject:
 
-        return dev_dict
+            # for each line in the json file search for 4 match groups
+            for (count, line) in enumerate(readJsonObject):
+
+                # search line in imageHeaderDict.json for 4 match groups, groups 1 & 3 are the dict keys, where as groups 2 & 4 are the dict values
+                match = re.search(r'"(\$\([A-Za-z0-9\S]+\))" : "([A-Za-z0-9\S]+)"', line)
+                # match = re.search(r'"(\$\([A-Za-z0-9_]+))" : "([A-Za-z0-9_]+)"', line)
+                # if match is found store groups in readFileDict
+                if match:
+                    # set key value pairs in readFileDict
+                    readFileDict[match.group(1)] = match.group(2)
+
+            # close file
+            readJsonObject.close()
+        return readFileDict
     
     # -------------------------------------------------------------------------------------------------
     def WriteStorageDictJson(self, writeJsonPath, portionOneDict, portionTwoDict, fileName):
@@ -141,44 +160,6 @@ class read_write_symbol_collector:
             # Close Dictionary
             writeJsonObject.write("\n}")
 
-        return None
-
-    # -------------------------------------------------------------------------------------------------
-    def ReadJsonDict( self, readJsonPath):
-        """ A function for reading the data from the template json file which contains the default hex header data,
-        variable data values are replaced later.
-
-        #TODO Create modular regular expression based on the character occurence rate, ex:
-            def readRandomFile (randomFilePath):
-                with open randomFilePath :
-                    for line in randomFilePath count all ascii characters, for highest occuring, or most
-
-        Args:
-            writeJsonPath
-        Returns:
-            readFileDict
-        """
-        # initialize dictionary
-        readFileDict = {}
-
-        # read json file key value pairs & store in dictionary
-        with open(f"{readJsonPath}", "r") as readJsonObject:
-
-            # for each line in the json file search for 4 match groups
-            for (count, line) in enumerate(readJsonObject):
-
-                # search line in imageHeaderDict.json for 4 match groups, groups 1 & 3 are the dict keys, where as groups 2 & 4 are the dict values
-                match = re.search(r'"(\$\([A-Za-z0-9\S]+\))" : "([A-Za-z0-9\S]+)"', line)
-                # match = re.search(r'"(\$\([A-Za-z0-9_]+))" : "([A-Za-z0-9_]+)"', line)
-                # if match is found store groups in readFileDict
-                if match:
-                    # set key value pairs in readFileDict
-                    readFileDict[match.group(1)] = match.group(2)
-
-            # close file
-            readJsonObject.close()
-        return readFileDict
-
     # -------------------------------------------------------------------------------------------------
     def CombineJsonDictFiles(self, frontJsonData, backJsonData, writeJsonPath, fileName):
         """ A Function which takes the self.__storageDict from the Perform function, and writes
@@ -194,5 +175,39 @@ class read_write_symbol_collector:
 
         # write front and back dict data to the given file path
         self.WriteStorageDictJson(writeJsonPath, frontJsonDataDict, backJsonDataDict, fileName)
+    
+    # -------------------------------------------------------------------------------------------------
+    def path_back_slash_filter(self):
+        for path in self.path_dict:
+            for char in path:
+                re.search()
+    
+    # -------------------------------------------------------------------------------------------------
+    def reformat_dict(self, input_dict):
+        """ a method to remove the $(arg.file_name) formatting from provided dictionary
+        """
+        output_dict = {}
+        for key, value in input_dict.items():
+            new_key = key.split('(')[1].split(')')[0].split('.')[0]
+            output_dict[new_key] = value
+        return output_dict
 
-        return None
+    # -------------------------------------------------------------------------------------------------
+    def developer_tools_generate(self):
+        """ a method for generating the developer_tools.txt from the given dict
+        """
+
+        program_paths = {
+            "current_dir" : f"{self.current_dir}",
+            "parent_dir" : f"{self.public_wand}",
+            "ollama_mod_cage" : f"{self.ollama_mod_cage}",
+            "developer_tools" : f"{self.developer_tools}",
+            "developer_custom" : f"{self.developer_custom}"
+        }
+
+        # WriteStorageDictJson requires 2 dictionary args, if 1 is empty it will just write 1
+        developer_custom_dict = self.ReadJsonDict(self.developer_custom)
+        developer_custom_dict = self.reformat_dict(developer_custom_dict)
+        # write dictionary data to json
+        self.WriteStorageDictJson(writeJsonPath=self.developer_tools, \
+            portionOneDict=program_paths, portionTwoDict=developer_custom_dict, fileName="developer_tools.txt")

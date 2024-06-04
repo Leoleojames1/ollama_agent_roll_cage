@@ -1,0 +1,11 @@
+{
+    "$(current_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage",
+    "$(parent_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage",
+    "$(ollama_mod_cage.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods",
+    "$(developer_tools.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage\developer_tools.json",
+    "$(developer_custom.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage\developer_custom.json",
+    "$(ollama_url.developer_tools)" : "http://localhost:11434/api/chat",
+    "$(model_git.developer_tools)" : "D:\CodingGit_StorageHDD\model_git",
+    "$(api_key_example.developer_tools)" : "dSaNPwghPs07oGGxIwCwNEjrz6xPvlITpNSVvIjldj3EUx7OKYbdP3t0ZpLm0lKTV1VsxJWXQZ9DmWmCYZ1DMvhCLp2QiEQMNpR27N9E3ntz2NB6kKP6XQeyD18ueOnU"
+
+}
