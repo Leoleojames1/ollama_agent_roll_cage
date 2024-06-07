@@ -1,0 +1,20 @@
+{
+    "$(current_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage",
+    "$(parent_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage",
+    "$(agent_files_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles",
+    "$(ignored_agents_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_Agents",
+    "$(ignored_pipeline_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline",
+    "$(llava_library_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\llava_library",
+    "$(ollama_mod_cage_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage",
+    "$(public_wand_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage\Public_Chatbot_Base_Wand",
+    "$(ignored_wand_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage\Public_Chatbot_Base_Wand",
+    "$(developer_tools_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage\developer_tools.json",
+    "$(developer_custom_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage\developer_custom.json",
+    "$(conversation_library_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\conversation_library",
+    "$(image_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\image_set",
+    "$(video_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\video_set",
+    "$(ollama_url.developer_tools)" : "http://localhost:11434/api/chat",
+    "$(model_git_dir.developer_tools)" : "D:\CodingGit_StorageHDD\model_git",
+    "$(api_key_example.developer_tools)" : "dSaNPwghPs07oGGxIwCwNEjrz6xPvlITpNSVvIjldj3EUx7OKYbdP3t0ZpLm0lKTV1VsxJWXQZ9DmWmCYZ1DMvhCLp2QiEQMNpR27N9E3ntz2NB6kKP6XQeyD18ueOnU"
+
+}
