@@ -6,7 +6,8 @@ Created on Nov 2, 2022
     read in for the arguments of each function and at the perform step are transformed with the GetSymbolValue()
     method from the symbol table class to their true table value from their symbol value.
 
-@author: lborcherding
+created on: Nov 2, 2022
+by @LeoBorcherding
 """
 
 import re
@@ -24,23 +25,68 @@ class read_write_symbol_collector:
         """
 
         self.url = "http://localhost:11434/api/chat"
-        
+        self.model_git_dir = 'D:\\CodingGit_StorageHDD\\model_git\\' #TODO GET FROM developer_custom.json
+
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.public_wand = os.path.join(self.current_dir, "Public_Chatbot_Base_Wand")
-        self.ignored_wand = os.path.join(self.current_dir, "Public_Chatbot_Base_Wand")
 
-        self.ollama_mod_cage = os.path.abspath(os.path.join(self.public_wand, os.pardir))
-        self.developer_tools = os.path.join(self.current_dir, "developer_tools.json")
-        self.developer_custom = os.path.join(self.current_dir, "developer_custom.json")
-        self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles") 
-        self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles\\Ignored_Agents\\") 
-        self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles\\pipeline") 
-        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\conversation_library\\")
-        self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
+        self.public_wand_dir = os.path.join(self.current_dir, "Public_Chatbot_Base_Wand")
+        self.ignored_wand_dir = os.path.join(self.current_dir, "Public_Chatbot_Base_Wand")
+        self.ollama_mod_cage_dir = os.path.abspath(os.path.join(self.public_wand_dir, os.pardir))
+
+        self.developer_tools_dir = os.path.join(self.current_dir, "developer_tools.json")
+        self.developer_custom_dir = os.path.join(self.current_dir, "developer_custom.json")
+
+        self.agent_files_dir = os.path.join(self.parent_dir, "AgentFiles") 
+        self.ignored_agents_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_Agents") 
+
+        self.ignored_pipeline_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline") 
+        self.llava_library_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\llava_library")
+        self.conversation_library_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\conversation_library")
+
+        self.image_dir = os.path.join(self.ignored_pipeline_dir, "data_constructor\\image_set")
+        self.video_dir = os.path.join(self.ignored_pipeline_dir, "data_constructor\\video_set")
+
+        # TODO if the developer tools file exists
+        if hasattr(self, self.developer_tools_dir):
+            self.developer_tools_dict = read_write_symbol_collector.read_developer_tools_json()
+
+    # -------------------------------------------------------------------------------------------------
+    def developer_tools_generate(self):
+        """ a method for generating the developer_tools.txt from the given dict
+        """
+
+        program_paths = {
+            "current_dir" : f"{self.current_dir}",
+            "parent_dir" : f"{self.parent_dir}",
+            "agent_files_dir" : f"{self.agent_files_dir}",
+            "ignored_agents_dir" : f"{self.ignored_agents_dir}",
+            "ignored_pipeline_dir" : f"{self.ignored_pipeline_dir}",
+            "llava_library_dir" : f"{self.llava_library_dir}",
+            "ollama_mod_cage_dir" : f"{self.ollama_mod_cage_dir}",
+            "public_wand_dir" : f"{self.public_wand_dir}",
+            "ignored_wand_dir" : f"{self.ignored_wand_dir}",
+            "developer_tools_dir" : f"{self.developer_tools_dir}",
+            "developer_custom_dir" : f"{self.developer_custom_dir}",
+            "conversation_library_dir" : f"{self.conversation_library_dir}",
+            "image_dir" : f"{self.image_dir}",
+            "video_dir" : f"{self.video_dir}",
+        }
+
+        # WriteStorageDictJson requires 2 dictionary args, if 1 is empty it will just write 1
+        developer_custom_dict = self.ReadJsonDict(self.developer_custom_dir)
+        developer_custom_dict = self.reformat_dict_remove_symbol_template(developer_custom_dict)
         
-        self.path_dict = {}
+        # write dictionary data to json
+        self.WriteStorageDictJson(writeJsonPath=self.developer_tools_dir, \
+            portionOneDict=program_paths, portionTwoDict=developer_custom_dict, fileName="developer_tools.txt")
 
+    # -------------------------------------------------------------------------------------------------
+    def read_developer_tools_json(self):
+        developer_dict = self.ReadJsonDict(self.developer_tools_dir)
+        developer_dict_filtered = self.reformat_dict_remove_symbol_template(developer_dict)
+        return developer_dict_filtered
+    
     # -------------------------------------------------------------------------------------------------
     def ReadJsonDict(self, readJsonPath):
         """ A function for reading the data from the template json file which contains the default hex header data,
@@ -50,7 +96,6 @@ class read_write_symbol_collector:
             def readRandomFile (randomFilePath):
                 with open randomFilePath :
                     for line in randomFilePath count all ascii characters, for highest occuring, or most
-
         Args:
             writeJsonPath
         Returns:
@@ -175,15 +220,9 @@ class read_write_symbol_collector:
 
         # write front and back dict data to the given file path
         self.WriteStorageDictJson(writeJsonPath, frontJsonDataDict, backJsonDataDict, fileName)
-    
+
     # -------------------------------------------------------------------------------------------------
-    def path_back_slash_filter(self):
-        for path in self.path_dict:
-            for char in path:
-                re.search()
-    
-    # -------------------------------------------------------------------------------------------------
-    def reformat_dict(self, input_dict):
+    def reformat_dict_remove_symbol_template(self, input_dict):
         """ a method to remove the $(arg.file_name) formatting from provided dictionary
         """
         output_dict = {}
@@ -193,21 +232,8 @@ class read_write_symbol_collector:
         return output_dict
 
     # -------------------------------------------------------------------------------------------------
-    def developer_tools_generate(self):
-        """ a method for generating the developer_tools.txt from the given dict
-        """
-
-        program_paths = {
-            "current_dir" : f"{self.current_dir}",
-            "parent_dir" : f"{self.public_wand}",
-            "ollama_mod_cage" : f"{self.ollama_mod_cage}",
-            "developer_tools" : f"{self.developer_tools}",
-            "developer_custom" : f"{self.developer_custom}"
-        }
-
-        # WriteStorageDictJson requires 2 dictionary args, if 1 is empty it will just write 1
-        developer_custom_dict = self.ReadJsonDict(self.developer_custom)
-        developer_custom_dict = self.reformat_dict(developer_custom_dict)
-        # write dictionary data to json
-        self.WriteStorageDictJson(writeJsonPath=self.developer_tools, \
-            portionOneDict=program_paths, portionTwoDict=developer_custom_dict, fileName="developer_tools.txt")
+    def back_slash_filter_path_dict(self):
+        #TODO FINISH, REPLACE // with //// or / with // for developer tools, self. arg conversion
+        for path in self.path_dict:
+            for char in path:
+                re.search()

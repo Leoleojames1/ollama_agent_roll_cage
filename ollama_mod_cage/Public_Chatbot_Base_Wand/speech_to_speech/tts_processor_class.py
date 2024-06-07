@@ -1,19 +1,11 @@
 """ tts_processor.py
-     copy paste model names:
-        borch/llama3_speed_chat_2
-        borch_llama3_speed_chat
-        borch_llama3_speed_chat
-        c3po
-        Jesus 
-        borch_llama3po 
-        dolphin-llama3 
-        dolphin-mistral 
-        gemma 
-        llama3 
-        mistral 
-        tic_tac
         
-    A class for processing the response sentences and audio generation for the ollama_chat_bot_class
+        A class for processing the response sentences and audio generation for the 
+        ollama_chat_bot_base through hotkeys, flag managers, and a smart speech
+        rendering queue designed to optimize speech speed and speech quality.
+
+created on: 4/20/2024
+by @LeoBorcherding
 """
 
 import sounddevice as sd
@@ -24,25 +16,32 @@ import torch
 import re
 import queue
 from TTS.api import TTS
-import speech_recognition as sr
-from Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
-from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
 import numpy as np
-import scipy.io.wavfile as wav
 import shutil
 
+# -------------------------------------------------------------------------------------------------
 class tts_processor_class:
-    def __init__(self, colors):
+    """ a class for managing the text to speech conversation between the user, ollama, & coqui-tts.
+    """
+    # -------------------------------------------------------------------------------------------------
+    def __init__(self, colors, developer_tools_dict):
         """a method for initializing the class
         """ 
+        self.developer_tools_dict = developer_tools_dict
+        self.current_dir = developer_tools_dict['current_dir']
+        self.parent_dir = developer_tools_dict['parent_dir']
 
-        self.current_dir = os.getcwd()
-        self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library")
-        self.recognize_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\recognize_speech")
-        self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\generate_speech")
-        self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\public_speech\\Public_Voice_Reference_Pack")
-        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\conversation_library")
+        self.speech_dir = developer_tools_dict['speech_dir']
+        self.recognize_speech_dir = developer_tools_dict['recognize_speech_dir']
+        self.generate_speech_dir = developer_tools_dict['generate_speech_dir']
+        self.tts_voice_ref_wav_pack_path = developer_tools_dict['tts_voice_ref_wav_pack_path']
+        self.conversation_library = developer_tools_dict['conversation_library']
+        
+        # self.speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library")
+        # self.recognize_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\recognize_speech")
+        # self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\generate_speech")
+        # self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\public_speech\\Public_Voice_Reference_Pack")
+        # self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\conversation_library")
         self.colors = colors
         
         if torch.cuda.is_available():
@@ -53,9 +52,10 @@ class tts_processor_class:
 
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
         self.audio_queue = queue.Queue()
-    
+
+    # -------------------------------------------------------------------------------------------------
     def process_tts_responses(self, response, voice_name):
-        """a method for managing the response preprocessing methods
+        """A method for managing the response preprocessing methods.
             args: response, voice_name
             returns: none
         """
@@ -71,6 +71,7 @@ class tts_processor_class:
         self.generate_play_audio_loop(tts_response_sentences, voice_name)
         return
 
+    # -------------------------------------------------------------------------------------------------
     def play_audio_from_file(self, filename):
         """A method for audio playback from file."""
         # Check if the file exists
@@ -88,6 +89,7 @@ class tts_processor_class:
         except Exception as e:
             print(f"Failed to play audio from file {filename}. Reason: {e}")
 
+    # -------------------------------------------------------------------------------------------------
     def generate_audio(self, sentence, voice_name_path, ticker):
         """ a method to generate the audio for the chatbot
             args: sentence, voice_name_path, ticker
@@ -103,7 +105,8 @@ class tts_processor_class:
         # Save the audio with a unique name
         filename = os.path.join(self.generate_speech_dir, f"audio_{ticker}.wav")
         sf.write(filename, tts_audio, 22050)
-        
+    
+    # -------------------------------------------------------------------------------------------------
     def generate_play_audio_loop(self, tts_response_sentences, voice_name):
         """ a method to generate and play the audio for the chatbot
             args: tts_sentences
@@ -141,6 +144,7 @@ class tts_processor_class:
         filename = os.path.join(self.generate_speech_dir, f"audio_{ticker}.wav")
         self.play_audio_from_file(filename)
 
+    # -------------------------------------------------------------------------------------------------
     def clear_directory(self, directory):
         """ a method for clearing the directory
             args: directory
@@ -156,6 +160,7 @@ class tts_processor_class:
             except Exception as e:
                 print(f'Failed to delete {file_path}. Reason: {e}')
 
+    # -------------------------------------------------------------------------------------------------
     def split_into_sentences(self, text: str) -> list[str]:
         """A method for splitting the LLAMA response into sentences.
         Args:
@@ -190,6 +195,7 @@ class tts_processor_class:
 
         return combined_sentences
     
+    # -------------------------------------------------------------------------------------------------
     def file_name_voice_filter(self, input):
         """ a method for preprocessing the voice recognition with a filter before forwarding the agent file names.
             args: user_input_agent_name
@@ -199,6 +205,7 @@ class tts_processor_class:
         output = re.sub(' ', '_', input).lower()
         return output
     
+    # -------------------------------------------------------------------------------------------------
     def file_name_conversation_history_filter(self, input):
         """ a method for preprocessing the voice recognition with a filter before forwarding the agent file names.
             args: user_input_agent_name

@@ -6,17 +6,22 @@ import ollama
 import sys
 
 class ollama_commands:
-    def __init__(self, user_input_model_select):
+    def __init__(self, user_input_model_select, developer_tools_dict):
         """a method for initializing the class
         """
         self.user_input_model_select = user_input_model_select
-        self.current_dir = os.getcwd()
-        self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
+        self.developer_tools_dict = developer_tools_dict
         
+        self.current_dir = developer_tools_dict['current_dir']
+        self.parent_dir = developer_tools_dict['parent_dir']
+    
         self.colors = self.get_colors()
 
     def get_colors(self):
+        """ a method for getting the color dictionary for command line print
+            args: none
+            returns: self.colors
+        """
         self.colors = {
             "YELLOW": '\033[93m',
             "GREEN": '\033[92m',
@@ -59,14 +64,6 @@ class ollama_commands:
             "BRIGHT_WHITE": '\033[97m',
         }
         return self.colors
-    
-    def swap(self):
-        """ a method to call when swapping models
-        """
-        self.chat_history = []
-        self.user_input_model_select = input(self.colors['HEADER']+ "<<< PROVIDE AGENT NAME TO SWAP >>> " + self.colors['OKBLUE'])
-        print(f"Model changed to {self.user_input_model_select}")
-        return
     
     def quit(self):
         """ a method for quitting the program """

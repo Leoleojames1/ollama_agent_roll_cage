@@ -9,17 +9,20 @@ import os
 from moviepy.editor import VideoFileClip
 from PIL import Image
 
+# -------------------------------------------------------------------------------------------------
 class data_set_constructor:
-    def __init__(self):
+    # -------------------------------------------------------------------------------------------------
+    def __init__(self, developer_tools_dict):
         """a method for initializing the class
         """
-        self.current_dir = os.getcwd()
-        self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
-        self.pipeline = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\")
-        self.image_dir = os.path.join(self.pipeline, "data_constructor\\image_set")
-        self.video_dir = os.path.join(self.pipeline, "data_constructor\\video_set")
-    
+        self.developer_tools_dict = developer_tools_dict
+        self.current_dir = self.developer_tools_dict['current_dir']
+        self.parent_dir = self.developer_tools_dict['parent_dir']
+        self.ignored_pipeline_dir = self.developer_tools_dict['ignored_pipeline_dir']
+        self.image_dir = self.developer_tools_dict['image_dir']
+        self.video_dir = self.developer_tools_dict['video_dir']
+        
+    # -------------------------------------------------------------------------------------------------
     def splice_video(self, video_path):
         # Load video
         clip = VideoFileClip(video_path)
@@ -42,6 +45,7 @@ class data_set_constructor:
 
         print(f"Frames saved in directory {video_image_dir}")
 
+    # -------------------------------------------------------------------------------------------------
     def generate_image_data(self):  # Changed interval to 30
         # Iterate over all videos in the video directory
         for video_file in os.listdir(self.video_dir):

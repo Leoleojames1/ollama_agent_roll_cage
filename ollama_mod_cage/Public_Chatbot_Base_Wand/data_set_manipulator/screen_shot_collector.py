@@ -4,16 +4,17 @@ import os
 import glob
 import pyautogui
 import time
-
+# -------------------------------------------------------------------------------------------------
 class screen_shot_collector:
-    def __init__(self):
+    # -------------------------------------------------------------------------------------------------
+    def __init__(self, developer_tools_dict):
         """a method for initializing the class
         """
-        self.current_dir = os.getcwd()
-        self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.parent_dir = os.path.abspath(os.path.join(self.parent_dir, os.pardir))
-        self.pipeline = os.path.join(self.parent_dir, "AgentFiles\\pipeline\\")
-
+        self.developer_tools_dict = developer_tools_dict
+        self.current_dir = self.developer_tools_dict['current_dir']
+        self.parent_dir = self.developer_tools_dict['parent_dir']
+        self.pipeline = self.developer_tools_dict['ignored_pipeline_dir']
+    # -------------------------------------------------------------------------------------------------
     def get_screenshot(self):
         """ a method for taking a screenshot
             args: none

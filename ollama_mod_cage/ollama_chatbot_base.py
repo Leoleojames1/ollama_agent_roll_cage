@@ -1,4 +1,4 @@
-""" ollama_chatbot_class.py
+""" ollama_chatbot_base.py
 
     ollama_agent_roll_cage, is a command line interface for STT, & TTS commands with local LLMS.
     It is an easy to install add on for the ollama application.
@@ -47,6 +47,7 @@ from Public_Chatbot_Base_Wand.read_write_symbol_collector import read_write_symb
 from Public_Chatbot_Base_Wand.data_set_manipulator import screen_shot_collector
 from Public_Chatbot_Base_Wand.create_convert_model import create_convert_manager
 
+# TODO setup sebdg emotional classifyer keras 
 # from tensorflow.keras.models import load_model
 # sentiment_model = load_model('D:\\CodingGit_StorageHDD\\model_git\\emotions_classifier\\emotions_classifier.keras')
 
@@ -58,77 +59,142 @@ class ollama_chatbot_base:
     """
 
     # -------------------------------------------------------------------------------------------------
-    def __init__(self, user_input_model_select):
-        """ a method for initializing the class """
-        # Connect api
-        self.url = "http://localhost:11434/api/chat"
-        self.user_input_model_select = user_input_model_select
-        # Setup chat_history
-        self.headers = {'Content-Type': 'application/json'}
+    def __init__(self, wizard_name):
+        """ a method for initializing the ollama_chatbot_base class 
+            Args: user_unput_model_select
+            Returns: none
+        """
+        # get user input model selection
+        self.get_model()
+        self.user_input_model_select = self.user_input_model_select
+        self.wizard_name = wizard_name
+
+        # initialize chat
         self.chat_history = []
         self.llava_history = []
+
         # Default Agent Voice Reference
         self.voice_name = "C3PO"
-        #Initialize tool flags
-        self.leap_flag = True # TODO TURN OFF FOR MINECRAFT
-        self.listen_flag = False # TODO TURN ON FOR MINECRAFT
-        self.latex_flag = False
-        self.llava_flag = False # TODO TURN ON FOR MINECRAFT
-        self.chunk_flag = False
-        self.auto_speech_flag = False #TODO KEEP OFF BY DEFAULT FOR MINECRAFT, TURN ON TO START
-        self.splice_flag = False
-        self.screen_shot_flag = False
-        self.cmd_run_flag = None
 
-        self.sys_prompts = {
-            "borch/phi3_speed_chat" : "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been tuned to respond in a more quick and conversational manner, the user is using speech to text for communication, its also okay to be fun and wild as a phi3 ai assistant. Its also okay to respond with a question, if directed to do something just do it, and realize that not everything needs to be said in one shot, have a back and forth listening to the users response. If the user decides to request a latex math code output, use \[...\] instead of $$...$$ notation, if the user does not request latex, refrain from using latex unless necessary. Do not re-explain your response in a parend or bracketed note: the response... this is annoying and users dont like it.",
-            "Minecraft" : "You are a helpful minecraft assistant, given the provided screenshot data please direct the user immediatedly, prioritize the order in which to inform the player, hostile mobs should be avoided or terminated, danger is a top priority, but so is crafting and building, if they require help quickly guide them to a solution in real time. Please respond in a quick conversational voice, do not read off of documentation, you need to directly explain quickly and effectively whats happening, for example if there is a zombie say something like, watch out thats a Zombie hurry up and kill it or run away, they are dangerous. The recognized Objects around the perimeter are usually items, health, hunger, breath, gui elements, or status affects, please differentiate these objects in the list from 3D objects in the forward facing perspective with hills trees, mobs etc, the items are held by the player and due to the perspective take up the warped edge of the image on the sides. the sky is typically up with a sun or moon and stars, with the dirt below, there is also the nether which is a firey wasteland and cave systems with ore. Please stick to whats relevant to the current user prompt and llava data:"
-            # Add more prompts here as needed
-        }
-
-        self.llava_sys_prompts = {
-            "phi3" : "You are a helpful minecraft assistant...",
-            "Minecraft_llava_sys" : "You are a minecraft llava image recognizer, search for passive mobs, hostile mobs, trees, hills, blocks, and items, given the provided screenshot please provide a dictionary of the objects recognized paired with key attributed about each object, and only 1 sentence to describe anything else that is not captured by the dictionary, do not use more sentences, only list objects with which you have high confidence of recognizing and for low confidence describe shape and object type more heavily to gage hard recognitions. Objects around the perimeter are usually player held items like swords or food, gui elements like items, health, hunger, breath, or status affects, please differentiate these objects in the list from the 3D landscape objects in the forward facing perspective, the items are held by the player traversing the world and can place and remove blocks. Return dictionary and 1 summary sentence:",
-            "Minecraft_llava_prompt" : "given the provided screenshot please provide a dictionary of key value pairs for each object in with image with its relative position, do not use sentences, if you cannot recognize the enemy describe the color and shape as an enemy in the dictionary"
-            # Add more prompts here as needed
-        }
-
-        self.llava_intermediate_prompts = {
-            "phi3_Minecraft_prompt": "Based on the information in LLAVA_DATA please direct the user immediatedly, prioritize the order in which to inform the player of the identified objects, items, hills, trees and passive and hostile mobs etc. Do not output the dictionary list, instead conversationally express what the player needs to do quickly so that they can ask you more questions.",
-        }
-        
         # Default conversation name
         self.save_name = "default"
         self.load_name = "default"
 
-        #TODO ADD FILE PATH COLLECTOR, MANAGER, PARSER & a developer_tools.txt to house said paths.
+        # TODO Connect api
+        self.url = "http://localhost:11434/api/chat" #TODO REMOVE
+
+        # Setup chat_history
+        self.headers = {'Content-Type': 'application/json'}
+
+        # get base path
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-        self.ignored_agents = os.path.join(self.parent_dir, "AgentFiles\\Ignored_Agents\\") 
-        self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\conversation_library")
-        self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\Ignored_pipeline\\conversation_library\\{self.user_input_model_select}\\{self.save_name}.json")
-        self.llava_library = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\llava_library")
 
-        # TODO developer_tools.txt file for custom path library
-        self.model_git = 'D:\\CodingGit_StorageHDD\\model_git\\'
+        # setup developer_tool.json
+        self.developer_tools = os.path.abspath(os.path.join(self.current_dir, "developer_tools.json"))
 
-        self.ollama_command_instance = ollama_commands(user_input_model_select)
-        self.colors = self.ollama_command_instance.colors
-
-        self.screen_shot_collector_instance = screen_shot_collector()
-        self.json_chat_history_instance = json_chat_history()
+        # get read write instance
         self.read_write_symbol_collector_instance = read_write_symbol_collector()
-        self.data_set_video_process_instance = data_set_constructor()
-        self.model_write_class_instance = model_write_class(self.colors)
-        self.create_convert_manager_instance = create_convert_manager(self.colors)
 
+        # TODO if the developer tools file exists
+        if hasattr(self, 'developer_tools'):
+            self.developer_tools_dict = self.read_write_symbol_collector_instance.read_developer_tools_json()
+
+        # setup base paths from developer tools path library
+        self.ignored_agents = self.developer_tools_dict['ignored_agents_dir']
+        self.llava_library = self.developer_tools_dict['llava_library_dir']
+        self.model_git_dir = self.developer_tools_dict['model_git_dir']
+        self.conversation_library = self.developer_tools_dict['conversation_library_dir']
+
+        # build conversation save path
+        self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\Ignored_pipeline\\conversation_library\\{self.user_input_model_select}\\{self.save_name}.json")
+
+        # TEXT SECTION:
+        self.latex_flag = False
+        self.cmd_run_flag = None
+
+        # SPEECH SECTION:
+        self.leap_flag = True # TODO TURN OFF FOR MINECRAFT
+        self.listen_flag = False # TODO TURN ON FOR MINECRAFT
+        self.chunk_flag = False
+        self.auto_speech_flag = False #TODO KEEP OFF BY DEFAULT FOR MINECRAFT, TURN ON TO START
+
+        # VISION SECTION:
+        self.llava_flag = False # TODO TURN ON FOR MINECRAFT
+        self.splice_flag = False
+        self.screen_shot_flag = False
+
+        # ollama chatbot base setup wand class instantiation
+        self.ollama_command_instance = ollama_commands(self.user_input_model_select, self.developer_tools_dict)
+        self.colors = self.ollama_command_instance.colors
+        # get data
+        self.screen_shot_collector_instance = screen_shot_collector(self.developer_tools_dict)
+        self.json_chat_history_instance = json_chat_history(self.developer_tools_dict)
+        self.data_set_video_process_instance = data_set_constructor(self.developer_tools_dict)
+        # generate
+        self.model_write_class_instance = model_write_class(self.colors, self.developer_tools_dict)
+        self.create_convert_manager_instance = create_convert_manager(self.colors, self.developer_tools_dict)
+
+    # -------------------------------------------------------------------------------------------------  
+    def get_model(self):
+        """ a method for collecting the model name from the user input
+        """
+        HEADER = '\033[95m'
+        OKBLUE = '\033[94m'
+        self.user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
+    
+    # -------------------------------------------------------------------------------------------------
+    def swap(self):
+        """ a method to call when swapping models
+        """
+        self.chat_history = []
+        self.user_input_model_select = input(self.colors['HEADER']+ "<<< PROVIDE AGENT NAME TO SWAP >>> " + self.colors['OKBLUE'])
+        print(f"Model changed to {self.user_input_model_select}")
+        return
+    
     # -------------------------------------------------------------------------------------------------      
     def system_prompt_manager(self, sys_prompt_select):
-        if sys_prompt_select in self.prompts:
-            self.chat_history.append({"role": "system", "content": self.prompts[sys_prompt_select]})
+        """ a method for managing the current system prompt when called, based on the user_input_model_select 
+            for automated fast shot prompting.
+            Args: sys_prompt_select
+            Returns: sys+prompt_select
+        """
+        # text model system prompts
+        self.sys_prompts = {
+            "borch/phi3_speed_chat" : "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been tuned to respond in a more quick and conversational manner, the user is using speech to text for communication, its also okay to be fun and wild as a phi3 ai assistant. Its also okay to respond with a question, if directed to do something just do it, and realize that not everything needs to be said in one shot, have a back and forth listening to the users response. If the user decides to request a latex math code output, use \[...\] instead of $$...$$ notation, if the user does not request latex, refrain from using latex unless necessary. Do not re-explain your response in a parend or bracketed note: the response... this is annoying and users dont like it.",
+            "Minecraft" : "You are a helpful minecraft assistant, given the provided screenshot data please direct the user immediatedly, prioritize the order in which to inform the player, hostile mobs should be avoided or terminated, danger is a top priority, but so is crafting and building, if they require help quickly guide them to a solution in real time. Please respond in a quick conversational voice, do not read off of documentation, you need to directly explain quickly and effectively whats happening, for example if there is a zombie say something like, watch out thats a Zombie hurry up and kill it or run away, they are dangerous. The recognized Objects around the perimeter are usually items, health, hunger, breath, gui elements, or status affects, please differentiate these objects in the list from 3D objects in the forward facing perspective with hills trees, mobs etc, the items are held by the player and due to the perspective take up the warped edge of the image on the sides. the sky is typically up with a sun or moon and stars, with the dirt below, there is also the nether which is a firey wasteland and cave systems with ore. Please stick to whats relevant to the current user prompt and llava data:"
+            #TODO add text prompts for the following ideas:
+            # latex pdf book library rag
+            # c3po adventure
+            # rick and morty adveture
+            # phi3 & llama3 fast shot prompting 
+            # linked in, redbubble, oarc - advertising server api for laptop
+        }
+
+        # llava system prompts
+        self.llava_sys_prompts = {
+            "phi3" : "You are a helpful phi3-vision assistant, please describe the screen share being sent to you from the OARC user, they are requesting image recognition from you:",
+            "Minecraft_llava_sys" : "You are a minecraft llava image recognizer, search for passive mobs, hostile mobs, trees, hills, blocks, and items, given the provided screenshot please provide a dictionary of the objects recognized paired with key attributed about each object, and only 1 sentence to describe anything else that is not captured by the dictionary, do not use more sentences, only list objects with which you have high confidence of recognizing and for low confidence describe shape and object type more heavily to gage hard recognitions. Objects around the perimeter are usually player held items like swords or food, gui elements like items, health, hunger, breath, or status affects, please differentiate these objects in the list from the 3D landscape objects in the forward facing perspective, the items are held by the player traversing the world and can place and remove blocks. Return dictionary and 1 summary sentence:",
+            "Minecraft_llava_prompt" : "given the provided screenshot please provide a dictionary of key value pairs for each object in with image with its relative position, do not use sentences, if you cannot recognize the enemy describe the color and shape as an enemy in the dictionary"
+            #TODO add text prompts for the following ideas:
+        }
+
+        # llava fast shot prompts
+        self.llava_intermediate_prompts = {
+            "phi3_Minecraft_prompt": "Based on the information in LLAVA_DATA please direct the user immediatedly, prioritize the order in which to inform the player of the identified objects, items, hills, trees and passive and hostile mobs etc. Do not output the dictionary list, instead conversationally express what the player needs to do quickly so that they can ask you more questions.",
+            #TODO add text prompts for the following ideas:
+        }
+
+        # if user model select is in system prompt dictionaries, append fast shot to the chat accordingly
+        if sys_prompt_select in self.sys_prompts:
+            self.chat_history.append({"role": "system", "content": self.sys_prompts[sys_prompt_select]})
+        elif sys_prompt_select in self.llava_sys_prompts:
+            self.chat_history.append({"role": "system", "content": self.llava_sys_prompts[sys_prompt_select]})
+        elif sys_prompt_select in self.llava_intermediate_prompts:
+            self.chat_history.append({"role": "system", "content": self.llava_intermediate_prompts[sys_prompt_select]})
         else:
             print("Invalid choice. Please select a valid prompt.")
-        return sys_prompt_select
+        return
 
     # -------------------------------------------------------------------------------------------------   
     def llava_prompt_manager(self, sys_prompt_select):
@@ -146,14 +212,15 @@ class ollama_chatbot_base:
         """
         #TODO ADD IF MEM OFF CLEAR HISTORY
         self.chat_history = []
+        #TODO ADD screen shot {clock & manager}
         self.screenshot_path = os.path.join(self.llava_library, "screenshot.png")
 
-        #TODO ADD SYSTEM PROMP MANAGER FOR DIFFERENT MODES
-        # Minecraft
-        # self.chat_history.append({"role": "system", "content": "You are a helpful minecraft assistant, given the provided screenshot data please direct the user immediatedly, prioritize the order in which to inform the player, hostile mobs should be avoided or terminated, danger is a top priority, but so is crafting and building, if they require help quickly guide them to a solution in real time. Please respond in a quick conversational voice, do not read off of documentation, you need to directly explain quickly and effectively whats happening, for example if there is a zombie say something like, watch out thats a Zombie hurry up and kill it or run away, they are dangerous. The recognized Objects around the perimeter are usually items, health, hunger, breath, gui elements, or status affects, please differentiate these objects in the list from 3D objects in the forward facing perspective with hills trees, mobs etc, the items are held by the player and due to the perspective take up the warped edge of the image on the sides. the sky is typically up with a sun or moon and stars, with the dirt below, there is also the nether which is a firey wasteland and cave systems with ore. Please stick to whats relevant to the current user prompt and llava data:"})
-        # phi3 speed chat
-        # self.chat_history.append({"role": "system", "content": "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been tuned to respond in a more quick and conversational manner, the user is using speech to text for communication, its also okay to be fun and wild as a phi3 ai assistant. Its also okay to respond with a question, if directed to do something just do it, and realize that not everything needs to be said in one shot, have a back and forth listening to the users response. If the user decides to request a latex math code output, use \[...\] instead of $$...$$ notation, if the user does not request latex, refrain from using latex unless necessary. Do not re-explain your response in a parend or bracketed note: the response... this is annoying and users dont like it."})
-        
+        # start prompt shot if flag is True TODO setup modular custom prompt selection
+        self.prompt_shot_flag = False # TODO SETUP FLAG LOGIC
+        if self.prompt_shot_flag is True:
+            sys_prompt_select = f"{self.user_input_model_select}"
+            self.system_prompt_manager(sys_prompt_select)
+
         # append user prompt
         self.chat_history.append({"role": "user", "content": user_input_prompt})
 
@@ -163,8 +230,10 @@ class ollama_chatbot_base:
             with open(f'{self.screenshot_path}', 'rb') as f:
                 user_screenshot_raw2 = base64.b64encode(f.read()).decode('utf-8')
                 self.user_screenshot_raw = user_screenshot_raw2
+            #TODO manage user_input_prompt for llava model during conversation
             llava_response = self.llava_prompt(user_screenshot_raw2, user_input_prompt)
             print(f"LLAVA SOURCE: {llava_response}")
+            # TODO DOES THIS DO ANYTHING? I DONT THINK SO
             self.chat_history.append({"role": "assistant", "content": f"LLAVA_DATA: {llava_response}"})
             self.chat_history.append({"role": "user", "content": "Based on the information in LLAVA_DATA please direct the user immediatedly, prioritize the order in which to inform the player of the identified objects, items, hills, trees and passive and hostile mobs etc. Do not output the dictionary list, instead conversationally express what the player needs to do quickly so that they can ask you more questions."})
 
@@ -180,11 +249,12 @@ class ollama_chatbot_base:
             return f"Error: {e}"
         
     # -------------------------------------------------------------------------------------------------   
-    def llava_prompt(self, user_screenshot_raw2, user_input_prompt):
+    def llava_prompt(self, user_screenshot_raw2, llava_user_input_prompt):
         """ a method for prompting the model
             args: user_input_prompt, user_input_model_select, search_google
             returns: none
         """
+        self.llava_user_input_prompt = llava_user_input_prompt
         self.llava_history = []
         self.llava_history.append({"role": "system", "content": "You are a minecraft llava image recognizer, search for passive mobs, hostile mobs, trees, hills, blocks, and items, given the provided screenshot please provide a dictionary of the objects recognized paired with key attributed about each object, and only 1 sentence to describe anything else that is not captured by the dictionary, do not use more sentences, only list objects with which you have high confidence of recognizing and for low confidence describe shape and object type more heavily to gage hard recognitions. Objects around the perimeter are usually player held items like swords or food, gui elements like items, health, hunger, breath, or status affects, please differentiate these objects in the list from the 3D landscape objects in the forward facing perspective, the items are held by the player traversing the world and can place and remove blocks. Return dictionary and 1 summary sentence:"})
         message = {"role": "user", "content": "given the provided screenshot please provide a dictionary of key value pairs for each object in with image with its relative position, do not use sentences, if you cannot recognize the enemy describe the color and shape as an enemy in the dictionary"}
@@ -219,31 +289,28 @@ class ollama_chatbot_base:
             Args: user_input_prompt
             Returns: user_input_prompt
         """ 
+        # Parse for general commands (non token specific args)
         user_input_prompt = re.sub(r"activate swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate create", "/create", user_input_prompt, flags=re.IGNORECASE)
-
         user_input_prompt = re.sub(r"activate listen on", "/listen on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate listen on", "/listen off", user_input_prompt, flags=re.IGNORECASE)
-
         user_input_prompt = re.sub(r"activate speech on", "/speech on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate speech off", "/speech off", user_input_prompt, flags=re.IGNORECASE)
-
         user_input_prompt = re.sub(r"activate leap on", "/leap on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate leap off", "/leap off", user_input_prompt, flags=re.IGNORECASE)
-
         user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
-
         user_input_prompt = re.sub(r"activate show model", "/show model", user_input_prompt, flags=re.IGNORECASE)
 
-        # Search for the name after 'forward slash voice swap'
+        # Parse for Token Specific Arg Commands
+        # Parse for the name after 'forward slash voice swap'
         match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.voice_name = match.group(2)
             self.voice_name = self.tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
 
-        # Search for the name after 'forward slash movie'
+        # Parse for the name after 'forward slash movie'
         match = re.search(r"(activate movie|/movie) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.movie_name = match.group(2)
@@ -251,7 +318,7 @@ class ollama_chatbot_base:
         else:
             self.movie_name = None
 
-        # Search for the name after 'activate save'
+        # Parse for the name after 'activate save'
         match = re.search(r"(activate save as|/save as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.save_name = match.group(2)
@@ -260,7 +327,7 @@ class ollama_chatbot_base:
         else:
             self.save_name = None
 
-        # Search for the name after 'activate load'
+        # Parse for the name after 'activate load'
         match = re.search(r"(activate load as|/load as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.load_name = match.group(2)
@@ -269,7 +336,7 @@ class ollama_chatbot_base:
         else:
             self.load_name = None
 
-        # Search for the name after 'forward slash voice swap'
+        # Parse for the name after 'forward slash voice swap'
         match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.tensor_name = match.group(2)
@@ -284,7 +351,7 @@ class ollama_chatbot_base:
             Returns: command_library[command_str]
         """
         command_library = {
-            "/swap": lambda: self.ollama_command_instance.swap(),
+            "/swap": lambda: self.swap(),
             "/voice swap": lambda: self.voice_swap(),
             "/save as": lambda: self.json_chat_history_instance.save_to_json(),
             "/load as": lambda: self.json_chat_history_instance.load_from_json(),
@@ -334,7 +401,10 @@ class ollama_chatbot_base:
             return cmd_run_flag
 
     # -------------------------------------------------------------------------------------------------   
-    def get_audio(self, ):
+    def get_audio(self):
+        """ a method for getting the user audio from the microphone
+            args: none
+        """
         print(">>AUDIO RECORDING<<")
         p = pyaudio.PyAudio()
         stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
@@ -366,7 +436,10 @@ class ollama_chatbot_base:
     
     # -------------------------------------------------------------------------------------------------
     def chatbot_main(self):
-        """ a method for managing the current chatbot instance loop """
+        """ a method for managing the current chatbot instance loop 
+            args: None
+            returns: None
+        """
         # wait to load tts & latex until needed
         self.latex_render_instance = None
         self.tts_processor_instance = None
@@ -451,19 +524,25 @@ class ollama_chatbot_base:
     # -------------------------------------------------------------------------------------------------
     def instance_tts_processor(self):
         if not hasattr(self, 'tts_processor_instance') or self.tts_processor_instance is None:
-            self.tts_processor_instance = tts_processor_class(self.colors)
+            self.tts_processor_instance = tts_processor_class(self.colors, self.developer_tools_dict)
         return self.tts_processor_instance
     
     # -------------------------------------------------------------------------------------------------   
     def leap(self, flag):
-        """ a method for changing the leap flag """
+        """ a method for changing the leap flag 
+            args: flag
+            returns: none
+        """
         self.leap_flag = flag
         print(f"leap_flag FLAG STATE: {self.leap_flag}")
         return
     
     # -------------------------------------------------------------------------------------------------   
     def speech(self, flag1, flag2):
-        """ a method for changing the speech flags """
+        """ a method for changing the speech to speech flags 
+            args: flag1, flag2
+            returns: none
+        """
         if flag2 == True:
             self.tts_processor_instance = self.instance_tts_processor()
         self.leap_flag = flag1
@@ -473,14 +552,20 @@ class ollama_chatbot_base:
         return
     # -------------------------------------------------------------------------------------------------   
     def latex(self, flag):
-        """ a method for changing the latex flag """
+        """ a method for changing the latex render gui flag 
+            args: flag
+            returns: none
+        """
         self.latex_flag = flag
         print(f"latex_flag FLAG STATE: {self.latex_flag}")        
         return
     
     # -------------------------------------------------------------------------------------------------   
     def llava_flow(self, flag):
-        """ a method for changing the listen flag """
+        """ a method for changing the llava image recognition flag 
+            args: flag
+            returns: none
+        """
         self.llava_flag = flag
         print(f"llava_flag FLAG STATE: {self.llava_flag}")
         return
@@ -488,6 +573,8 @@ class ollama_chatbot_base:
     # -------------------------------------------------------------------------------------------------   
     def voice_swap(self):
         """ a method to call when swapping voices
+            args: none
+            returns: none
         """
         # Search for the name after 'forward slash voice swap'
         print(f"Agent voice swapped to {self.voice_name}")
@@ -496,7 +583,10 @@ class ollama_chatbot_base:
     
     # -------------------------------------------------------------------------------------------------   
     def listen(self, flag):
-        """ a method for changing the listen flag """
+        """ a method for changing the listen flag 
+            args: flag
+            return: none
+        """
         if flag == True:
             self.tts_processor_instance = self.instance_tts_processor()
         self.listen_flag = flag
@@ -505,7 +595,10 @@ class ollama_chatbot_base:
 
     # -------------------------------------------------------------------------------------------------   
     def auto_commands(self, flag):
-        """ a method for auto_command flag """
+        """ a method for auto_command flag 
+            args: flag
+            return: none
+        """
         self.auto_commands_flag = flag
         print(f"auto_commands FLAG STATE: {self.auto_commands_flag}")
         return
