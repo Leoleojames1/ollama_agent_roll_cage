@@ -34,9 +34,8 @@ class tts_processor_class:
         self.speech_dir = developer_tools_dict['speech_dir']
         self.recognize_speech_dir = developer_tools_dict['recognize_speech_dir']
         self.generate_speech_dir = developer_tools_dict['generate_speech_dir']
-        self.tts_voice_ref_wav_pack_path = developer_tools_dict['tts_voice_ref_wav_pack_path']
-        self.conversation_library = developer_tools_dict['conversation_library']
-        
+        self.tts_voice_ref_wav_pack_path = developer_tools_dict['tts_voice_ref_wav_pack_path_dir']
+        self.conversation_library = developer_tools_dict['conversation_library_dir']
         # self.speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library")
         # self.recognize_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\recognize_speech")
         # self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\generate_speech")

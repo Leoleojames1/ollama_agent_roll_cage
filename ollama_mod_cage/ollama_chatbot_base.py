@@ -447,8 +447,8 @@ class ollama_chatbot_base:
         print(self.colors["OKCYAN"] + "Press space bar to record audio:" + self.colors["OKCYAN"])
         print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
 
-        keyboard.add_hotkey('ctrl+a+d', self.auto_speech_set, args=(True,))
-        keyboard.add_hotkey('ctrl+s+w', self.chunk_speech, args=(True,))
+        keyboard.add_hotkey('ctrl+w', self.auto_speech_set, args=(True,))
+        keyboard.add_hotkey('ctrl+s', self.chunk_speech, args=(True,))
 
         while True:
             user_input_prompt = ""

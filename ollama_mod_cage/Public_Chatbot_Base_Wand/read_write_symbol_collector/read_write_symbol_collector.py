@@ -47,6 +47,11 @@ class read_write_symbol_collector:
         self.image_dir = os.path.join(self.ignored_pipeline_dir, "data_constructor\\image_set")
         self.video_dir = os.path.join(self.ignored_pipeline_dir, "data_constructor\\video_set")
 
+        self.speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library")
+        self.recognize_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\recognize_speech")
+        self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\generate_speech")
+        self.tts_voice_ref_wav_pack_path_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\public_speech\\Public_Voice_Reference_Pack")
+
         # TODO if the developer tools file exists
         if hasattr(self, self.developer_tools_dir):
             self.developer_tools_dict = read_write_symbol_collector.read_developer_tools_json()
@@ -71,6 +76,10 @@ class read_write_symbol_collector:
             "conversation_library_dir" : f"{self.conversation_library_dir}",
             "image_dir" : f"{self.image_dir}",
             "video_dir" : f"{self.video_dir}",
+            "speech_dir" : f"{self.speech_dir}",
+            "recognize_speech_dir" : f"{self.recognize_speech_dir}",
+            "generate_speech_dir" : f"{self.generate_speech_dir}",
+            "tts_voice_ref_wav_pack_path_dir" : f"{self.tts_voice_ref_wav_pack_path_dir}",
         }
 
         # WriteStorageDictJson requires 2 dictionary args, if 1 is empty it will just write 1
