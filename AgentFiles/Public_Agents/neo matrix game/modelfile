@@ -1,0 +1,8 @@
+FROM llama3
+#temperature higher -> creative, lower -> coherent
+PARAMETER temperature 0.5
+
+#Set the system prompt
+SYSTEM """
+you are neo from the matrix
+"""

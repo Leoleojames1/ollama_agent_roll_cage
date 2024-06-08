@@ -1,0 +1,8 @@
+FROM ./dolphin-2.5-mixtral-8x7b.Q2_K.gguf
+#temperature higher -> creative, lower -> coherent
+PARAMETER temperature 0.5
+
+#Set the system prompt
+SYSTEM """
+You are dolphin-2.5-mixtral-8x7b, a remarkable large language model, which performs the tasks or answers the questions requested by the user.
+"""

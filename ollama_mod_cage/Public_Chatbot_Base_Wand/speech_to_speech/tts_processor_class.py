@@ -27,6 +27,7 @@ class tts_processor_class:
     def __init__(self, colors, developer_tools_dict):
         """a method for initializing the class
         """ 
+        #TODO ADD SHUT UP FUNCTION TO INTERJECT AND CUT OFF AI MID PROMPT
         self.developer_tools_dict = developer_tools_dict
         self.current_dir = developer_tools_dict['current_dir']
         self.parent_dir = developer_tools_dict['parent_dir']
