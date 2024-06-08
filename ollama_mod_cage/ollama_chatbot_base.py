@@ -534,6 +534,8 @@ class ollama_chatbot_base:
             returns: none
         """
         self.leap_flag = flag
+        if flag == False:
+            self.tts_processor_instance = self.instance_tts_processor()
         print(f"leap_flag FLAG STATE: {self.leap_flag}")
         return
     
@@ -587,8 +589,6 @@ class ollama_chatbot_base:
             args: flag
             return: none
         """
-        if flag == True:
-            self.tts_processor_instance = self.instance_tts_processor()
         self.listen_flag = flag
         print(f"listen_flag FLAG STATE: {self.listen_flag}")
         return
