@@ -19,6 +19,9 @@ https://www.youtube.com/watch?v=2IBPWCKCKjE
 **/voice /save as 0.24 DEMO, INSTALL, & SETUP VIDEO 3:**
 https://www.youtube.com/watch?v=xfQSfTJcPpA
 
+**/llava flow 0.26 DEMO MINECRAFT IMAGE RECOGNITION:**
+https://www.youtube.com/watch?v=szd1wIOc034&t=53s
+
 <img
 src="docs/Manual_Commands/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
