@@ -1,6 +1,6 @@
 ***NOTE: This tool is a culmination of many different pieces of software however I want to share how amazing bing chat has been for testing and deploying new functions for each class in the program. Just thank you microsoft bing is amazing now. (and a big thanks to OpenAI for helping them do that)***
 
-# ollama_agent_roll_cage (OARC) V0.26.3: WORKING SPEECH BUGFIX
+# 👽 ollama_agent_roll_cage (OARC) V0.26.3 🤬
 
 ollama discord community resource obsidian document:
 
