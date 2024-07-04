@@ -10,15 +10,16 @@ by @LeoBorcherding
 import os
 import json
 
-from Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
+# from Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
 
 class json_chat_history:
     """ a class for writing the json history to the json files
     """
     # -------------------------------------------------------------------------------------------------
-    def __init__(self, developer_tools_dict):
+    def __init__(self, developer_tools_dict, directory_manager_class):
         """a method for initializing the class
         """
+        self.directory_manager_class = directory_manager_class
         self.developer_tools_dict = developer_tools_dict
         self.current_dir = developer_tools_dict['current_dir']
         self.parent_dir = developer_tools_dict['parent_dir']
@@ -34,7 +35,7 @@ class json_chat_history:
         self.user_input_model_select = user_input_model_select
         file_save_path_dir = os.path.join(self.conversation_library, f"{self.user_input_model_select}")
         file_save_path_str = os.path.join(file_save_path_dir, f"{self.save_name}.json")
-        directory_manager_class.create_directory_if_not_exists(file_save_path_dir)
+        self.directory_manager_class.create_directory_if_not_exists(file_save_path_dir)
         
         print(f"file path 1:{file_save_path_dir} \n")
         print(f"file path 2:{file_save_path_str} \n")
@@ -58,8 +59,9 @@ class json_chat_history:
             file_load_path_dir = os.path.join(self.conversation_library, self.user_input_model_select)
 
         file_load_path_str = os.path.join(file_load_path_dir, f"{self.load_name}.json")
-        directory_manager_class.create_directory_if_not_exists(file_load_path_dir)
+        self.directory_manager_class.create_directory_if_not_exists(file_load_path_dir)
         print(f"file path 1:{file_load_path_dir} \n")
         print(f"file path 2:{file_load_path_str} \n")
         with open(file_load_path_str, "r") as json_file:
             self.chat_history = json.load(json_file)
+        

@@ -8,6 +8,8 @@
 import os
 from moviepy.editor import VideoFileClip
 from PIL import Image
+import numpy as np
+import soundfile as sf
 
 # -------------------------------------------------------------------------------------------------
 class data_set_constructor:
@@ -21,6 +23,7 @@ class data_set_constructor:
         self.ignored_pipeline_dir = self.developer_tools_dict['ignored_pipeline_dir']
         self.image_dir = self.developer_tools_dict['image_dir']
         self.video_dir = self.developer_tools_dict['video_dir']
+        self.agent_files_dir = self.developer_tools_dict['agent_files_dir']
         
     # -------------------------------------------------------------------------------------------------
     def splice_video(self, video_path):
@@ -52,3 +55,40 @@ class data_set_constructor:
             if video_file.endswith('.mp4'):
                 video_path = os.path.join(self.video_dir, video_file)
                 self.splice_video(video_path)  # Splice video every 'interval' seconds
+
+    # -------------------------------------------------------------------------------------------------
+    def call_convert(self):
+        # Example usage: D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Public_Agents\C3PO\c3po_train_set_2\wav_set
+        input_wav = f"{self.agent_files_dir}\Public_Agents\C3PO\c3po_train_set_2\wav_set\C3PO_long_train_1_r2_2_16.wav"
+        output_wav = f"{self.agent_files_dir}\Public_Agents\C3PO\c3po_train_set_2\wav_set\C3PO_long_train_1_r2_2_16.wav"
+        converter = FloatConverter(input_wav, output_wav, target_dtype="float8")
+        converter.convert()
+        
+# -------------------------------------------------------------------------------------------------
+class FloatConverter:
+    # -------------------------------------------------------------------------------------------------
+    def __init__(self, input_path, output_path, target_dtype="float32"):
+        self.input_path = input_path
+        self.output_path = output_path
+        self.target_dtype = target_dtype
+
+    # -------------------------------------------------------------------------------------------------
+    def convert(self):
+        try:
+            # Read the float16 WAV file
+            audio_data, sample_rate = sf.read(self.input_path)
+
+            # Convert to the target dtype
+            if self.target_dtype == "float32":
+                converted_data = audio_data.astype(np.float32)
+            elif self.target_dtype == "float8":
+                converted_data = (audio_data * 127).astype(np.int8) / 127.0
+            else:
+                raise ValueError("Invalid target dtype. Choose 'float32' or 'float8'.")
+
+            # Write the converted data to a new WAV file
+            sf.write(self.output_path, converted_data, sample_rate)
+
+            print(f"Conversion successful! Saved as {self.output_path}")
+        except Exception as e:
+            print(f"Error during conversion: {e}")

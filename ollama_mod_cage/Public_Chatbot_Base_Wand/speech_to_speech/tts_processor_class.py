@@ -15,34 +15,39 @@ import os
 import torch
 import re
 import queue
+# from Garden_chatbot_Base_Wand.coqui import TTS
 from TTS.api import TTS
 import numpy as np
 import shutil
+import time
+import keyboard
 
 # -------------------------------------------------------------------------------------------------
 class tts_processor_class:
     """ a class for managing the text to speech conversation between the user, ollama, & coqui-tts.
     """
     # -------------------------------------------------------------------------------------------------
-    def __init__(self, colors, developer_tools_dict):
+    def __init__(self, colors, developer_tools_dict, voice_type, voice_name):
         """a method for initializing the class
         """ 
-        #TODO ADD SHUT UP FUNCTION TO INTERJECT AND CUT OFF AI MID PROMPT
+        self.voice_type = voice_type
+        self.voice_name = voice_name
+        self.colors = colors
+        self.is_multi_speaker = None
+        
+        # get file paths from developer tools dictionary
         self.developer_tools_dict = developer_tools_dict
         self.current_dir = developer_tools_dict['current_dir']
         self.parent_dir = developer_tools_dict['parent_dir']
-
         self.speech_dir = developer_tools_dict['speech_dir']
         self.recognize_speech_dir = developer_tools_dict['recognize_speech_dir']
         self.generate_speech_dir = developer_tools_dict['generate_speech_dir']
         self.tts_voice_ref_wav_pack_path = developer_tools_dict['tts_voice_ref_wav_pack_path_dir']
         self.conversation_library = developer_tools_dict['conversation_library_dir']
-        # self.speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library")
-        # self.recognize_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\recognize_speech")
-        # self.generate_speech_dir = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\speech_library\\generate_speech")
-        # self.tts_voice_ref_wav_pack_path = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\public_speech\\Public_Voice_Reference_Pack")
-        # self.conversation_library = os.path.join(self.parent_dir, "AgentFiles\\Ignored_pipeline\\conversation_library")
-        self.colors = colors
+        self.voice_name_reference_speech_path = None  # Initialize the attribute
+
+        # get colors
+        # self.colors = colors
         
         if torch.cuda.is_available():
             self.device = "cuda"
@@ -50,8 +55,68 @@ class tts_processor_class:
             self.device = "cpu"
             print("CUDA-compatible GPU is not available. Using CPU instead. If you believe this should not be the case, reinstall torch-audio with the correct version.")
 
-        self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
+        #TODO XTTS fine-tune selector and path manager
+        # create instances for each voice model, tts processor should re instance if voice is changed, and if name is not in fine tune folder, then search for voice in default voice reference
+        
+        #======================
+        #TODO for each xtts finetune print each name and ask user to select which to instance, 1, 2, 3, 4, ...
+
+        # self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
+
+        # self.tts = \
+        #         TTS(model_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_C3PO/", 
+        #                     config_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_C3PO/config.json", progress_bar=False, gpu=True).to(self.device)
+
+        #TODO implement default voice on startup with voice selector on /voice swap
+        # self.tts = \
+        #         TTS(model_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_CarliG/", 
+        #                     config_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_CarliG/config.json", progress_bar=False, gpu=True).to(self.device)
+
+        # ask for voice selection from user? or have default
+        # print("initializing tts")
+        # self.initialize_tts_model()
+
+        print("made it here")
+        fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
+        fine_tuned_model_path = os.path.join(fine_tuned_dir, f"XTTS-v2_{self.voice_name}")
+        reference_wav_path = os.path.join(fine_tuned_model_path, "reference.wav")
+        print(f"{fine_tuned_model_path}")
+        if os.path.exists(fine_tuned_model_path):
+            # Use fine-tuned model (single-speaker)
+            print("taking finetune path.")
+            config_path = os.path.join(fine_tuned_model_path, "config.json")
+            self.tts = TTS(model_path=fine_tuned_model_path, config_path=config_path, progress_bar=False, gpu=True).to(self.device)
+            self.is_multi_speaker = False
+            self.voice_name_reference_speech_path = reference_wav_path  # Not needed for fine-tuned model
+        else:
+            print("taking base xtts path.")
+            # Use base XTTS model with voice reference (multi-speaker)
+            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
+            self.is_multi_speaker = True
+            self.voice_name_reference_speech_path = os.path.join(self.tts_voice_ref_wav_pack_path, self.voice_name, "clone_speech.wav")
+
         self.audio_queue = queue.Queue()
+
+    # -------------------------------------------------------------------------------------------------
+    def initialize_tts_model(self):
+        print("made it here")
+        fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
+        fine_tuned_model_path = os.path.join(fine_tuned_dir, f"XTTS-v2_{self.voice_name}")
+        reference_wav_path = os.path.join(fine_tuned_model_path, "reference.wav")
+        print(f"{fine_tuned_model_path}")
+        if os.path.exists(fine_tuned_model_path):
+            # Use fine-tuned model (single-speaker)
+            print("taking finetune path.")
+            config_path = os.path.join(fine_tuned_model_path, "config.json")
+            self.tts = TTS(model_path=fine_tuned_model_path, config_path=config_path, progress_bar=False, gpu=True).to(self.device)
+            self.is_multi_speaker = False
+            self.voice_name_reference_speech_path = reference_wav_path  # Not needed for fine-tuned model
+        else:
+            print("taking base xtts path.")
+            # Use base XTTS model with voice reference (multi-speaker)
+            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
+            self.is_multi_speaker = True
+            self.voice_name_reference_speech_path = os.path.join(self.tts_voice_ref_wav_pack_path, self.voice_name, "clone_speech.wav")
 
     # -------------------------------------------------------------------------------------------------
     def process_tts_responses(self, response, voice_name):
@@ -90,14 +155,17 @@ class tts_processor_class:
             print(f"Failed to play audio from file {filename}. Reason: {e}")
 
     # -------------------------------------------------------------------------------------------------
-    def generate_audio(self, sentence, voice_name_path, ticker):
+    # def generate_audio(self, sentence, voice_name_reference_speech_path, ticker):
+    def generate_audio(self, sentence, ticker):
         """ a method to generate the audio for the chatbot
             args: sentence, voice_name_path, ticker
             returns: none
         """
-        # Generate TTS audio (replace with your actual TTS logic)
-        print("starting speech generation:")
-        tts_audio = self.tts.tts(text=sentence, speaker_wav=voice_name_path, language="en", speed=3)
+        print(self.colors["LIGHT_CYAN"] + "🔊 generating audio for current sentence chunk 🔊:" + self.colors["RED"])
+        # if self.is_multi_speaker:
+        tts_audio = self.tts.tts(text=sentence, speaker_wav=self.voice_name_reference_speech_path, language="en", speed=3)
+        # else:
+        #     tts_audio = self.tts.tts(text=sentence, language="en", speed=3)
 
         # Convert to NumPy array (adjust dtype as needed)
         tts_audio = np.array(tts_audio, dtype=np.float32)
@@ -112,37 +180,63 @@ class tts_processor_class:
             args: tts_sentences
             returns: none
         """
-        ticker = 0  # Initialize ticker
-        voice_name_path = os.path.join(self.tts_voice_ref_wav_pack_path, f"{voice_name}\\clone_speech.wav")
+        # Shut up Feature - during audio playback loop, interupt model and allow user to overwride chat at current audio out to stop the model from talking and input new speech.
+        #TODO add, if "spacebar pressed". or "microphone input on" or "smart whisper prompting" with speech recognized 
+        # data decomposition combined with alternative methods for quitting the speech and moving to the next message or question for the model
+        # write conversation history and explain which line the user cut the model off at and explain that the user is now on the next prompt and didnt care to hear
+        # the audio out from the last conversation.
 
-        # Generate the audio for the first sentence
-        audio_thread = threading.Thread(target=self.generate_audio, args=(tts_response_sentences[0], voice_name_path, ticker))
-        audio_thread.start()
+        #TODO smart listen & whisper, smart listen_v2 podcast moderator and fact checker.
+        voice_name_reference_speech_path = os.path.join(self.tts_voice_ref_wav_pack_path, f"{voice_name}\\clone_speech.wav")
+        
+        audio_queue = queue.Queue(maxsize=2)  # Queue to hold generated audio
+        interrupted = False
+        generation_complete = False
 
-        for sentence in tts_response_sentences[1:]:
-            # Wait for the audio file to be generated
-            audio_thread.join()
+        def generate_audio_thread():
+            nonlocal generation_complete
+            for i, sentence in enumerate(tts_response_sentences):
+                if interrupted:
+                    break
+                self.generate_audio(sentence, i)
+                audio_queue.put(i)
+            generation_complete = True
 
-            # Construct the filename
-            filename = os.path.join(self.generate_speech_dir, f"audio_{ticker}.wav")
+        # Start the audio generation thread
+        threading.Thread(target=generate_audio_thread, daemon=True).start()
 
-            # Play the audio from file in a separate thread
-            play_thread = threading.Thread(target=self.play_audio_from_file, args=(filename,))
-            play_thread.start()
+        ticker = 0
+        while not (generation_complete and audio_queue.empty()) and not interrupted:
+            try:
+                current_ticker = audio_queue.get(timeout=0.1)
+                filename = os.path.join(self.generate_speech_dir, f"audio_{current_ticker}.wav")
+                
+                play_thread = threading.Thread(target=self.play_audio_from_file, args=(filename,))
+                play_thread.start()
 
-            ticker += 1  # Increment ticker
+                while play_thread.is_alive():
+                    if keyboard.is_pressed('shift+alt'):
+                        sd.stop()  # Stop the currently playing audio
+                        interrupted = True
+                        break
+                    time.sleep(0.1)  # Small sleep to prevent busy-waiting
 
-            # Start generating the audio for the next sentence
-            audio_thread = threading.Thread(target=self.generate_audio, args=(sentence, voice_name_path, ticker))
-            audio_thread.start()
+                play_thread.join()
+                ticker += 1
 
-            # Wait for the audio to finish playing before moving on to the next sentence
-            play_thread.join()
+            except queue.Empty:
+                continue  # If queue is empty, continue waiting
 
-        # Handle the last sentence
-        audio_thread.join()
-        filename = os.path.join(self.generate_speech_dir, f"audio_{ticker}.wav")
-        self.play_audio_from_file(filename)
+        if interrupted:
+            print(self.colors["BRIGHT_YELLOW"] + "Speech interrupted by user." + self.colors["RED"])
+            self.clear_remaining_audio_files(ticker, len(tts_response_sentences))
+            
+    # -------------------------------------------------------------------------------------------------
+    def clear_remaining_audio_files(self, start_ticker, total_sentences):
+        for i in range(start_ticker, total_sentences):
+            filename = os.path.join(self.generate_speech_dir, f"audio_{i}.wav")
+            if os.path.exists(filename):
+                os.remove(filename)
 
     # -------------------------------------------------------------------------------------------------
     def clear_directory(self, directory):
@@ -167,6 +261,11 @@ class tts_processor_class:
             text (str): The input text.
         Returns:
             list[str]: List of sentences.
+
+            #TODO retrain c3po with shorter sentences and more even volume distribution
+
+            #TODO maximum split must be less than 250 token
+                - no endless sentences, ->blocks of 11 seconds, if more the model will speed up to fit it in that space where you control multiple generations
         """
         # Add spaces around punctuation marks for consistent splitting
         text = " " + text + " "
@@ -194,23 +293,3 @@ class tts_processor_class:
                 i += 1
 
         return combined_sentences
-    
-    # -------------------------------------------------------------------------------------------------
-    def file_name_voice_filter(self, input):
-        """ a method for preprocessing the voice recognition with a filter before forwarding the agent file names.
-            args: user_input_agent_name
-            returns: user_input_agent_name
-        """
-        # Use regex to replace all spaces with underscores
-        output = re.sub(' ', '_', input).lower()
-        return output
-    
-    # -------------------------------------------------------------------------------------------------
-    def file_name_conversation_history_filter(self, input):
-        """ a method for preprocessing the voice recognition with a filter before forwarding the agent file names.
-            args: user_input_agent_name
-            returns: user_input_agent_name
-        """
-        # Use regex to replace all spaces with underscores and convert to lowercase
-        output = re.sub(' ', '_', input).lower()
-        return output

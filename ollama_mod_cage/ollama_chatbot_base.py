@@ -35,6 +35,9 @@ import base64
 import keyboard
 import pyaudio
 import speech_recognition as sr
+import curses
+import threading
+import json
 
 from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
 from Public_Chatbot_Base_Wand.speech_to_speech import tts_processor_class
@@ -42,10 +45,14 @@ from Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
 from Public_Chatbot_Base_Wand.latex_render import latex_render_class
 from Public_Chatbot_Base_Wand.data_set_manipulator import data_set_constructor
 from Public_Chatbot_Base_Wand.write_modelfile import model_write_class
-from Public_Chatbot_Base_Wand.chat_history import json_chat_history
 from Public_Chatbot_Base_Wand.read_write_symbol_collector import read_write_symbol_collector
 from Public_Chatbot_Base_Wand.data_set_manipulator import screen_shot_collector
 from Public_Chatbot_Base_Wand.create_convert_model import create_convert_manager
+from Public_Chatbot_Base_Wand.node_custom_methods import FileSharingNode
+import pandas as pd
+import pyarrow.parquet as pq
+from datasets import Dataset
+import sounddevice as sd
 
 # TODO setup sebdg emotional classifyer keras 
 # from tensorflow.keras.models import load_model
@@ -53,28 +60,49 @@ from Public_Chatbot_Base_Wand.create_convert_model import create_convert_manager
 
 # -------------------------------------------------------------------------------------------------
 class ollama_chatbot_base:
-    """ A class for accessing the ollama local serve api via python, and creating new custom agents.
-    The ollama_chatbot_class is also used for accessing Speech to Text transcription/Text to Speech Generation methods via a speedy
-    low level, command line interface and the Tortoise TTS model.
+    """ 
+    This class provides an interface to the Ollama local serve API for creating custom chatbot agents.
+    It also provides access to Speech-to-Text transcription and Text-to-Speech generation methods via a low-level command line interface and the Tortoise TTS model.
     """
 
     # -------------------------------------------------------------------------------------------------
-    def __init__(self, wizard_name):
-        """ a method for initializing the ollama_chatbot_base class 
-            Args: user_unput_model_select
-            Returns: none
+    # def __init__(self, agent_id, pad, win, lock, stdscr):
+    def __init__(self):
+        """ 
+        Initialize the ollama_chatbot_base class with the given agent ID, model name, pad, window, and lock.
+
+        Args:
+            agent_id (int): The ID of the agent.
+            model_name (str): The name of the model to use for the chatbot.
+            pad (curses.pad): The pad to use for the chatbot's interface.
+            win (curses.window): The window to use for the chatbot's interface.
+            lock (threading.Lock): A threading lock to ensure thread-safe operations.
         """
+        # initialize pads from curses
+        # self.lock = lock
+        self.pads = []
+        # self.win = win
+        # self.agent_id = agent_id
+        self.user_input_model_select = None
+        # self.pad = pad
+        self.user_input_prompt = ""
+        # self.stdscr = stdscr
+        # get speech interrupt
+        self.speech_interrupted = False
+        
         # get user input model selection
         self.get_model()
         self.user_input_model_select = self.user_input_model_select
-        self.wizard_name = wizard_name
 
         # initialize chat
         self.chat_history = []
         self.llava_history = []
 
         # Default Agent Voice Reference
-        self.voice_name = "C3PO"
+        #TODO add voice reference file manager
+        # self.voice_name = "C3PO"
+        self.voice_type = None
+        self.voice_name = None
 
         # Default conversation name
         self.save_name = "default"
@@ -105,8 +133,9 @@ class ollama_chatbot_base:
         self.llava_library = self.developer_tools_dict['llava_library_dir']
         self.model_git_dir = self.developer_tools_dict['model_git_dir']
         self.conversation_library = self.developer_tools_dict['conversation_library_dir']
+        self.tts_voice_ref_wav_pack_path = self.developer_tools_dict['tts_voice_ref_wav_pack_path_dir']
 
-        # build conversation save path
+        # build conversation save path #TODO ADD TO DEV DICT
         self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\Ignored_pipeline\\conversation_library\\{self.user_input_model_select}\\{self.save_name}.json")
 
         # TEXT SECTION:
@@ -127,21 +156,24 @@ class ollama_chatbot_base:
         # ollama chatbot base setup wand class instantiation
         self.ollama_command_instance = ollama_commands(self.user_input_model_select, self.developer_tools_dict)
         self.colors = self.ollama_command_instance.colors
+        self.directory_manager_class = directory_manager_class()
         # get data
         self.screen_shot_collector_instance = screen_shot_collector(self.developer_tools_dict)
-        self.json_chat_history_instance = json_chat_history(self.developer_tools_dict)
+        # splice data
         self.data_set_video_process_instance = data_set_constructor(self.developer_tools_dict)
         # generate
         self.model_write_class_instance = model_write_class(self.colors, self.developer_tools_dict)
         self.create_convert_manager_instance = create_convert_manager(self.colors, self.developer_tools_dict)
-
+        # peer2peer node
+        self.FileSharingNode_instance = FileSharingNode(host="127.0.0.1", port=9876)
+        
     # -------------------------------------------------------------------------------------------------  
     def get_model(self):
         """ a method for collecting the model name from the user input
         """
         HEADER = '\033[95m'
         OKBLUE = '\033[94m'
-        self.user_input_model_select = input(HEADER + "<<< PROVIDE AGENT NAME >>> " + OKBLUE)
+        self.user_input_model_select = input(HEADER + "<<< PROVIDE MODEL NAME >>> " + OKBLUE)
     
     # -------------------------------------------------------------------------------------------------
     def swap(self):
@@ -151,6 +183,41 @@ class ollama_chatbot_base:
         self.user_input_model_select = input(self.colors['HEADER']+ "<<< PROVIDE AGENT NAME TO SWAP >>> " + self.colors['OKBLUE'])
         print(f"Model changed to {self.user_input_model_select}")
         return
+    
+    # -------------------------------------------------------------------------------------------------   
+    def get_audio(self):
+        """ a method for getting the user audio from the microphone
+            args: none
+        """
+        print(">>AUDIO RECORDING<<")
+        p = pyaudio.PyAudio()
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
+        frames = []
+
+        while self.auto_speech_flag and not self.chunk_flag:
+            data = stream.read(1024)
+            frames.append(data)
+
+        print(">>AUDIO RECEIVED<<")
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        # Convert the audio data to an AudioData object
+        audio = sr.AudioData(b''.join(frames), 16000, 2)
+        self.chunk_flag = False  # Set chunk_flag to False here to indicate that the audio has been received
+        return audio
+    
+    # -------------------------------------------------------------------------------------------------   
+    def recognize_speech(self, audio):
+        """ a method for calling the speech recognizer
+            args: audio
+            returns: speech_str
+        """
+        #TODO Realized current implementation calls google API, must replace with LOCAL SPEECH RECOGNITION MODEL
+        speech_str = sr.Recognizer().recognize_google(audio)
+        print(f">>{speech_str}<<")
+        return speech_str
     
     # -------------------------------------------------------------------------------------------------      
     def system_prompt_manager(self, sys_prompt_select):
@@ -204,6 +271,25 @@ class ollama_chatbot_base:
             print("Invalid choice. Please select a valid prompt.")
         return sys_prompt_select
     
+    # -------------------------------------------------------------------------------------------------
+    def shot_prompt(self, prompt):
+        # Clear chat history
+        self.shot_history = []
+
+        # Append user prompt
+        self.chat_history.append({"role": "user", "content": prompt})
+
+        try:
+            response = ollama.generate(model=self.user_input_model_select, messages=self.shot_history, stream=False)
+            if isinstance(response, dict) and "message" in response:
+                model_response = response.get("message")
+                self.chat_history.append(model_response)
+                return model_response["content"]
+            else:
+                return "Error: Response from model is not in the expected format"
+        except Exception as e:
+            return f"Error: {e}"
+    
     # -------------------------------------------------------------------------------------------------   
     def send_prompt(self, user_input_prompt):
         """ a method for prompting the model
@@ -211,7 +297,7 @@ class ollama_chatbot_base:
             returns: none
         """
         #TODO ADD IF MEM OFF CLEAR HISTORY
-        self.chat_history = []
+        # self.chat_history = []
         #TODO ADD screen shot {clock & manager}
         self.screenshot_path = os.path.join(self.llava_library, "screenshot.png")
 
@@ -292,7 +378,7 @@ class ollama_chatbot_base:
         # Parse for general commands (non token specific args)
         user_input_prompt = re.sub(r"activate swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate create", "/create", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama create", "/llama create", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate listen on", "/listen on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate listen on", "/listen off", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate speech on", "/speech on", user_input_prompt, flags=re.IGNORECASE)
@@ -301,20 +387,20 @@ class ollama_chatbot_base:
         user_input_prompt = re.sub(r"activate leap off", "/leap off", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate show model", "/show model", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate show model", "/llama show", user_input_prompt, flags=re.IGNORECASE)
 
         # Parse for Token Specific Arg Commands
-        # Parse for the name after 'forward slash voice swap'
-        match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.voice_name = match.group(2)
-            self.voice_name = self.tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
+        # # Parse for the name after 'forward slash voice swap'
+        # match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        # if match:
+        #     self.voice_name = match.group(2)
+        #     self.voice_name = self.tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
 
         # Parse for the name after 'forward slash movie'
         match = re.search(r"(activate movie|/movie) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.movie_name = match.group(2)
-            self.movie_name = self.tts_processor_instance.file_name_conversation_history_filter(self.movie_name)
+            self.movie_name = self.file_name_conversation_history_filter(self.movie_name)
         else:
             self.movie_name = None
 
@@ -322,7 +408,7 @@ class ollama_chatbot_base:
         match = re.search(r"(activate save as|/save as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.save_name = match.group(2)
-            self.save_name = self.tts_processor_instance.file_name_conversation_history_filter(self.save_name)
+            self.save_name = self.file_name_conversation_history_filter(self.save_name)
             print(f"save_name string: {self.save_name}")
         else:
             self.save_name = None
@@ -331,7 +417,7 @@ class ollama_chatbot_base:
         match = re.search(r"(activate load as|/load as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.load_name = match.group(2)
-            self.load_name = self.tts_processor_instance.file_name_conversation_history_filter(self.load_name)
+            self.load_name = self.file_name_conversation_history_filter(self.load_name)
             print(f"load_name string: {self.load_name}")
         else:
             self.load_name = None
@@ -343,18 +429,19 @@ class ollama_chatbot_base:
 
         return user_input_prompt
     
-
     # -------------------------------------------------------------------------------------------------
     def command_select(self, command_str):
-        """ a method for selecting the command to execute
+        """ 
+            Parse user_input_prompt as command_str to see if their is a command to select & execute for the current chatbot instance
+
             Args: command_str
             Returns: command_library[command_str]
         """
         command_library = {
             "/swap": lambda: self.swap(),
             "/voice swap": lambda: self.voice_swap(),
-            "/save as": lambda: self.json_chat_history_instance.save_to_json(),
-            "/load as": lambda: self.json_chat_history_instance.load_from_json(),
+            "/save as": lambda: self.save_to_json(self.save_name, self.user_input_model_select),
+            "/load as": lambda: self.load_from_json(self.load_name, self.user_input_model_select),
             "/write modelfile": lambda: self.model_write_class_instance.write_model_file(),
             "/convert tensor": lambda: self.create_convert_manager_instance.safe_tensor_gguf_convert(self.tensor_name),
             "/convert gguf": lambda: self.model_write_class_instance.write_model_file_and_run_agent_create_gguf(self.listen_flag, self.model_git),
@@ -373,15 +460,18 @@ class ollama_chatbot_base:
             "/auto on": lambda: self.auto_speech_set(True),
             "/auto off": lambda: self.auto_speech_set(False),
             "/quit": lambda: self.ollama_command_instance.quit(),
-            "/ollama create": lambda: self.ollama_command_instance.ollama_create(),
-            "/ollama show": lambda: self.ollama_command_instance.ollama_show_modelfile(),
-            "/ollama template": lambda: self.ollama_command_instance.ollama_show_template(),
-            "/ollama license": lambda: self.ollama_command_instance.ollama_show_license(),
-            "/ollama list": lambda: self.ollama_command_instance.ollama_list(),
+            "/llama create": lambda: self.ollama_command_instance.ollama_create(),
+            "/llama show": lambda: self.ollama_command_instance.ollama_show_modelfile(),
+            "/llama template": lambda: self.ollama_command_instance.ollama_show_template(),
+            "/llama license": lambda: self.ollama_command_instance.ollama_show_license(),
+            "/llama list": lambda: self.ollama_command_instance.ollama_list(),
             "/splice video": lambda: self.data_set_video_process_instance.generate_image_data(),
-            "/developer new" : lambda: self.read_write_symbol_collector_instance.developer_tools_generate()
+            "/developer new" : lambda: self.read_write_symbol_collector_instance.developer_tools_generate(),
+            "/start node": lambda: self.FileSharingNode_instance.start_node(),
+            "/synthetic generator": lambda: self.generate_synthetic_data(),
+            "/convert wav": lambda: self.data_set_video_process_instance.call_convert()
         }
-
+        
         # Find the command in the command string
         command = next((cmd for cmd in command_library.keys() if command_str.startswith(cmd)), None)
 
@@ -399,132 +489,338 @@ class ollama_chatbot_base:
         else:
             cmd_run_flag = False
             return cmd_run_flag
-
-    # -------------------------------------------------------------------------------------------------   
-    def get_audio(self):
-        """ a method for getting the user audio from the microphone
-            args: none
+        
+    # -------------------------------------------------------------------------------------------------
+    def file_name_conversation_history_filter(self, input):
+        """ a method for preprocessing the voice recognition with a filter before forwarding the agent file names.
+            args: user_input_agent_name
+            returns: user_input_agent_name
         """
-        print(">>AUDIO RECORDING<<")
-        p = pyaudio.PyAudio()
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
-        frames = []
-
-        while self.auto_speech_flag and not self.chunk_flag:
-            data = stream.read(1024)
-            frames.append(data)
-
-        print(">>AUDIO RECEIVED<<")
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
-
-        # Convert the audio data to an AudioData object
-        audio = sr.AudioData(b''.join(frames), 16000, 2)
-        self.chunk_flag = False  # Set chunk_flag to False here to indicate that the audio has been received
-        return audio
-    
-    # -------------------------------------------------------------------------------------------------   
-    def recognize_speech(self, audio):
-        """ a method for calling the speech recognizer
-            args: audio
-            returns: speech_str
-        """
-        speech_str = sr.Recognizer().recognize_google(audio)
-        print(f">>{speech_str}<<")
-        return speech_str
+        # Use regex to replace all spaces with underscores and convert to lowercase
+        output = re.sub(' ', '_', input).lower()
+        return output
     
     # -------------------------------------------------------------------------------------------------
-    def chatbot_main(self):
-        """ a method for managing the current chatbot instance loop 
-            args: None
-            returns: None
+    def file_name_voice_filter(self, input):
+        """ a method for preprocessing the voice recognition with a filter before forwarding the agent file names.
+            args: user_input_agent_name
+            returns: user_input_agent_name
         """
-        # wait to load tts & latex until needed
-        self.latex_render_instance = None
-        self.tts_processor_instance = None
-
-        print(self.colors["OKCYAN"] + "Press space bar to record audio:" + self.colors["OKCYAN"])
-        print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
-
-        keyboard.add_hotkey('ctrl+w', self.auto_speech_set, args=(True,))
-        keyboard.add_hotkey('ctrl+s', self.chunk_speech, args=(True,))
-
+        # Use regex to replace all spaces with underscores
+        output = re.sub(' ', '_', input).lower()
+        return output
+    
+    # -------------------------------------------------------------------------------------------------
+    def get_available_voices(self):
+        # Get list of fine-tuned models
+        fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
+        fine_tuned_voices = [d[8:] for d in os.listdir(fine_tuned_dir) if os.path.isdir(os.path.join(fine_tuned_dir, d)) and d.startswith("XTTS-v2_")]
+        
+        # Get list of voice reference samples
+        reference_voices = [d for d in os.listdir(self.tts_voice_ref_wav_pack_path) if os.path.isdir(os.path.join(self.tts_voice_ref_wav_pack_path, d))]
+        
+        return fine_tuned_voices, reference_voices
+    
+    # -------------------------------------------------------------------------------------------------
+    def get_voice_selection(self):
+        print("Available voices:")
+        fine_tuned_voices, reference_voices = self.get_available_voices()
+        all_voices = fine_tuned_voices + reference_voices
+        for i, voice in enumerate(all_voices):
+            print(f"{i + 1}. {voice}")
+        
         while True:
-            user_input_prompt = ""
-            speech_done = False
-            cmd_run_flag = False
-
-            if self.listen_flag | self.auto_speech_flag is True:
-                self.tts_processor_instance = self.instance_tts_processor()
-                while self.auto_speech_flag is True:  # user holds down the space bar
-                    try:
-                        # Record audio from microphone
-                        audio = self.get_audio()
-                        if self.listen_flag is True:
-                            # Recognize speech to text from audio
-                            user_input_prompt = self.recognize_speech(audio)
-                            print(f">>SPEECH RECOGNIZED<< >> {user_input_prompt} <<")
-                            speech_done = True
-                            self.chunk_flag = False
-                            print(f"CHUNK FLAG STATE: {self.chunk_flag}")
-                            self.auto_speech_flag = False
-                    except sr.UnknownValueError:
-                        print(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
-                    except sr.RequestError as e:
-                        print(self.colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + self.colors["OKCYAN"])
-            elif self.listen_flag is False:
-                print(self.colors["OKCYAN"] + "Please type your selected prompt:" + self.colors["OKCYAN"])
-                user_input_prompt = input(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
-                speech_done = True
-            user_input_prompt = self.voice_command_select_filter(user_input_prompt)
-            cmd_run_flag = self.command_select(user_input_prompt)
-            # get screenshot
-            if self.llava_flag is True:
-                self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
-            # splice videos
-            if self.splice_flag == True:
-                self.data_set_video_process_instance.generate_image_data()
-            if cmd_run_flag == False and speech_done == True:
-                print(self.colors["YELLOW"] + f"{user_input_prompt}" + self.colors["OKCYAN"])
-                # Send the prompt to the assistant
-                if self.screen_shot_flag is True:
-                    response = self.send_prompt(user_input_prompt)
-                    self.screen_shot_flag = False
+            selection = input("Select a voice (enter the number): ")
+            try:
+                index = int(selection) - 1
+                if 0 <= index < len(all_voices):
+                    selected_voice = all_voices[index]
+                    if selected_voice in fine_tuned_voices:
+                        self.voice_name = selected_voice
+                        self.voice_type = "fine_tuned"
+                    else:
+                        self.voice_name = selected_voice
+                        self.voice_type = "reference"
+                    return
                 else:
-                    response = self.send_prompt(user_input_prompt)
-                print(self.colors["RED"] + f"<<< {self.user_input_model_select} >>> " + self.colors["RED"] + f"{response}" + self.colors["RED"])
-                # Check for latex and add to queue
-                if self.latex_flag:
-                    # Create a new instance
-                    latex_render_instance = latex_render_class()
-                    latex_render_instance.add_latex_code(response, self.user_input_model_select)
-                # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
-                # Clear speech cache and split the response into sentences for next TTS cache
-                if self.leap_flag is not None and isinstance(self.leap_flag, bool):
-                    if self.leap_flag != True:
-                        self.tts_processor_instance.process_tts_responses(response, self.voice_name)
-                elif self.leap_flag is None:
-                    pass
-                # Start the mainloop in the main thread
-                print(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
+                    print("Invalid selection. Please try again.")
+            except ValueError:
+                print("Please enter a valid number.")
+
+    # -------------------------------------------------------------------------------------------------   
+    def save_to_json(self, save_name, user_input_model_select):
+        """ a method for saving the current agent conversation history
+            Args: filename
+            Returns: none
+        """
+        self.save_name = save_name
+        self.user_input_model_select = user_input_model_select
+        file_save_path_dir = os.path.join(self.conversation_library, f"{self.user_input_model_select}")
+        file_save_path_str = os.path.join(file_save_path_dir, f"{self.save_name}.json")
+        self.directory_manager_class.create_directory_if_not_exists(file_save_path_dir)
+        
+        print(f"file path 1:{file_save_path_dir} \n")
+        print(f"file path 2:{file_save_path_str} \n")
+        with open(file_save_path_str, "w") as json_file:
+            json.dump(self.chat_history, json_file, indent=2)
+
+    # -------------------------------------------------------------------------------------------------   
+    def load_from_json(self, load_name, user_input_model_select):
+        """ a method for loading the directed conversation history to the current agent, mis matching
+        agents and history may be bizarre
+            Args: filename
+            Returns: none
+        """
+        self.load_name = load_name
+        self.user_input_model_select = user_input_model_select
+
+        # Check if user_input_model_select contains a slash
+        if "/" in self.user_input_model_select:
+            user_dir, model_dir = self.user_input_model_select.split("/")
+            file_load_path_dir = os.path.join(self.conversation_library, user_dir, model_dir)
+        else:
+            file_load_path_dir = os.path.join(self.conversation_library, self.user_input_model_select)
+
+        file_load_path_str = os.path.join(file_load_path_dir, f"{self.load_name}.json")
+        self.directory_manager_class.create_directory_if_not_exists(file_load_path_dir)
+        print(f"file path 1:{file_load_path_dir} \n")
+        print(f"file path 2:{file_load_path_str} \n")
+        with open(file_load_path_str, "r") as json_file:
+            self.chat_history = json.load(json_file)
+
+    # # -------------------------------------------------------------------------------------------------
+    # def print_to_win(self, message):
+    #     """
+    #     Print the given message to the chatbot's window and refresh the window.
+
+    #     Args:
+    #         message (str): The message to print.
+    #     """
+    #     if self.win is None:
+    #         raise ValueError("self.win is None")
+    #     if not isinstance(message, str):
+    #         raise TypeError("message must be a string")
+    #     try:
+    #         self.win.addstr(message)
+    #         self.win.refresh()
+    #     except curses.error as e:
+    #         raise RuntimeError(f"An error occurred while printing to the window: {e}") from e
+
+    # # -------------------------------------------------------------------------------------------------
+    # def update_pad(self):
+    #     """
+    #     Continuously update the chatbot's pad with the user's input and refresh the pad.
+    #     """
+    #     while True:
+    #         if self.user_input_prompt:
+    #             try:
+    #                 with self.lock:  # Acquire the lock before updating the UI
+    #                     self.pad.addstr(self.user_input_prompt)  # Add the user input to the pad
+    #                     self.win.refresh()
+    #                     self.pad.refresh(0, 0, 0, 0, self.win.getmaxyx()[0], self.win.getmaxyx()[1])  # Refresh the pad after adding the user's input
+    #                     self.user_input_prompt = ""
+    #             except curses.error as e:
+    #                 print(f"An error occurred while updating the pad: {e}")
+
+    # # -------------------------------------------------------------------------------------------------
+    # def capture_keys(self):
+    #     """
+    #     Continuously capture keys from the user and update the user's input accordingly.
+    #     """
+    #     user_input = ""
+    #     self.win.nodelay(True)
+    #     while True:
+    #         key = self.win.getch()
+    #         if key == ord('\n'):
+    #             self.user_input_prompt = user_input
+    #             print(f"user_input_prompt is set to: {user_input}")
+    #             user_input = ""
+    #             self.update_pad()  # Update the pad after a newline is entered
+    #         elif key == curses.KEY_BACKSPACE:
+    #             user_input = user_input[:-1]
+    #         elif key >= ord(' ') and key <= ord('~'):
+    #             user_input += chr(key)
+    #         elif key == -1:
+    #             continue
+
+    # # -------------------------------------------------------------------------------------------------
+    # def handle_resize(self):
+    #     """
+    #     Handles screen resizing. Updates the size and position of each chatbot's
+    #     window and pad to fit the new screen size.
+
+    #     Args:
+    #         None
+    #     Returns:
+    #         None
+    #     """
+    #     if self.chatbot is None:
+    #         return
+
+    #     max_y, max_x = self.stdscr.getmaxyx()
+    #     win_height = max_y
+    #     win_width = max_x - 2
+    #     win_y = 0
+    #     win_x = 1
+    #     try:
+    #         self.chatbot.win.resize(win_height, win_width)
+    #         self.chatbot.win.mvwin(win_y, win_x)
+    #         self.chatbot.pad.resize(100, win_width)
+    #     except curses.error as e:
+    #         self.stdscr.addstr(0, 0, f"Resize error: {e}\n")
+    #         self.stdscr.refresh()
+
+    # # -------------------------------------------------------------------------------------------------
+    # def highlight_current_chatbot(self):
+    #     """
+    #     Highlights the currently selected chatbot by drawing a box around its window.
+    #     All other chatbots are unhighlighted.
+
+    #     Args:
+    #         None
+
+    #     Returns:
+    #         None
+    #     """
+    #     # Only highlight if a chatbot instance is currently selected
+    #     if self.chatbot is not None:
+    #         # Set the color of the chatbot window to highlight
+    #         self.chatbot.win.attron(curses.color_pair(2))
+    #         # Draw a box around the chatbot window
+    #         self.chatbot.win.box()
+    #         # Turn off the highlight color
+    #         self.chatbot.win.attroff(curses.color_pair(2))
+    #         # Refresh the screen after updating the frame
+    #         self.stdscr.refresh()  # Refresh the screen after updating the frame
+            
+    # # -------------------------------------------------------------------------------------------------
+    # def chatbot_main(self):
+    #     """
+    #     The main loop for the chatbot. This method manages the chatbot instance, handling user input and chatbot responses.
+    #     """
+
+    #     try:
+    #         # Get the model name
+    #         self.stdscr.addstr("<<< PROVIDE MODEL NAME >>> ", curses.color_pair(1))
+    #         self.stdscr.refresh()
+    #         self.user_input_model_select = self.stdscr.getstr().decode('utf-8')
+
+    #         print(f"chatbot_main is being called for {self.user_input_model_select}")
+
+    #         # Start the update method in a separate thread
+    #         update_pad_thread = threading.Thread(target=self.update_pad)
+    #         update_pad_thread.start()
+
+    #         self.latex_render_instance = None
+    #         self.tts_processor_instance = None
+
+    #         self.print_to_win("Press space bar to record audio:")
+    #         self.print_to_win("<<< USER >>> ")
+
+    #         keyboard.add_hotkey('ctrl+w', self.auto_speech_set, args=(True,))
+    #         keyboard.add_hotkey('ctrl+s', self.chunk_speech, args=(True,))
+
+    #         # Start the capture_keys method in a separate thread
+    #         capture_keys_thread = threading.Thread(target=self.capture_keys)
+    #         capture_keys_thread.start()
+
+    #         while True:
+    #             user_input_prompt = ""
+    #             speech_done = False
+    #             cmd_run_flag = False
+
+    #             if self.listen_flag or self.auto_speech_flag:
+    #                 self.tts_processor_instance = self.instance_tts_processor()
+    #                 while self.auto_speech_flag:  # user holds down the space bar
+    #                     try:
+    #                         # Record audio from microphone
+    #                         audio = self.get_audio()
+    #                         if self.listen_flag:
+    #                             # Recognize speech to text from audio
+    #                             user_input_prompt = self.recognize_speech(audio)
+    #                             self.print_to_win(f">>SPEECH RECOGNIZED<< >> {user_input_prompt} <<")
+    #                             speech_done = True
+    #                             self.chunk_flag = False
+    #                             self.print_to_win(f"CHUNK FLAG STATE: {self.chunk_flag}")
+    #                             self.auto_speech_flag = False
+    #                     except sr.UnknownValueError:
+    #                         self.print_to_win(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
+    #                     except sr.RequestError as e:
+    #                         self.print_to_win(self.colors["OKCYAN"] + f"Could not request results from Google Speech Recognition service: {e}" + self.colors["OKCYAN"])
+    #             elif not self.listen_flag:
+    #                 self.print_to_win(self.colors["OKCYAN"] + "Please type your selected prompt:" + self.colors["OKCYAN"])
+    #                 user_input_prompt = input(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
+    #                 speech_done = True
+    #             user_input_prompt = self.voice_command_select_filter(user_input_prompt)
+    #             cmd_run_flag = self.command_select(user_input_prompt)
+    #             # get screenshot
+    #             if self.llava_flag:
+    #                 self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
+    #             # splice videos
+    #             if self.splice_flag:
+    #                 self.data_set_video_process_instance.generate_image_data()
+    #             if not cmd_run_flag and speech_done:
+    #                 self.print_to_win(f"{user_input_prompt}\n")
+    #                 # Send the prompt to the assistant
+    #                 if self.screen_shot_flag:
+    #                     response = self.send_prompt(user_input_prompt)
+    #                     self.screen_shot_flag = False
+    #                 else:
+    #                     response = self.send_prompt(user_input_prompt)
+    #                 self.print_to_win(f"<<< {self.user_input_model_select} >>> {response}\n")
+
+    #                 if self.latex_flag:
+    #                     # Create a new instance
+    #                     latex_render_instance = latex_render_class()
+    #                     latex_render_instance.add_latex_code(response, self.user_input_model_select)
+    #                 # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
+    #                 # Clear speech cache and split the response into sentences for next TTS cache
+    #                 if self.leap_flag is not None and not self.leap_flag:
+    #                     self.tts_processor_instance.process_tts_responses(response, self.voice_name)
+    #                 elif self.leap_flag is None:
+    #                     pass
+    #                 # Start the mainloop in the main thread
+    #                 self.print_to_win(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
+    #     except Exception as e:
+    #         print(f"An error occurred in the thread for {self.user_input_model_select}: {e}")
 
     # -------------------------------------------------------------------------------------------------   
     def chunk_speech(self, value):
+        """
+        This method sets the chunk_flag to the given value and prints its state.
+        The chunk_flag is used to control whether the speech input should be chunked.
+
+        Args:
+            value (bool): The value to set the chunk_flag to.
+        """
         # time.sleep(1)
         self.chunk_flag = value
         print(f"chunk_flag FLAG STATE: {self.chunk_flag}")
 
     # -------------------------------------------------------------------------------------------------   
     def auto_speech_set(self, value):
+        """
+        This method sets the auto_speech_flag and chunk_flag to the given value and False respectively, and prints the state of auto_speech_flag.
+        The auto_speech_flag is used to control whether the speech input should be automatically processed.
+
+        Args:
+            value (bool): The value to set the auto_speech_flag to.
+        """
         self.auto_speech_flag = value
         self.chunk_flag = False
         print(f"auto_speech_flag FLAG STATE: {self.auto_speech_flag}")
 
     # -------------------------------------------------------------------------------------------------
-    def instance_tts_processor(self):
+    def instance_tts_processor(self, voice_type, voice_name):
+        """
+        This method creates a new instance of the tts_processor_class if it doesn't already exist, and returns it.
+        The tts_processor_class is used for processing text-to-speech responses.
+
+        Returns:
+            tts_processor_instance (tts_processor_class): The instance of the tts_processor_class.
+        """
         if not hasattr(self, 'tts_processor_instance') or self.tts_processor_instance is None:
-            self.tts_processor_instance = tts_processor_class(self.colors, self.developer_tools_dict)
+            self.tts_processor_instance = tts_processor_class(self.colors, self.developer_tools_dict, voice_type, voice_name)
         return self.tts_processor_instance
     
     # -------------------------------------------------------------------------------------------------   
@@ -533,9 +829,14 @@ class ollama_chatbot_base:
             args: flag
             returns: none
         """
+        #TODO add ERROR handling
+        if flag == True:
+            print(self.colors["OKBLUE"] + "- text to speech deactivated -" + self.colors["RED"])
         self.leap_flag = flag
         if flag == False:
-            self.tts_processor_instance = self.instance_tts_processor()
+            print(self.colors["OKBLUE"] + "- text to speech activated -" + self.colors["RED"])
+            self.get_voice_selection()
+            self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
         print(f"leap_flag FLAG STATE: {self.leap_flag}")
         return
     
@@ -545,8 +846,16 @@ class ollama_chatbot_base:
             args: flag1, flag2
             returns: none
         """
+        #TODO add ERROR handling
+        if flag2 == False:
+            print(self.colors["OKBLUE"] + "- speech to text deactivated -" + self.colors["RED"])
+            print(self.colors["OKBLUE"] + "- text to speech deactivated -" + self.colors["RED"])
         if flag2 == True:
-            self.tts_processor_instance = self.instance_tts_processor()
+            print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
+            print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
+            print(self.colors["OKBLUE"] + "- text to speech activated -" + self.colors["RED"])
+            self.get_voice_selection()
+            self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
         self.leap_flag = flag1
         self.listen_flag = flag2
         print(f"listen_flag FLAG STATE: {self.listen_flag}")
@@ -591,6 +900,13 @@ class ollama_chatbot_base:
         """
         self.listen_flag = flag
         print(f"listen_flag FLAG STATE: {self.listen_flag}")
+
+        if flag == False:
+            print(self.colors["OKBLUE"] + "- speech to text deactivated -" + self.colors["RED"])
+
+        if flag == True:
+            print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
+            print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
         return
 
     # -------------------------------------------------------------------------------------------------   
@@ -602,3 +918,150 @@ class ollama_chatbot_base:
         self.auto_commands_flag = flag
         print(f"auto_commands FLAG STATE: {self.auto_commands_flag}")
         return
+    
+    # -------------------------------------------------------------------------------------------------
+    def chatbot_main(self):
+        """ a method for managing the current chatbot instance loop 
+            args: None
+            returns: None
+        """
+
+        # wait to load tts & latex until needed
+        self.latex_render_instance = None
+        self.tts_processor_instance = None
+        # self.FileSharingNode = None
+
+        # print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
+
+        # keyboard.add_hotkey('ctrl+shift', self.auto_speech_set, args=(True,))
+        # keyboard.add_hotkey('ctrl+alt', self.chunk_speech, args=(True,))
+        # keyboard.add_hotkey('shift+alt', self.interrupt_speech)
+        while True:
+            user_input_prompt = ""
+            speech_done = False
+            cmd_run_flag = False
+
+            if self.listen_flag | self.auto_speech_flag is True:
+                # self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
+                while self.auto_speech_flag is True:  # user holds down the space bar
+                    keyboard.add_hotkey('ctrl+shift', self.auto_speech_set, args=(True,))
+                    keyboard.add_hotkey('ctrl+alt', self.chunk_speech, args=(True,))
+                    keyboard.add_hotkey('shift+alt', self.interrupt_speech)
+                    try:
+                        # Record audio from microphone
+                        audio = self.get_audio()
+                        if self.listen_flag is True:
+                            # Recognize speech to text from audio
+                            user_input_prompt = self.recognize_speech(audio)
+                            print(self.colors["GREEN"] + f"<<< 👂 SPEECH RECOGNIZED 👂 >>> ") # + self.colors["BRIGHT_YELLOW"] + f"{user_input_prompt} " + self.colors["GREEN"] + "<<")
+                            speech_done = True
+                            self.chunk_flag = False
+                            # print(f"CHUNK FLAG STATE: {self.chunk_flag}")
+                            self.auto_speech_flag = False
+                    except sr.UnknownValueError:
+                        #TODO REPLACE GOOGLE WITH WHISPER MODEL
+                        print(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
+                    except sr.RequestError as e:
+                        print(self.colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + self.colors["OKCYAN"])
+            elif self.listen_flag is False:
+                user_input_prompt = input(self.colors["GREEN"] + f"<<< 🧠 USER 🧠 >>> " + self.colors["END"])
+                speech_done = True
+            user_input_prompt = self.voice_command_select_filter(user_input_prompt)
+            cmd_run_flag = self.command_select(user_input_prompt)
+            # get screenshot
+            if self.llava_flag is True:
+                self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
+            # splice videos
+            if self.splice_flag == True:
+                self.data_set_video_process_instance.generate_image_data()
+            if cmd_run_flag == False and speech_done == True:
+                print(self.colors["YELLOW"] + f"{user_input_prompt}" + self.colors["OKCYAN"])
+                # Send the prompt to the assistant
+                if self.screen_shot_flag is True:
+                    response = self.send_prompt(user_input_prompt)
+                    self.screen_shot_flag = False
+                else:
+                    response = self.send_prompt(user_input_prompt)
+                print(self.colors["RED"] + f"<<< 🤖 {self.user_input_model_select} 🤖 >>> " + self.colors["BRIGHT_BLACK"] + f"{response}" + self.colors["RED"])
+                # Check for latex and add to queue
+                if self.latex_flag:
+                    # Create a new instance
+                    latex_render_instance = latex_render_class()
+                    latex_render_instance.add_latex_code(response, self.user_input_model_select)
+                # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
+                # Clear speech cache and split the response into sentences for next TTS cache
+                #TODO alternative option for shut up fetature?
+                # if self.leap_flag is not None and not self.leap_flag:
+                #     self.tts_processor_instance.process_tts_responses(response, self.tts_processor_instance.voice_name)
+                
+                if self.leap_flag is not None and isinstance(self.leap_flag, bool):
+                    if self.leap_flag != True:
+                        self.tts_processor_instance.process_tts_responses(response, self.voice_name)
+                        #TODO COMPLETE SHUTUP FEATURE INTERRUPT
+                        if self.speech_interrupted:  # Add this check
+                            print("Speech was interrupted. Ready for next input.")
+                            self.speech_interrupted = False
+                elif self.leap_flag is None:
+                    pass
+                # Start the mainloop in the main thread
+                # print(self.colors["GREEN"] + f"<<< 🧠 USER 🧠 >>> " + self.colors["END"])
+
+    # -------------------------------------------------------------------------------------------------        
+    def interrupt_speech(self):
+        self.speech_interrupted = True
+        if hasattr(self, 'tts_processor_instance'):
+            sd.stop()  # Stop any currently playing audio
+
+    # -------------------------------------------------------------------------------------------------
+    def generate_synthetic_data(self):
+        """
+        Generates synthetic data based on the given dataset and model prompt function.
+
+        Returns:
+            datasets.Dataset: A new dataset containing synthetic data.
+        """
+        # Prompt user for the old dataset name
+        old_dataset_name = input("Enter the name of the old dataset: ")
+        dataset_lib_dir = os.path.join(self.model_git_dir, "Finetune_Datasets")
+
+        # Prompt user for the new dataset name
+        new_dataset_name = input("Enter the name for the new dataset: ")
+
+        # Construct the old dataset directory path
+        old_dataset_dir = os.path.join(dataset_lib_dir, old_dataset_name, "data")
+
+        # Create a new directory for the new dataset
+        new_dataset_dir = os.path.join(dataset_lib_dir, new_dataset_name, "data")
+        os.makedirs(new_dataset_dir, exist_ok=True)
+
+        synthetic_data = []  # Initialize an empty list to store synthetic examples
+
+        # Process Parquet files in the old dataset directory
+        for parquet_file in os.listdir(old_dataset_dir):
+            if parquet_file.endswith('.parquet'):
+                parquet_path = os.path.join(old_dataset_dir, parquet_file)
+                # Read the first data point from the Parquet file
+                first_data_point = self.read_first_data_point(parquet_path)
+                # Construct a prompt for each example
+                print(f"here is the first data point: {first_data_point}")
+                
+                construct_prompt = f"Please generate 10 alternative variations in phrasing and structure for the following Hugging Face data point for a user assistant conversation training set: {first_data_point}"
+                synthetic_example = self.shot_prompt(construct_prompt)  # Replace with your model call
+                synthetic_data.append({'text': synthetic_example})
+
+        # Create a new dataset from the synthetic data
+        synthetic_dataset = Dataset.from_dict({'text': [item['text'] for item in synthetic_data]})
+
+        # Write the synthetic dataset to a Parquet file
+        synthetic_parquet_file = os.path.join(new_dataset_dir, "synthetic_dataset.parquet")
+        synthetic_dataset.to_pandas().to_parquet(synthetic_parquet_file)
+
+        return synthetic_dataset
+
+    
+    # -------------------------------------------------------------------------------------------------
+    def read_first_data_point(self, parquet_path):
+        # Read the Parquet file and extract the first data point
+        table = pq.read_table(parquet_path)
+        first_data_point = table.to_pandas().iloc[0]
+        return first_data_point

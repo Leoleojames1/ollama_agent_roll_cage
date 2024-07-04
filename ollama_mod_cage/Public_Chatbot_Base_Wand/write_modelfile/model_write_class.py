@@ -10,7 +10,6 @@ by @LeoBorcherding
 
 import os
 
-
 # -------------------------------------------------------------------------------------------------
 class model_write_class:
     def __init__(self, colors, developer_tools_dict):

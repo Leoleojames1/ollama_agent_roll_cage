@@ -104,6 +104,6 @@ class ollama_commands:
     
     def ollama_create(self):
         """ a method for running the ollama create command across the current agent """
-        self.write_model_file_and_run_agent_create_ollama(self.listen_flag)
+        self.model_write_class.write_model_file_and_run_agent_create_ollama(self.listen_flag)
         print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
         return
