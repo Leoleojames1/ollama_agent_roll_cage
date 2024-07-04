@@ -27,7 +27,7 @@ https://www.youtube.com/watch?v=xfQSfTJcPpA
 **/llava flow 0.26 DEMO MINECRAFT IMAGE RECOGNITION:**
 https://www.youtube.com/watch?v=szd1wIOc034&t=53s
 
-** V0.27.0 DEMO's 2 - 5: XTTS Finetune Manager**
+*** V0.27.0 DEMO's 2 through 5 XTTS Finetune Manager***
 
 https://streamable.com/73ner6?src=player-page-share
 
