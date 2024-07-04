@@ -1,0 +1,2 @@
+[submodule "ollama_mod_cage/Garden_Chatbot_Base_Wand/coqui"]
+	url = https://github.com/idiap/coqui-ai-TTS.git
