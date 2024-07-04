@@ -2,7 +2,7 @@
 
 ***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)***
 
-# 🤖👽 ollama_agent_roll_cage (OARC) V0.26.3 🤬🧙
+# 🤖👽 ollama_agent_roll_cage (OARC) V0.27.0 🤬🧙
 
 ollama discord community resource obsidian document:
 
