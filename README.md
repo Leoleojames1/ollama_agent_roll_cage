@@ -27,6 +27,12 @@ https://www.youtube.com/watch?v=xfQSfTJcPpA
 **/llava flow 0.26 DEMO MINECRAFT IMAGE RECOGNITION:**
 https://www.youtube.com/watch?v=szd1wIOc034&t=53s
 
+** V0.27.0 DEMO's 2 - 5: XTTS Finetune Manager**
+https://streamable.com/73ner6?src=player-page-share
+https://streamable.com/6t6mhj?src=player-page-share
+https://streamable.com/v50in8?src=player-page-share
+https://streamable.com/hldmzh?src=player-page-share
+
 <img
 src="docs/Manual_Commands/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
