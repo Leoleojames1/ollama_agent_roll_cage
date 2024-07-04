@@ -28,9 +28,13 @@ https://www.youtube.com/watch?v=xfQSfTJcPpA
 https://www.youtube.com/watch?v=szd1wIOc034&t=53s
 
 ** V0.27.0 DEMO's 2 - 5: XTTS Finetune Manager**
+
 https://streamable.com/73ner6?src=player-page-share
+
 https://streamable.com/6t6mhj?src=player-page-share
+
 https://streamable.com/v50in8?src=player-page-share
+
 https://streamable.com/hldmzh?src=player-page-share
 
 <img
