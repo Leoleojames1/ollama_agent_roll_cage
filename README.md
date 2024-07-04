@@ -160,8 +160,12 @@ pip install TTS
 ```
 
 Now download the XTTS Model for coqui, open command prompt and cd to ollama_agent_roll_cage\AgentFiles\Ignored_TTS and clone the model into this folder with:
-coqui/XTTS-v2 Model: https://huggingface.co/coqui/XTTS-v2
+coqui/XTTS-v2 Model: 
+
+https://huggingface.co/coqui/XTTS-v2
+
 you can also download any finetune xtts models to this folder:
+
 https://huggingface.co/Borcherding/XTTS-v2_C3PO
 
 https://huggingface.co/Borcherding/XTTS-v2_CarliG
