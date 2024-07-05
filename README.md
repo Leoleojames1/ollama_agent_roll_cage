@@ -9,7 +9,7 @@
 
 🦙 ***[Ollama Discord Server](https://discord.gg/dAzSYcnpdF)*** 🦙
 
-👽***[Borch's Unified Theory of Everything](https://discord.gg/dAzSYcnpdF)***🧙
+👽 ***[Borch's Unified Theory of Everything](https://discord.gg/dAzSYcnpdF)*** 🧙
 
 <img
 src="docs/Manual_Commands/rollcage.jpg"
