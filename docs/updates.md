@@ -1,3 +1,27 @@
+**SPEECH TO SPEECH 0.2 DEMO VIDEO 1:**
+https://www.youtube.com/watch?v=T7pGI5V1Soo
+
+**/create shrek 0.212 DEMO VIDEO 2:**
+https://www.youtube.com/watch?v=2IBPWCKCKjE
+
+**/voice /save as 0.24 DEMO, INSTALL, & SETUP VIDEO 3:**
+https://www.youtube.com/watch?v=xfQSfTJcPpA
+
+**/llava flow 0.26 DEMO MINECRAFT IMAGE RECOGNITION:**
+https://www.youtube.com/watch?v=szd1wIOc034&t=53s
+
+**V0.27.0 DEMO's 2 through 5 XTTS Finetune Manager:**
+
+https://streamable.com/73ner6?src=player-page-share
+
+https://streamable.com/6t6mhj?src=player-page-share
+
+https://streamable.com/v50in8?src=player-page-share
+
+https://streamable.com/hldmzh?src=player-page-share
+
+https://huggingface.co/Borcherding/XTTS-v2_C3PO
+
 ## Updates 0.21 -> 0.3 - Development Cycle - New Commands, Features, & Optimizations:
 ```diff
 - ***UPCOMING SOON***
@@ -48,24 +72,47 @@
 ```diff
 @@ ***NEXT UPDATE*** @@
 ```
+- coqui text to speech -> xtts model training with xtts-finetune-webui, train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
+- custom xtts webui: https://github.com/aitrepreneur/xtts-finetune-webui
 - borch/phi3_latex -> modified system prompt for smart latex document output for simpler regex parsing of the model response tokens.
   
 - /latex on/off -> run latex real time render automation for current conversation when using a latex tuned model such as borch/phi3_latex or utilizing regex to splice out the latex and render the current formula document. This will be updated as the conversation continues and will contain the current prompts latex, where as the .tex file will contain the entire latex conversation history.
 - /latex save -> save spliced and built latex file to .tex file
 - /latex run -> run saved latex file with pdf generate command and open generated pdf
 - add latex AI model citation section for citation automation, as well as website citation via duck duck go search api
-- /convert tensor
+
+### Update 0.25.5: Langchain, Function Caller, Ollama Chat Api with variable model delimiters
+Optimized chat history, send prompt method, and model prompt template with the ollama python package:
+
+https://pypi.org/project/ollama/
+
+https://www.langchain.com/
+
+RAG FROM SCRATCH: 
+
+https://github.com/langchain-ai/rag-from-scratch
+
+design custom server and api for OARC, then plug api into Open Web UI:
+
+https://docs.openwebui.com/
+
+train borch/phi3_latex model fine tune, with currated latex dataset for different math topic groups:
+https://github.com/unslothai/unsloth
+
+train sentiment detection for latex output to create custom math topic group analyizer model (calulus, complex analysis, vector analysis, etc):
+
+Implement sebdg emotion classifier for routing functions:
+https://huggingface.co/sebdg/emotions_classifier
+
 ### Update 0.26: DuckDuckGo API search & voice command function call model
 - /search {request} -> send search request to DuckDuckGo free api (no key required) for context lookup
 - search query boost automatic
 - search query runs on serperate thread and returns the results to the current model.
 - add search query digester and summarization model as a preprocessor before prompting the main model.
 - /boost -> activate model prompt query boost utilizing secondary model to improve user input requests as an ingest preprocess before prompting the model, call secondary prompt method and run on seperate thread.
+
 - /automatically assume all /{keyword} commands via a function call mediator model
   
-- coqui text to speech -> xtts model training with xtts-finetune-webui, train an xtts voice model with 2:00-10:00 minutes of audio data for a more accurate voice recording.
-- custom xtts webui: https://github.com/aitrepreneur/xtts-finetune-webui
-
 ### Update 0.27: voice clone record, playback wav, mp3, mp4, audiobook, music, movie
 - /record -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
 - /record as -> user input & voice? -> "name" -> record wav file and save to agent or to wav library
