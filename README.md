@@ -15,8 +15,6 @@
 src="docs/Manual_Commands/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
-***NOTE: This tool is a culmination of many different pieces of software however I want to share how amazing bing chat has been for testing and deploying new functions for each class in the program. Just thank you microsoft bing is amazing now. (and a big thanks to OpenAI for helping them do that)***
-
 Its also important to note the non-commerical liscense agreement for meta's llama3, coqui-tts's XTTS model, as well as any other non-commerical use models. These models have liscense protection for experimental, and personal use, for non-commerical gain.
 
 ***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)***
@@ -26,9 +24,11 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 Follow the install V0.24.0 install guide, which will be getting an update soon.
 
 **OARC V0.24.0 DEMO - INSTALL & SETUP: /voice, /save as**
+
 https://www.youtube.com/watch?v=xfQSfTJcPpA
 
 **OARC V0.27.0 DEMO's - C3PO Story Adventure, and XTTS Finetune import setup:**
+
 https://streamable.com/v50in8?src=player-page-share
 
 https://streamable.com/hldmzh?src=player-page-share
@@ -65,7 +65,7 @@ please also download cudnn and combine cuda & cudnn like in the video below:
 
 ***[CUDNN INSTALLER](https://developer.nvidia.com/cudnn)***
 
-***[CUDA & CUDA FUSE INSTALL GUIDE](https://www.youtube.com/watch?v=OEFKlRSd8Ic)***
+***[CUDA & CUDNN FUSE INSTALL GUIDE](https://www.youtube.com/watch?v=OEFKlRSd8Ic)***
 
 ## Installing Ollama
 Now download and install **ollama** with **llama3 8b Instruct** from the following link, you will be asked to provide an email for either hugging face or meta to download the llama3 model, this is fine, as you are agreeing to the software license agreement which is a beneficial document for open source developers and is meant to protect meta from large corporations such as amazon and google. Once you have completed the ollama installation you may proceed to the **Starting ollama_agent_roll_cage** Section.
@@ -76,7 +76,7 @@ Also Please Follow these tutorials for understanding and installing Ollama:
 
 ***[Matt Williams: Getting Started on Ollama Guide](https://www.youtube.com/watch?v=90ozfdsQOKo&t=28s)***
 
-***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)***https://www.youtube.com/watch?v=UfhXbwA5thQ
+***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)***
 
 After installing ollama in the users directory automatically it will be in:
 ```
@@ -186,8 +186,6 @@ https://visualstudio.microsoft.com/downloads/
 and upon installation download the Rust compiler as well as the C++ compiler:
 
 You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
-
-you likely need to edit this cmd file and replace my ADA username with your own username
 
 # Getting Started After Installation:
 
