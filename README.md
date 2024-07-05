@@ -6,7 +6,9 @@
   **ollama_agent_roll_cage** (OARC) is a local python agent fusing **ollama** llm's with **Coqui-TTS** speech models, **Keras** classifiers, **Llava** vision, **Whisper** recognition, and more to create a unified chatbot agent for local, custom automation. This program manages, and automates the creation of **chatbots** through **conversation history**, **model management**, **function calling**, and ultimately defining a **base reality** for your agent to build its world view via an **interaction space** for windows **software**, local files, and callable screenshots giving the user more control over the likely output of the agent through **multimodal** agentic **chain of thought**, and a mixture of exterior software tools. 
 
   ollama_agent_roll_cage includes the /create command, allowing the user to define a model, and system prompt for a custom modelfile, via text and speech commands. This is not the same as the /unsloth fine-tune command tune which requires the unsloth package import, and the correct model training data, which will be added in OARC update 0.3, system prompt modifications are very useful for specific use cases, more advanced options stack modified system prompts with fine tuned models in an agent framework like OARC does 😄. Ultimately we want to investigate our Agent at every level, and take care wherever possible. More functions are coming soon, and as such new models to match, hope you have a good install, join the Ollama community & the OARC community on discord below for more help and join in on OARC community mod pack development,
+
 🦙 ***[Ollama Discord Server](https://discord.gg/dAzSYcnpdF)*** 🦙
+
 👽***[Borch's Unified Theory of Everything](https://discord.gg/dAzSYcnpdF)***🧙
 
 <img
@@ -16,6 +18,7 @@ src="docs/Manual_Commands/rollcage.jpg"
 ***NOTE: This tool is a culmination of many different pieces of software however I want to share how amazing bing chat has been for testing and deploying new functions for each class in the program. Just thank you microsoft bing is amazing now. (and a big thanks to OpenAI for helping them do that)***
 
 Its also important to note the non-commerical liscense agreement for meta's llama3, coqui-tts's XTTS model, as well as any other non-commerical use models. These models have liscense protection for experimental, and personal use, for non-commerical gain.
+
 ***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)***
 
 ***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
@@ -72,6 +75,7 @@ Now download and install **ollama** with **llama3 8b Instruct** from the followi
 Also Please Follow these tutorials for understanding and installing Ollama:
 
 ***[Matt Williams: Getting Started on Ollama Guide](https://www.youtube.com/watch?v=90ozfdsQOKo&t=28s)***
+
 ***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)***https://www.youtube.com/watch?v=UfhXbwA5thQ
 
 After installing ollama in the users directory automatically it will be in:
@@ -303,8 +307,11 @@ Render the latest latex to the custom tkinter gui
 </div>
 
 as you can see the tkinter Gui is capable of parsing and rendering latex formula output from the model. I have created a modified system prompt for phi3 which allows this feature to be more consistent, feel free to check out my other modified system prompts while you are there:
+
 ***[borch/phi3_speed_chat](https://ollama.com/borch/phi3_speed_chat)***
+
 ***[borch/emotional_llama_speed_chat](https://ollama.com/borch/emotional_llama_speed_chat)***
+
 ***[borch/llama3po](https://ollama.com/borch/llama3po)***
 
 ## Ollama Model's and Modififed System Prompting
@@ -481,6 +488,7 @@ This error means that you tried to run the program but the program is already ru
 and open it, right click on the ollama llama app icon, and click quit ollama.
 
 ### OARC V0.2 - V0.3 Development Cycle Road Map
+
 ***[Development Cycle Road Map](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/docs/updates.md)***
   
 ## More information about me and the project:
