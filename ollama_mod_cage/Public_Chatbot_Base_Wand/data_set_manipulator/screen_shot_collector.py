@@ -14,6 +14,8 @@ class screen_shot_collector:
         self.current_dir = self.developer_tools_dict['current_dir']
         self.parent_dir = self.developer_tools_dict['parent_dir']
         self.pipeline = self.developer_tools_dict['ignored_pipeline_dir']
+        self.llava_library = self.developer_tools_dict['llava_library_dir']
+
     # -------------------------------------------------------------------------------------------------
     def get_screenshot(self):
         """ a method for taking a screenshot
