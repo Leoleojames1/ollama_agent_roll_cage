@@ -141,8 +141,11 @@ pip install -r requirements.txt
 
 ## Installing Coqui Text to Speech
 Now download the Coqui Text to Speech Library with pip install:
+
 https://pypi.org/project/TTS/
+
 https://github.com/coqui-ai/TTS
+
 ```
 pip install TTS
 ```
