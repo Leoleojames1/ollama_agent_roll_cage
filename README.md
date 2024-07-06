@@ -156,7 +156,7 @@ you can also download any finetune xtts models to this folder:
 
 ***[Borcherding/XTTS-v2_C3PO voice model](https://huggingface.co/Borcherding/XTTS-v2_C3PO)***
 
-***[Borcherding/XTTS-v2_CarliG voice model](https://huggingface.co/Borcherding/XTTS-v2_CarliG))***
+***[Borcherding/XTTS-v2_CarliG voice model](https://huggingface.co/Borcherding/XTTS-v2_CarliG)***
 
 ***[KoljaB/XTTS_S_Dogg voice model](https://huggingface.co/KoljaB/XTTS_S_Dogg)***
 
