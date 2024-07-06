@@ -25,9 +25,11 @@ Follow the install V0.24.0 install guide, which will be getting an update soon.
 
 **OARC V0.24.0 DEMO - INSTALL & SETUP: /voice, /save as**
 
-https://www.youtube.com/watch?v=xfQSfTJcPpA
+***[Ollama Agent Roll Cage V0.24.0 Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
 
-**OARC V0.27.0 DEMO's - C3PO Story Adventure, and XTTS Finetune import setup:**
+**OARC V0.27.0 DEMO's - C3PO Story Adventure DEMO, and XTTS Finetune import setup Guide:**
+
+https://streamable.com/6t6mhj?src=player-page-share
 
 https://streamable.com/v50in8?src=player-page-share
 
