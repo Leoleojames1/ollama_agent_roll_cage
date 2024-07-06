@@ -30,7 +30,7 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 ***[OARC 0.27.0 DEMO 5 - HF S_Dogg model](https://streamable.com/hldmzh?src=player-page-share)***
 
 ## Installing Ollama Agent Roll Cage
-The full video guide for installing and setting up ollama agent roll cage can be found here. This is for version 0.24, and updated install guide will be released soon.
+The full video guide for installing and setting up ollama agent roll cage can be found here. This is for version V0.24.0, an updated install guide will be released soon.
 
 ***[Ollama Agent Roll Cage V0.24.0 Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
 
