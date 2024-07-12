@@ -21,24 +21,23 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 
 ***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
 
-Follow the install V0.24.0 install guide, which will be getting an update soon.
+## OARC V0.27.0 - XTTS Finetune Demos
 
-**OARC V0.24.0 DEMO - INSTALL & SETUP: /voice, /save as**
+***[OARC 0.27.0 BETA DEMO 3 - C3PO: Moisture Farm](https://streamable.com/6t6mhj?src=player-page-share)***
 
-https://www.youtube.com/watch?v=xfQSfTJcPpA
+***[OARC 0.27.0 DEMO 4 - ADD NEW XTTS MODEL](https://streamable.com/v50in8?src=player-page-share)***
 
-**OARC V0.27.0 DEMO's - C3PO Story Adventure, and XTTS Finetune import setup:**
+***[OARC 0.27.0 DEMO 5 - HF S_Dogg model](https://streamable.com/hldmzh?src=player-page-share)***
 
-https://streamable.com/v50in8?src=player-page-share
+## Installing Ollama Agent Roll Cage
+The full video guide for installing and setting up ollama agent roll cage can be found here. This is for version V0.24.0, an updated install guide will be released soon.
 
-https://streamable.com/hldmzh?src=player-page-share
-
-https://huggingface.co/Borcherding/XTTS-v2_C3PO
+***[Ollama Agent Roll Cage V0.24.0 Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
 
 ## Installing Miniconda & Setting Up Python Virtual Environment
 Miniconda for modular python virtual environments:
 
-https://docs.anaconda.com/free/miniconda/miniconda-install/
+***[Miniconda Intaller](https://docs.anaconda.com/free/miniconda/miniconda-install/)***
 
 Make sure to utilize a conda virtual environment for all of your python dependecy management.
 Once you have conda installed open the command line and name your new vEnv whatever you want with python version 3.11 as 3.12 has dependency issues:
@@ -142,8 +141,11 @@ pip install -r requirements.txt
 
 ## Installing Coqui Text to Speech
 Now download the Coqui Text to Speech Library with pip install:
+
 https://pypi.org/project/TTS/
+
 https://github.com/coqui-ai/TTS
+
 ```
 pip install TTS
 ```
@@ -155,13 +157,14 @@ https://huggingface.co/coqui/XTTS-v2
 
 you can also download any finetune xtts models to this folder:
 
-https://huggingface.co/Borcherding/XTTS-v2_C3PO
+***[Borcherding/XTTS-v2_C3PO voice model](https://huggingface.co/Borcherding/XTTS-v2_C3PO)***
 
-https://huggingface.co/Borcherding/XTTS-v2_CarliG
+***[Borcherding/XTTS-v2_CarliG voice model](https://huggingface.co/Borcherding/XTTS-v2_CarliG)***
 
-https://huggingface.co/KoljaB/XTTS_S_Dogg
+***[KoljaB/XTTS_S_Dogg voice model](https://huggingface.co/KoljaB/XTTS_S_Dogg)***
 
-https://huggingface.co/kodoqmc/XTTS-v2_PeterDrury
+***[kodoqmc/XTTS-v2_PeterDrury voice model](https://huggingface.co/kodoqmc/XTTS-v2_PeterDrury)***
+
 ```
 git clone https://huggingface.co/coqui/XTTS-v2
 
