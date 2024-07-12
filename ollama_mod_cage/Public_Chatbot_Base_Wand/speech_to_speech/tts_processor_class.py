@@ -15,7 +15,7 @@ import os
 import torch
 import re
 import queue
-# from Garden_chatbot_Base_Wand.coqui import TTS
+# from Garden_chatbot_Base_Wand.coqui import TTS #TODO import new eginhard fork
 from TTS.api import TTS
 import numpy as np
 import shutil
@@ -133,7 +133,7 @@ class tts_processor_class:
         self.clear_directory(self.recognize_speech_dir)
         self.clear_directory(self.generate_speech_dir)
 
-        self.generate_play_audio_loop(tts_response_sentences, voice_name)
+        self.generate_play_audio_loop(tts_response_sentences)
         return
 
     # -------------------------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ class tts_processor_class:
         sf.write(filename, tts_audio, 22050)
     
     # -------------------------------------------------------------------------------------------------
-    def generate_play_audio_loop(self, tts_response_sentences, voice_name):
+    def generate_play_audio_loop(self, tts_response_sentences):
         """ a method to generate and play the audio for the chatbot
             args: tts_sentences
             returns: none
@@ -185,10 +185,8 @@ class tts_processor_class:
         # data decomposition combined with alternative methods for quitting the speech and moving to the next message or question for the model
         # write conversation history and explain which line the user cut the model off at and explain that the user is now on the next prompt and didnt care to hear
         # the audio out from the last conversation.
-
         #TODO smart listen & whisper, smart listen_v2 podcast moderator and fact checker.
-        voice_name_reference_speech_path = os.path.join(self.tts_voice_ref_wav_pack_path, f"{voice_name}\\clone_speech.wav")
-        
+
         audio_queue = queue.Queue(maxsize=2)  # Queue to hold generated audio
         interrupted = False
         generation_complete = False
@@ -233,6 +231,8 @@ class tts_processor_class:
             
     # -------------------------------------------------------------------------------------------------
     def clear_remaining_audio_files(self, start_ticker, total_sentences):
+        """ a method to clear the audio cache from the current splicing session
+        """
         for i in range(start_ticker, total_sentences):
             filename = os.path.join(self.generate_speech_dir, f"audio_{i}.wav")
             if os.path.exists(filename):
@@ -240,7 +240,7 @@ class tts_processor_class:
 
     # -------------------------------------------------------------------------------------------------
     def clear_directory(self, directory):
-        """ a method for clearing the directory
+        """ a method for clearing the given directory
             args: directory
             returns: none
         """

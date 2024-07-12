@@ -69,6 +69,12 @@ class ollama_commands:
         """ a method for quitting the program """
         sys.exit()
 
+    def ollama_show_loaded_models(self):
+        ollama_loaded_models = ollama.ps()
+        print(self.colors['RED'] + f"<<< CURRENTLY LOADED OLLAMA MODELS >>> ")
+        for items in ollama_loaded_models:
+            print(self.colors['OKBLUE'] + f"{items}")
+
     def ollama_show_template(self):
         """ a method for getting the model template """
         modelfile_data = ollama.show(f'{self.user_input_model_select}')

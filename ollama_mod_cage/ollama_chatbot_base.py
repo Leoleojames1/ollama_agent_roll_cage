@@ -50,6 +50,7 @@ from Public_Chatbot_Base_Wand.data_set_manipulator import screen_shot_collector
 from Public_Chatbot_Base_Wand.create_convert_model import create_convert_manager
 from Public_Chatbot_Base_Wand.node_custom_methods import FileSharingNode
 import pandas as pd
+import pyarrow as pa
 import pyarrow.parquet as pq
 from datasets import Dataset
 import sounddevice as sd
@@ -62,7 +63,7 @@ import sounddevice as sd
 class ollama_chatbot_base:
     """ 
     This class provides an interface to the Ollama local serve API for creating custom chatbot agents.
-    It also provides access to Speech-to-Text transcription and Text-to-Speech generation methods via a low-level command line interface and the Tortoise TTS model.
+    It also provides access to Speech-to-Text transcription and Text-to-Speech generation methods via a low-level command line interface and the coqui-TTS, XTTS model.
     """
 
     # -------------------------------------------------------------------------------------------------
@@ -97,6 +98,8 @@ class ollama_chatbot_base:
         # initialize chat
         self.chat_history = []
         self.llava_history = []
+        self.agent_library = []
+        self.agent_dict = []
 
         # Default Agent Voice Reference
         #TODO add voice reference file manager
@@ -142,6 +145,10 @@ class ollama_chatbot_base:
         self.latex_flag = False
         self.cmd_run_flag = None
 
+        # AGENT SELECT FLAG
+        self.agent_flag = False
+        self.memory_clear = False
+
         # SPEECH SECTION:
         self.leap_flag = True # TODO TURN OFF FOR MINECRAFT
         self.listen_flag = False # TODO TURN ON FOR MINECRAFT
@@ -184,6 +191,18 @@ class ollama_chatbot_base:
         print(f"Model changed to {self.user_input_model_select}")
         return
     
+    # ------------------------------------------------------------------------------------------------
+    def get_vision_model(self):
+            #TODO LOAD LLAVA AND PHI3 CONCURRENTLY, prompt phi, then send to llava, but dont instance llava when prompting
+            self.vision_model_select = input(self.colors["HEADER"] + "<<< PROVIDE VISION MODEL NAME >>> " + self.colors["OKBLUE"])
+            #TODO ADD BETTER VISION MODEL SELECTOR
+            if self.vision_model_select is None:
+                print("NO MODEL SELECTED, DEFAULTING TO llava")
+                vision_model = "llava"
+            else:
+                vision_model = self.vision_model_select
+            self.vision_model = vision_model
+
     # -------------------------------------------------------------------------------------------------   
     def get_audio(self):
         """ a method for getting the user audio from the microphone
@@ -208,6 +227,17 @@ class ollama_chatbot_base:
         self.chunk_flag = False  # Set chunk_flag to False here to indicate that the audio has been received
         return audio
     
+    # -------------------------------------------------------------------------------------------------
+    def get_system_audio(self):
+        """ a method to get the system audio from discord, spotify, youtube, etc, to be recognized by
+            the speech to text model
+            args: none
+            returns: none
+        """
+        test = "test"
+        #TODO grab audio clip, and transcibe to text for input, also add transcibe and save to text json
+        # also add get audio and store as audio for training and add record clone for user mic to train xtts 
+
     # -------------------------------------------------------------------------------------------------   
     def recognize_speech(self, audio):
         """ a method for calling the speech recognizer
@@ -219,57 +249,278 @@ class ollama_chatbot_base:
         print(f">>{speech_str}<<")
         return speech_str
     
-    # -------------------------------------------------------------------------------------------------      
-    def system_prompt_manager(self, sys_prompt_select):
-        """ a method for managing the current system prompt when called, based on the user_input_model_select 
-            for automated fast shot prompting.
-            Args: sys_prompt_select
-            Returns: sys+prompt_select
+    # --------------------------------------------------------------------------------------------------
+    def agent_prompt_library(self):
+        """ a method to setup the agent prompt dictionaries for the user
+            #TODO add agent prompt collection from .modelfile or .agentfile
+            args: none
+            returns: none
+
+            =-=-=-= 👽 =-=-=-= AGENT PROMPT LIBRARY =-=-=-= 👽 =-=-=-=
+
+            🤖 system prompt 🤖
+                self.chat_history.append({"role": "system", "content": "selected_system_prompt"})
+
+            🧠 user prompt booster 🧠 
+                self.chat_history.append({"role": "user", "content": "selected_booster_prompt"}) 
+
+            =-=-=-= 🔥 =-=-=-= AGENT  STRUCTURE =-=-=-= 🌊 =-=-=-=
+
+            self.agent_name = {
+                "agent_llm_system_prompt" : (
+                    "You are a helpful llm assistant, designated with with fulling the user's request, "
+                ), 
+                "agent_llm_booster_prompt" : (
+                    "Here is the llava data/latex data/etc from the vision/latex/rag action space, "
+                ),
+                "agent_vision_system_prompt" : (
+                    "You are a multimodal vision to text model, the user is navigating their pc and "
+                    "they need a description of the screen, which is going to be processed by the llm "
+                    "and sent to the user after this. please return of json output of the image data. "
+                ), 
+                "agent_vision_booster_prompt" : (
+                    "You are a helpful llm assistant, designated with with fulling the user's request, "
+                ), 
         """
-        # text model system prompts
-        self.sys_prompts = {
-            "borch/phi3_speed_chat" : "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been tuned to respond in a more quick and conversational manner, the user is using speech to text for communication, its also okay to be fun and wild as a phi3 ai assistant. Its also okay to respond with a question, if directed to do something just do it, and realize that not everything needs to be said in one shot, have a back and forth listening to the users response. If the user decides to request a latex math code output, use \[...\] instead of $$...$$ notation, if the user does not request latex, refrain from using latex unless necessary. Do not re-explain your response in a parend or bracketed note: the response... this is annoying and users dont like it.",
-            "Minecraft" : "You are a helpful minecraft assistant, given the provided screenshot data please direct the user immediatedly, prioritize the order in which to inform the player, hostile mobs should be avoided or terminated, danger is a top priority, but so is crafting and building, if they require help quickly guide them to a solution in real time. Please respond in a quick conversational voice, do not read off of documentation, you need to directly explain quickly and effectively whats happening, for example if there is a zombie say something like, watch out thats a Zombie hurry up and kill it or run away, they are dangerous. The recognized Objects around the perimeter are usually items, health, hunger, breath, gui elements, or status affects, please differentiate these objects in the list from 3D objects in the forward facing perspective with hills trees, mobs etc, the items are held by the player and due to the perspective take up the warped edge of the image on the sides. the sky is typically up with a sun or moon and stars, with the dirt below, there is also the nether which is a firey wasteland and cave systems with ore. Please stick to whats relevant to the current user prompt and llava data:"
-            #TODO add text prompts for the following ideas:
-            # latex pdf book library rag
-            # c3po adventure
-            # rick and morty adveture
-            # phi3 & llama3 fast shot prompting 
-            # linked in, redbubble, oarc - advertising server api for laptop
+        #TODO ADD WRITE AGENTFILE
+        #TODO add text prompts for the following ideas:
+        # latex pdf book library rag
+        # c3po adventure
+        # rick and morty adveture
+        # phi3 & llama3 fast shot prompting 
+        # linked in, redbubble, oarc - advertising server api for laptop
+        #TODO add create .agentfile with voice commands or text input
+        #CSV CONSTRUCTION
+        #TODO FUNCTION CALLING MODEL DATASET
+        #TODO LATEX MATH MODEL DATASET
+        #LABEL STUDIO
+        #TODO MINECRAFT LLAVA DATASET
+        #TODO WINDOWS LLAVA DATASET
+        #TODO NAMECALL, SMART LISTEN, FAQ CHECKER
+        #TODO DUCK DUCK GO SEARCH
+        #TODO LATEX MODEL -> MATPLOT LIVE AI GRAPH CALC
+        #TODO ROUTING FOR FUNTION CALLING MODEL TO EXECUTE FUNCTION CALLS
+        #TODO SIMPLE LANGRAPH RAG
+        #TODO SIMPLE USEFUL KERAS MODEL EITHER EMOTIONS OR SOMETHING ELSE
+        #TODO ADD DUCKDUCKGO SEARCH PROMPT BOOST
+        #TODO RECORD VOICE MEMO/CLONE DATA
+        #TODO PLAY MUSIC, MOVIE, MP3, MP4 from library
+        #TODO BOOK AUDIO, EITHER FROM TEXT OR AUDIO FILE
+        #TODO LATEX PDF GENERATE FILE
+        #TODO CSV DATA SYNTHESIS
+        #TODO COMFYUI Image generation workflows
+        #TODO text to image
+        # img to video
+        # img to img
+        # uncrop image extender
+        # new stable diffusion 3 models, img gen model library
+        # lora select, workflow select
+        # TODO FROG ANIMATED PORTRAIT
+        # TODO LIP SYNC AVATAR LIVE
+        # TODO WEBCAM LLAVA RECOGNIZER, objects, emotions, math, text, art, nature
+        #TODO SMART LISTEN 1 -> listens afer long pause outputs /moderator, faq checker
+        #TODO yo llama pull that up
+
+        #TODO preload command list -> command.txt run desired default command setup with /preload command list [name]
+        #TODO macro jobset for keyboard and mouse input for the entire program
+        #TODO UPDATE/UPGRADE COMPREHENSIVE SENTENCE PARSER HANDLE BULLET POINTS, NUMBERS, "", code, emojis, and more, just something
+        #TODO ^-- if great than 250 with no splice, then splice at the closest word under 250
+        #TODO german, spanish, french, english whisper models
+        #TODO that new ollama 0.2.1 multilingual model
+        #TODO DESTINY DINKLEBOT AGENT
+        #TODO MTG ASSIST AGENT
+        #TODO YOUTUBE REVIEW AGENT
+        #TODO PEER TO PEER NETWORK
+        #TODO EMAIL SHARING AGENT
+        #TODO CREW AI?
+        #TODO UNSLOTH AUTOMATIONS
+        #TODO LLAMACPP, GGUF AND SAFETENSOR CONVERT UPGRADE
+
+        # --------------------------------------------------------------------------------------------------
+        # minecraft
+        self.minecraft_agent = {
+            "LLM_SYSTEM_PROMPT" : (
+                "You are a helpful Minecraft assistant. Given the provided screenshot data, "
+                "please direct the user immediately. Prioritize the order in which to inform "
+                "the player. Hostile mobs should be avoided or terminated. Danger is a top "
+                "priority, but so is crafting and building. If they require help, quickly "
+                "guide them to a solution in real time. Please respond in a quick conversational "
+                "voice. Do not read off documentation; you need to directly explain quickly and "
+                "effectively what's happening. For example, if there is a zombie, say something "
+                "like, 'Watch out, that's a Zombie! Hurry up and kill it or run away; they are "
+                "dangerous.' The recognized objects around the perimeter are usually items, health, "
+                "hunger, breath, GUI elements, or status effects. Please differentiate these objects "
+                "in the list from 3D objects in the forward-facing perspective (hills, trees, mobs, etc.). "
+                "The items are held by the player and, due to the perspective, take up the warped edge "
+                "of the image on the sides. The sky is typically up with a sun or moon and stars, with "
+                "the dirt below. There is also the Nether, which is a fiery wasteland, and cave systems "
+                "with ore. Please stick to what's relevant to the current user prompt and lava data."
+            ),
+            "LLM_BOOSTER_PROMPT" : (
+                "Based on the information in LLAVA_DATA please direct the user immediatedly, prioritize the "
+                "order in which to inform the player of the identified objects, items, hills, trees and passive "
+                "and hostile mobs etc. Do not output the dictionary list, instead conversationally express what "
+                "the player needs to do quickly so that they can ask you more questions."
+            ),
+            "VISION_SYSTEM_PROMPT": (
+                "You are a Minecraft image recognizer assistant. Search for passive and hostile mobs, "
+                "trees and plants, hills, blocks, and items. Given the provided screenshot, please "
+                "provide a dictionary of the recognized objects paired with key attributes about each "
+                "object, and only 1 sentence to describe anything else that is not captured by the "
+                "dictionary. Do not use more sentences. Objects around the perimeter are usually player-held "
+                "items like swords or food, GUI elements like items, health, hunger, breath, or status "
+                "affects. Please differentiate these objects in the list from the 3D landscape objects "
+                "in the forward-facing perspective. The items are held by the player traversing the world "
+                "and can place and remove blocks. Return a dictionary and 1 summary sentence."
+            ),
+            "VISION_BOOSTER_PROMPT": (
+                "Given the provided screenshot, please provide a dictionary of key-value pairs for each "
+                "object in the image with its relative position. Do not use sentences. If you cannot "
+                "recognize the enemy, describe the color and shape as an enemy in the dictionary, and "
+                "notify the LLMs that the user needs to be warned about zombies and other evil creatures."
+            )
         }
 
-        # llava system prompts
-        self.llava_sys_prompts = {
-            "phi3" : "You are a helpful phi3-vision assistant, please describe the screen share being sent to you from the OARC user, they are requesting image recognition from you:",
-            "Minecraft_llava_sys" : "You are a minecraft llava image recognizer, search for passive mobs, hostile mobs, trees, hills, blocks, and items, given the provided screenshot please provide a dictionary of the objects recognized paired with key attributed about each object, and only 1 sentence to describe anything else that is not captured by the dictionary, do not use more sentences, only list objects with which you have high confidence of recognizing and for low confidence describe shape and object type more heavily to gage hard recognitions. Objects around the perimeter are usually player held items like swords or food, gui elements like items, health, hunger, breath, or status affects, please differentiate these objects in the list from the 3D landscape objects in the forward facing perspective, the items are held by the player traversing the world and can place and remove blocks. Return dictionary and 1 summary sentence:",
-            "Minecraft_llava_prompt" : "given the provided screenshot please provide a dictionary of key value pairs for each object in with image with its relative position, do not use sentences, if you cannot recognize the enemy describe the color and shape as an enemy in the dictionary"
-            #TODO add text prompts for the following ideas:
+        # --------------------------------------------------------------------------------------------------
+        # general_navigator
+        self.general_navigator_agent = {
+            "LLM_SYSTEM_PROMPT" : (
+                "You are a helpful llm assistant, designated with with fulling the user's request, "
+                "the user is communicating with speech recognition and is sending their "
+                "screenshot data to the vision model for decomposition. Receive this destription and "
+                "Instruct the user and help them fullfill their request by collecting the vision data "
+                "and responding. "
+            ), 
+            "LLM_BOOSTER_PROMPT" : (
+                "Here is the output from the vision model describing the user screenshot data "
+                "along with the users speech data. Please reformat this data, and formulate a "
+                "fullfillment for the user request in a conversational speech manner which will "
+                "be processes by the text to speech model for output. "
+            ),
+            "VISION_SYSTEM_PROMPT" : (
+                "You are an image recognition assistant, the user is sending you a request and an image "
+                "please fullfill the request"
+            ), 
+            "VISION_BOOSTER_PROMPT" : (
+                "Given the provided screenshot, please provide a list of objects in the image "
+                "with the attributes that you can recognize. "
+            )
+        }
+        # --------------------------------------------------------------------------------------------------
+        # phi3_speed_chat
+        self.phi3_speed_chat_agent = {
+            "LLM_SYSTEM_PROMPT" : 
+                "You are borch/phi3_speed_chat, a phi3 large language model, specifically you have been "
+                "tuned to respond in a more quick and conversational manner, the user is using speech to "
+                "text for communication, its also okay to be fun and wild as a phi3 ai assistant. Its also "
+                "okay to respond with a question, if directed to do something just do it, and realize that "
+                "not everything needs to be said in one shot, have a back and forth listening to the users "
+                "response. If the user decides to request a latex math code output, use \[...\] instead of "
+                "$$...$$ notation, if the user does not request latex, refrain from using latex unless "
+                "necessary. Do not re-explain your response in a parend or bracketed note: the response... "
+                "this is annoying and users dont like it.",
         }
 
-        # llava fast shot prompts
-        self.llava_intermediate_prompts = {
-            "phi3_Minecraft_prompt": "Based on the information in LLAVA_DATA please direct the user immediatedly, prioritize the order in which to inform the player of the identified objects, items, hills, trees and passive and hostile mobs etc. Do not output the dictionary list, instead conversationally express what the player needs to do quickly so that they can ask you more questions.",
-            #TODO add text prompts for the following ideas:
-        }
+    # -------------------------------------------------------------------------------------------------
+    def agent_prompt_select(self):
+        """ a method for displaying the agent library and requesting the user to select the agent to load
+        """  
+        self.agent_flag = True
+        # print(self.colors["LIGHT_MAGENTA"] + "<<< AGENT PROMPTS >>>")
 
-        # if user model select is in system prompt dictionaries, append fast shot to the chat accordingly
-        if sys_prompt_select in self.sys_prompts:
-            self.chat_history.append({"role": "system", "content": self.sys_prompts[sys_prompt_select]})
-        elif sys_prompt_select in self.llava_sys_prompts:
-            self.chat_history.append({"role": "system", "content": self.llava_sys_prompts[sys_prompt_select]})
-        elif sys_prompt_select in self.llava_intermediate_prompts:
-            self.chat_history.append({"role": "system", "content": self.llava_intermediate_prompts[sys_prompt_select]})
-        else:
-            print("Invalid choice. Please select a valid prompt.")
-        return
+        # # for agents in library print the agent name
+        # for agents in self.agent_library:
+        #     print(self.colors["OKBLUE"] + f"AGENT NAME:" + self.colors["LIGHT_YELLOW"] + f" {agents}")
+        #     print(self.colors["OKBLUE"] + f"AGENT NAME:" + self.colors["LIGHT_YELLOW"] + f" {self.agent_library[agents]}")
+        #     for items in agents:
+        #         # for items in the agent print the items
+        #         print(self.colors["OKBLUE"] + f"AGENT ITEMS:" + self.colors["RED"] + f" {items}")
+        #         print(self.colors["OKBLUE"] + f"AGENT ITEMS:" + self.colors["RED"] + f" {self.agents[items]}")
+        #         print(self.colors["OKBLUE"] + f"AGENT ITEMS:" + self.colors["RED"] + f" {self.agent_library[agents][items]}")
 
-    # -------------------------------------------------------------------------------------------------   
-    def llava_prompt_manager(self, sys_prompt_select):
-        if sys_prompt_select in self.prompts:
-            self.chat_history.append({"role": "system", "content": self.prompts[sys_prompt_select]})
-        else:
-            print("Invalid choice. Please select a valid prompt.")
-        return sys_prompt_select
+        self.agent_prompt_library()
+
+        print(self.colors["BRIGHT_YELLOW"] + "<<< AGENT LIBRARY >>> ")
+
+        print(self.colors["OKBLUE"] + "<<< minecraft_agent >>> ")
+        for item in self.minecraft_agent:
+            print(self.colors["BRIGHT_YELLOW"] + f"<<< {item} >>> " + self.colors["RED"] + f"{self.minecraft_agent[item]}")
+
+        print(self.colors["OKBLUE"] + "<<< general_navigator_agent >>> ")
+        for item in self.general_navigator_agent:
+            print(self.colors["BRIGHT_YELLOW"] + f"<<< {item} >>> " + self.colors["RED"] + f"{self.general_navigator_agent[item]}")
+
+        print(self.colors["OKBLUE"] + "<<< phi3_speed_chat_agent >>> ")
+        for item in self.phi3_speed_chat_agent:
+            print(self.colors["BRIGHT_YELLOW"] + f"<<< {item} >>> " + self.colors["RED"] + f"{self.phi3_speed_chat_agent[item]}")
+
+        self.agent_select = input(self.colors["HEADER"] + "<<< PROVIDE AGENT SYSTEM PROMPT NAME >>> " + self.colors["OKBLUE"])
+
+        if self.agent_select == "minecraft_agent":
+            self.agent_dict = self.minecraft_agent
+            self.LLM_SYSTEM_PROMPT_FLAG = True
+            self.LLM_BOOSTER_PROMPT = True
+            self.VISION_SYSTEM_PROMPT = True
+            self.VISION_BOOSTER_PROMPT = True
+
+        if self.agent_select == "general_navigator_agent":
+            self.agent_dict = self.general_navigator_agent
+            self.LLM_SYSTEM_PROMPT_FLAG = True
+            self.LLM_BOOSTER_PROMPT = True
+            self.VISION_SYSTEM_PROMPT = True
+            self.VISION_BOOSTER_PROMPT = True
+
+        if self.agent_select == "phi3_speed_chat_agent":
+            self.agent_dict = self.phi3_speed_chat_agent
+            self.LLM_SYSTEM_PROMPT_FLAG = True
+            self.LLM_BOOSTER_PROMPT = False
+            self.VISION_SYSTEM_PROMPT = False
+            self.VISION_BOOSTER_PROMPT = False
+
+    # # -------------------------------------------------------------------------------------------------
+    # def llm_system_prompt(self):
+    #     """ a method for returning the agent's llm system prompt
+    #     """
+    #     if self.LLM_SYSTEM_PROMPT_FLAG == True:
+    #         self.chat_history.append({"role": "system", "content": self.agent_dict["LLM_SYSTEM_PROMPT"]})
+    #     else:
+    #         print("Invalid choice. Please select a valid prompt.")
+    #     return
+    
+    # # -------------------------------------------------------------------------------------------------
+    # def vision_system_prompt(self):
+    #     """ a method for returning the agent's llm system prompt
+    #     """
+    #     if self.VISION_SYSTEM_PROMPT == True:
+    #         self.llava_history.append({"role": "system", "content": self.agent_dict["VISION_SYSTEM_PROMPT"]})
+    #     else:
+    #         print("Invalid choice. Please select a valid prompt.")
+    #     return
+    
+    # # -------------------------------------------------------------------------------------------------      
+    # def llm_booster_prompt(self):
+    #     """ a method for managing the intermediate llm prompts
+    #         args: none
+    #         returns: none
+    #     """
+    #     if self.LLM_BOOSTER_PROMPT == True:
+    #         self.chat_history.append({"role": "assistant", "content": f"VISION_DATA: {self.llava_response}"})
+    #         self.chat_history.append({"role": "user", "content": self.agent_dict["LLM_BOOSTER_PROMPT"]})
+    #     else:
+    #         print("Invalid choice. Please select a valid prompt.")
+    #     return
+    
+    # # -------------------------------------------------------------------------------------------------      
+    # def vision_booster_prompt(self):
+    #     """ a method for managing the intermediate vision prompts
+    #         args: none
+    #         returns: none
+    #     """
+    #     if self.VISION_BOOSTER_PROMPT == True:
+    #         self.vision_booster_return = self.agent_dict["VISION_BOOSTER_PROMPT"]
+    #     else:
+    #         print("Invalid choice. Please select a valid prompt.")
+    #     return
     
     # -------------------------------------------------------------------------------------------------
     def shot_prompt(self, prompt):
@@ -289,41 +540,58 @@ class ollama_chatbot_base:
                 return "Error: Response from model is not in the expected format"
         except Exception as e:
             return f"Error: {e}"
-    
+        
     # -------------------------------------------------------------------------------------------------   
     def send_prompt(self, user_input_prompt):
         """ a method for prompting the model
             args: user_input_prompt, user_input_model_select, search_google
             returns: none
         """
-        #TODO ADD IF MEM OFF CLEAR HISTORY
-        # self.chat_history = []
+        # if agent selected set up system prompts for llm
+
+        if self.agent_flag == True:
+            self.chat_history.append({"role": "system", "content": self.agent_dict["LLM_SYSTEM_PROMPT"]})
+            print(self.colors["OKBLUE"] + f"<<< LLM SYSTEM >>> ")
+            print(self.colors["BRIGHT_YELLOW"] + f"{self.agent_dict['LLM_SYSTEM_PROMPT']}")
+        else:
+            pass
+
+        #TODO ADD IF MEM OFF CLEAR HISTORY, also add long term memory support with rag and long term conversation file for demo
+        if self.memory_clear == True:
+            self.chat_history = []
+
         #TODO ADD screen shot {clock & manager}
         self.screenshot_path = os.path.join(self.llava_library, "screenshot.png")
 
-        # start prompt shot if flag is True TODO setup modular custom prompt selection
-        self.prompt_shot_flag = False # TODO SETUP FLAG LOGIC
-        if self.prompt_shot_flag is True:
-            sys_prompt_select = f"{self.user_input_model_select}"
-            self.system_prompt_manager(sys_prompt_select)
-
-        # append user prompt
+        # append user prompt from text or speech input
         self.chat_history.append({"role": "user", "content": user_input_prompt})
 
         # get the llava response and append it to the chat history only if an image is provided
         if self.llava_flag is True:
+
             # load the screenshot and convert it to a base64 string
             with open(f'{self.screenshot_path}', 'rb') as f:
                 user_screenshot_raw2 = base64.b64encode(f.read()).decode('utf-8')
                 self.user_screenshot_raw = user_screenshot_raw2
-            #TODO manage user_input_prompt for llava model during conversation
-            llava_response = self.llava_prompt(user_screenshot_raw2, user_input_prompt)
-            print(f"LLAVA SOURCE: {llava_response}")
-            # TODO DOES THIS DO ANYTHING? I DONT THINK SO
-            self.chat_history.append({"role": "assistant", "content": f"LLAVA_DATA: {llava_response}"})
-            self.chat_history.append({"role": "user", "content": "Based on the information in LLAVA_DATA please direct the user immediatedly, prioritize the order in which to inform the player of the identified objects, items, hills, trees and passive and hostile mobs etc. Do not output the dictionary list, instead conversationally express what the player needs to do quickly so that they can ask you more questions."})
 
+            # get llava response from constructed user input
+            self.llava_response = self.llava_prompt(user_input_prompt, user_screenshot_raw2, user_input_prompt, self.vision_model)
+
+            # print vision model response
+            print(self.colors["OKBLUE"] + "<<< VISION MODEL RESPONSE >>> ")
+            print(self.colors["BRIGHT_YELLOW"] + f"{self.llava_response}")
+    
+            # if agent selected set up intermediate prompts for llm model
+            if self.LLM_BOOSTER_PROMPT == True:
+                self.chat_history.append({"role": "assistant", "content": f"VISION_DATA: {self.llava_response}"})
+                self.llm_booster_constructor = self.agent_dict["LLM_BOOSTER_PROMPT"] + f"{user_input_prompt}"
+                self.chat_history.append({"role": "user", "content": self.llm_booster_constructor})
+                print(self.colors["OKBLUE"] + f"<<< LLM BOOSTER >>> ")
+                print(self.colors["BRIGHT_YELLOW"] + f"<<< {self.llm_booster_constructor} >>>")
+            else:
+                pass
         try:
+            # SEND USER INPUT or USER INPUT & LLAVA OUTPUT TO THE SELECTED LLM
             response = ollama.chat(model=self.user_input_model_select, messages=(self.chat_history), stream=False )
             if isinstance(response, dict) and "message" in response:
                 model_response = response.get("message")
@@ -335,23 +603,64 @@ class ollama_chatbot_base:
             return f"Error: {e}"
         
     # -------------------------------------------------------------------------------------------------   
-    def llava_prompt(self, user_screenshot_raw2, llava_user_input_prompt):
-        """ a method for prompting the model
-            args: user_input_prompt, user_input_model_select, search_google
+    def llava_prompt(self, user_input_prompt, user_screenshot_raw2, llava_user_input_prompt, vision_model="llava"):
+        """ a method for prompting the vision model
+            args: user_screenshot_raw2, llava_user_input_prompt, vision_model="llava"
             returns: none
-        """
+
+            #TODO default? if none selected?
+            #TODO add modelfile, system prompt get feature and modelfile manager library
+            #TODO /sys prompt select, /booster prompt select, ---> leverage into function calling ai 
+            for modular auto prompting chatbot
+        """ 
+        # setup history & prompt
         self.llava_user_input_prompt = llava_user_input_prompt
         self.llava_history = []
-        self.llava_history.append({"role": "system", "content": "You are a minecraft llava image recognizer, search for passive mobs, hostile mobs, trees, hills, blocks, and items, given the provided screenshot please provide a dictionary of the objects recognized paired with key attributed about each object, and only 1 sentence to describe anything else that is not captured by the dictionary, do not use more sentences, only list objects with which you have high confidence of recognizing and for low confidence describe shape and object type more heavily to gage hard recognitions. Objects around the perimeter are usually player held items like swords or food, gui elements like items, health, hunger, breath, or status affects, please differentiate these objects in the list from the 3D landscape objects in the forward facing perspective, the items are held by the player traversing the world and can place and remove blocks. Return dictionary and 1 summary sentence:"})
-        message = {"role": "user", "content": "given the provided screenshot please provide a dictionary of key value pairs for each object in with image with its relative position, do not use sentences, if you cannot recognize the enemy describe the color and shape as an enemy in the dictionary"}
 
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # self.llava_history.append({"role": "system", "content": "You are a minecraft image recognizer assistant, 
+        # search for passive and hostile mobs, trees and plants, hills, blocks, and items, given the provided screenshot 
+        # in the forward facing perspective, the items are held by the player traversing the world and can place and remove blocks. 
+        # Return dictionary and 1 summary sentence:"})
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        # if agent selected, set up system prompts for vision model
+
+        if self.VISION_SYSTEM_PROMPT == True:
+            self.vision_system_constructor = f"{self.agent_dict['VISION_SYSTEM_PROMPT']} " + f"{user_input_prompt}"
+            self.llava_history.append({"role": "system", "content": f"{self.vision_system_constructor}"})
+            print(f"<<< VISION SYSTEM: {self.vision_system_constructor} >>>")
+        else:
+            self.vision_system_constructor = f"{self.general_navigator_agent['VISION_SYSTEM_PROMPT']} " + f"{user_input_prompt}"
+            self.llava_history.append({"role": "system", "content": f"{self.vision_system_constructor}"})
+            print(f"<<< VISION SYSTEM: {self.vision_system_constructor} >>>")
+
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # message = {"role": "user", 
+        #            "content": "given the provided screenshot please provide a dictionary of key value pairs for each object in " 
+        #            "with image with its relative position, do not use sentences, if you cannot recognize the enemy describe the " 
+        #            "color and shape as an enemy in the dictionary, and notify the llms that the user needs to be warned about "
+        #            "zombies and other evil creatures"}
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        if self.agent_flag == True:
+            self.vision_booster_constructor = f"{self.agent_dict['VISION_BOOSTER_PROMPT']}" + f"{user_input_prompt}"
+            message = {"role": "user", "content": f"{self.vision_booster_constructor}"}
+            print(f"<<< VISION BOOSTER >>> {self.vision_booster_constructor} >>>")
+        else:
+            self.vision_booster_constructor = f"{self.general_navigator_agent['VISION_BOOSTER_PROMPT']}" + f"{user_input_prompt}"
+            message = {"role": "user", "content": f"{self.vision_booster_constructor}"}
+            print(f"<<< VISION BOOSTER >>> {self.vision_booster_constructor} >>>")
+
+        #TODO ADD LLM PROMPT REFINEMENT AS A PREPROCESS COMBINED WITH THE CURRENT AGENTS PRIME DIRECTIVE
         image_message = None
         if user_screenshot_raw2 is not None:
             # Assuming user_input_image is a base64 encoded image
             message["images"] = [user_screenshot_raw2]
             image_message = message
         try:
-            response_llava = ollama.chat(model="llava", messages=(self.llava_history + [image_message]), stream=False )
+            #Prompt vision model with compiled chat history data
+            response_llava = ollama.chat(model=f"{vision_model}", messages=(self.llava_history + [image_message]), stream=False )
         except Exception as e:
             return f"Error: {e}"
 
@@ -360,9 +669,10 @@ class ollama_chatbot_base:
             # print(f"LAVA_RECOGNITION: {message}")
             model_response = response_llava.get("message")
             self.llava_history.append({"role": "assistant", "content": model_response["content"]})
+
             # print(f"LLAVA HISTORY: {self.llava_history}")
 
-            # Keep only the last 2 responses in llava_history
+            # Keep only the last 2 responses in llava_history #TODO TEST THIS FUNCTIONALITY
             self.llava_history = self.llava_history[-2:]
 
             return model_response["content"]
@@ -376,9 +686,15 @@ class ollama_chatbot_base:
             Returns: user_input_prompt
         """ 
         # Parse for general commands (non token specific args)
+        #TODO ADD NEW FUNCTIONS and make llama -> ollama lava -> llava, etc
         user_input_prompt = re.sub(r"activate swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama create", "/llama create", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama create", "/ollama create", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama show", "/ollama show", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama template", "/ollama template", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama license", "/ollama license", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama list", "/ollama list", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama loaded", "/ollama loaded", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate listen on", "/listen on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate listen on", "/listen off", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate speech on", "/speech on", user_input_prompt, flags=re.IGNORECASE)
@@ -387,8 +703,10 @@ class ollama_chatbot_base:
         user_input_prompt = re.sub(r"activate leap off", "/leap off", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate show model", "/llama show", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate lava flow", "/llava flow", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate lava freeze", "/llava freeze", user_input_prompt, flags=re.IGNORECASE)
 
+        #TODO replace /llava flow/freeze with lava flow/freeze
         # Parse for Token Specific Arg Commands
         # # Parse for the name after 'forward slash voice swap'
         # match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
@@ -436,9 +754,11 @@ class ollama_chatbot_base:
 
             Args: command_str
             Returns: command_library[command_str]
+            #TODO IMPLEMENT /system base prompt from .modelfile
         """
         command_library = {
             "/swap": lambda: self.swap(),
+            "/agent select": lambda: self.agent_prompt_select(),
             "/voice swap": lambda: self.voice_swap(),
             "/save as": lambda: self.save_to_json(self.save_name, self.user_input_model_select),
             "/load as": lambda: self.load_from_json(self.load_name, self.user_input_model_select),
@@ -460,11 +780,12 @@ class ollama_chatbot_base:
             "/auto on": lambda: self.auto_speech_set(True),
             "/auto off": lambda: self.auto_speech_set(False),
             "/quit": lambda: self.ollama_command_instance.quit(),
-            "/llama create": lambda: self.ollama_command_instance.ollama_create(),
-            "/llama show": lambda: self.ollama_command_instance.ollama_show_modelfile(),
-            "/llama template": lambda: self.ollama_command_instance.ollama_show_template(),
-            "/llama license": lambda: self.ollama_command_instance.ollama_show_license(),
-            "/llama list": lambda: self.ollama_command_instance.ollama_list(),
+            "/ollama create": lambda: self.ollama_command_instance.ollama_create(),
+            "/ollama show": lambda: self.ollama_command_instance.ollama_show_modelfile(),
+            "/ollama template": lambda: self.ollama_command_instance.ollama_show_template(),
+            "/ollama license": lambda: self.ollama_command_instance.ollama_show_license(),
+            "/ollama list": lambda: self.ollama_command_instance.ollama_list(),
+            "/ollama loaded": lambda: self.ollama_command_instance.ollama_show_loaded_models(),
             "/splice video": lambda: self.data_set_video_process_instance.generate_image_data(),
             "/developer new" : lambda: self.read_write_symbol_collector_instance.developer_tools_generate(),
             "/start node": lambda: self.FileSharingNode_instance.start_node(),
@@ -481,9 +802,29 @@ class ollama_chatbot_base:
         else:
             args = None
 
+        # If /llava flow, 
+        if command == "/llava flow":
+            # user select the vision model, #TODO SHOW OLLAMA LIST AND SUGGEST POSSIBLE VISION MODELS, ULTIMATLEY YOU NEED THE OLLAMA MODEL NAME
+            self.get_vision_model()
+
+        # If /system select, 
+        if command == "/system select":
+            # get the user selection for the system prompt, print system prompt name selector and return user input
+            # self.get_system_prompts()
+            self.agent_prompt_library()
+            self.agent_prompt_select()
+
+        # If /system select, 
+        if command == "/system base":
+            # get the system prompt library
+            #self.TODO GET BASE SYSTEM PROMPT FROM /ollama modelfile
+            test = None #DONT USE YET LOL 😂, JUST RESTART THE PROGRAM TO RETURN TO BASE
+
         # Check if the command is in the library, if not return None
         if command in command_library:
+            #Call Command Method
             command_library[command]()
+
             cmd_run_flag = True
             return cmd_run_flag
         else:
@@ -588,6 +929,411 @@ class ollama_chatbot_base:
         with open(file_load_path_str, "r") as json_file:
             self.chat_history = json.load(json_file)
 
+    # -------------------------------------------------------------------------------------------------   
+    def chunk_speech(self, value):
+        """
+        This method sets the chunk_flag to the given value and prints its state.
+        The chunk_flag is used to control whether the speech input should be chunked.
+
+        Args:
+            value (bool): The value to set the chunk_flag to.
+        """
+        # time.sleep(1)
+        self.chunk_flag = value
+        print(f"chunk_flag FLAG STATE: {self.chunk_flag}")
+
+    # -------------------------------------------------------------------------------------------------   
+    def auto_speech_set(self, value):
+        """
+        This method sets the auto_speech_flag and chunk_flag to the given value and False respectively, and prints the state of auto_speech_flag.
+        The auto_speech_flag is used to control whether the speech input should be automatically processed.
+
+        Args:
+            value (bool): The value to set the auto_speech_flag to.
+        """
+        self.auto_speech_flag = value
+        self.chunk_flag = False
+        print(f"auto_speech_flag FLAG STATE: {self.auto_speech_flag}")
+
+    # -------------------------------------------------------------------------------------------------
+    def instance_tts_processor(self, voice_type, voice_name):
+        """
+        This method creates a new instance of the tts_processor_class if it doesn't already exist, and returns it.
+        The tts_processor_class is used for processing text-to-speech responses.
+
+        Returns:
+            tts_processor_instance (tts_processor_class): The instance of the tts_processor_class.
+        """
+        if not hasattr(self, 'tts_processor_instance') or self.tts_processor_instance is None:
+            self.tts_processor_instance = tts_processor_class(self.colors, self.developer_tools_dict, voice_type, voice_name)
+        return self.tts_processor_instance
+    
+    # -------------------------------------------------------------------------------------------------   
+    def leap(self, flag):
+        """ a method for changing the leap flag 
+            args: flag
+            returns: none
+        """
+        #TODO add ERROR handling
+        if flag == True:
+            print(self.colors["OKBLUE"] + "- text to speech deactivated -" + self.colors["RED"])
+        self.leap_flag = flag
+        if flag == False:
+            print(self.colors["OKBLUE"] + "- text to speech activated -" + self.colors["RED"])
+            self.get_voice_selection()
+            self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
+        print(f"leap_flag FLAG STATE: {self.leap_flag}")
+        return
+    
+    # -------------------------------------------------------------------------------------------------   
+    def speech(self, flag1, flag2):
+        """ a method for changing the speech to speech flags 
+            args: flag1, flag2
+            returns: none
+        """
+        #TODO add ERROR handling
+        if flag2 == False:
+            print(self.colors["OKBLUE"] + "- speech to text deactivated -" + self.colors["RED"])
+            print(self.colors["OKBLUE"] + "- text to speech deactivated -" + self.colors["RED"])
+        if flag2 == True:
+            print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
+            print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
+            print(self.colors["OKBLUE"] + "- text to speech activated -" + self.colors["RED"])
+            self.get_voice_selection()
+            self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
+        self.leap_flag = flag1
+        self.listen_flag = flag2
+        print(f"listen_flag FLAG STATE: {self.listen_flag}")
+        print(f"leap_flag FLAG STATE: {self.leap_flag}")
+        return
+    # -------------------------------------------------------------------------------------------------   
+    def latex(self, flag):
+        """ a method for changing the latex render gui flag 
+            args: flag
+            returns: none
+        """
+        self.latex_flag = flag
+        print(f"latex_flag FLAG STATE: {self.latex_flag}")        
+        return
+    
+    # -------------------------------------------------------------------------------------------------   
+    def llava_flow(self, flag):
+        """ a method for changing the llava image recognition flag 
+            args: flag
+            returns: none
+        """
+        self.llava_flag = flag
+        print(f"llava_flag FLAG STATE: {self.llava_flag}")
+        return
+    
+    # -------------------------------------------------------------------------------------------------   
+    def voice_swap(self):
+        """ a method to call when swapping voices
+            args: none
+            returns: none
+            #TODO REFACTOR FOR NEW SYSTEM
+        """
+        # Search for the name after 'forward slash voice swap'
+        # print(f"Agent voice swapped to {self.voice_name}")
+        # print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
+        # return
+    
+    # -------------------------------------------------------------------------------------------------   
+    def listen(self, flag):
+        """ a method for changing the listen flag 
+            args: flag
+            return: none
+        """
+        self.listen_flag = flag
+        print(f"listen_flag FLAG STATE: {self.listen_flag}")
+
+        if flag == False:
+            print(self.colors["OKBLUE"] + "- speech to text deactivated -" + self.colors["RED"])
+
+        if flag == True:
+            print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
+            print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
+        return
+
+    # -------------------------------------------------------------------------------------------------   
+    def auto_commands(self, flag):
+        """ a method for auto_command flag 
+            args: flag
+            return: none
+        """
+        self.auto_commands_flag = flag
+        print(f"auto_commands FLAG STATE: {self.auto_commands_flag}")
+        return
+    
+    # -------------------------------------------------------------------------------------------------        
+    def interrupt_speech(self):
+        self.speech_interrupted = True
+        if hasattr(self, 'tts_processor_instance'):
+            sd.stop()  # Stop any currently playing audio 
+            
+            #TODO ALSO STOP ANY CURRENT AUDIO GENERATION
+            # INTERRUPT CURRENTLY ONLY WORKS WHEN AUDIO IS PLAYING,
+            # IT SHOULD ALSO INTERRUPT TEXT TO SPEECH GENERATOR
+
+    # -------------------------------------------------------------------------------------------------
+    def chatbot_main(self):
+        """ a method for managing the current chatbot instance loop 
+            args: None
+            returns: None
+        """
+        # wait to load tts & latex until needed
+        self.latex_render_instance = None
+        self.tts_processor_instance = None
+        # self.FileSharingNode = None
+
+        while True:
+            user_input_prompt = ""
+            speech_done = False
+            cmd_run_flag = False
+
+            keyboard.add_hotkey('ctrl+shift', self.auto_speech_set, args=(True,))
+            keyboard.add_hotkey('ctrl+alt', self.chunk_speech, args=(True,))
+            keyboard.add_hotkey('shift+alt', self.interrupt_speech)
+            
+            if self.listen_flag | self.auto_speech_flag is True:
+                # self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
+                while self.auto_speech_flag is True:  # user holds down the space bar
+                    # keyboard.add_hotkey('ctrl+shift', self.auto_speech_set, args=(True,))
+                    # keyboard.add_hotkey('ctrl+alt', self.chunk_speech, args=(True,))
+                    # keyboard.add_hotkey('shift+alt', self.interrupt_speech)
+                    try:
+                        # Record audio from microphone
+                        audio = self.get_audio()
+                        if self.listen_flag is True:
+                            # Recognize speech to text from audio
+                            user_input_prompt = self.recognize_speech(audio)
+                            print(self.colors["GREEN"] + f"<<< 👂 SPEECH RECOGNIZED 👂 >>> ") # + self.colors["BRIGHT_YELLOW"] + f"{user_input_prompt} " + self.colors["GREEN"] + "<<")
+                            speech_done = True
+                            self.chunk_flag = False
+                            # print(f"CHUNK FLAG STATE: {self.chunk_flag}")
+                            self.auto_speech_flag = False
+                    except sr.UnknownValueError:
+                        #TODO REPLACE GOOGLE WITH WHISPER MODEL
+                        print(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
+                    except sr.RequestError as e:
+                        print(self.colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + self.colors["OKCYAN"])
+            elif self.listen_flag is False:
+                user_input_prompt = input(self.colors["GREEN"] + f"<<< 🧠 USER 🧠 >>> " + self.colors["END"])
+                speech_done = True
+            user_input_prompt = self.voice_command_select_filter(user_input_prompt)
+            cmd_run_flag = self.command_select(user_input_prompt)
+            # get screenshot
+            if self.llava_flag is True:
+                self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
+            # splice videos
+            if self.splice_flag == True:
+                self.data_set_video_process_instance.generate_image_data()
+            if cmd_run_flag == False and speech_done == True:
+                print(self.colors["YELLOW"] + f"{user_input_prompt}" + self.colors["OKCYAN"])
+                # Send the prompt to the assistant
+                if self.screen_shot_flag is True:
+                    response = self.send_prompt(user_input_prompt)
+                    self.screen_shot_flag = False
+                else:
+                    response = self.send_prompt(user_input_prompt)
+                print(self.colors["RED"] + f"<<< 🤖 {self.user_input_model_select} 🤖 >>> " + self.colors["BRIGHT_BLACK"] + f"{response}" + self.colors["RED"])
+                # Check for latex and add to queue
+                if self.latex_flag:
+                    # Create a new instance
+                    latex_render_instance = latex_render_class()
+                    latex_render_instance.add_latex_code(response, self.user_input_model_select)
+                # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
+                # Clear speech cache and split the response into sentences for next TTS cache
+                #TODO alternative option for shut up fetature?
+                # if self.leap_flag is not None and not self.leap_flag:
+                #     self.tts_processor_instance.process_tts_responses(response, self.tts_processor_instance.voice_name)
+                
+                if self.leap_flag is not None and isinstance(self.leap_flag, bool):
+                    if self.leap_flag != True:
+                        self.tts_processor_instance.process_tts_responses(response, self.voice_name)
+                        #TODO COMPLETE SHUTUP FEATURE INTERRUPT
+                        if self.speech_interrupted:  # Add this check
+                            print("Speech was interrupted. Ready for next input.")
+                            self.speech_interrupted = False
+                elif self.leap_flag is None:
+                    pass
+                # Start the mainloop in the main thread
+                # print(self.colors["GREEN"] + f"<<< 🧠 USER 🧠 >>> " + self.colors["END"])
+
+    # -------------------------------------------------------------------------------------------------
+    def generate_synthetic_data(self):
+        """
+        Generates synthetic data based on the given dataset and model prompt function.
+
+        Returns:
+            datasets.Dataset: A new dataset containing synthetic data.
+        """
+        # Prompt user for the old dataset name
+        old_dataset_name = input("Enter the name of the old dataset: ")
+        dataset_lib_dir = os.path.join(self.model_git_dir, "Finetune_Datasets")
+
+        # Prompt user for the new dataset name
+        new_dataset_name = input("Enter the name for the new dataset: ")
+
+        # Construct the old dataset directory path
+        old_dataset_dir = os.path.join(dataset_lib_dir, old_dataset_name, "data")
+
+        # Create a new directory for the new dataset
+        new_dataset_dir = os.path.join(dataset_lib_dir, new_dataset_name, "data")
+        os.makedirs(new_dataset_dir, exist_ok=True)
+
+        synthetic_data = []  # Initialize an empty list to store synthetic examples
+
+        # Process Parquet files in the old dataset directory
+        for parquet_file in os.listdir(old_dataset_dir):
+            if parquet_file.endswith('.parquet'):
+                parquet_path = os.path.join(old_dataset_dir, parquet_file)
+                # Read the first data point from the Parquet file
+                first_data_point = self.read_first_data_point(parquet_path)
+                # Construct a prompt for each example
+                print(f"here is the first data point: {first_data_point}")
+                
+                construct_prompt = f"Please generate 10 alternative variations in phrasing and structure for the following Hugging Face data point for a user assistant conversation training set: {first_data_point}"
+                synthetic_example = self.shot_prompt(construct_prompt)  # Replace with your model call
+                synthetic_data.append({'text': synthetic_example})
+
+        # Create a new dataset from the synthetic data
+        synthetic_dataset = Dataset.from_dict({'text': [item['text'] for item in synthetic_data]})
+
+        # Write the synthetic dataset to a Parquet file
+        synthetic_parquet_file = os.path.join(new_dataset_dir, "synthetic_dataset.parquet")
+        synthetic_dataset.to_pandas().to_parquet(synthetic_parquet_file)
+
+        return synthetic_dataset
+
+    # -------------------------------------------------------------------------------------------------
+    def read_first_data_point(self, parquet_path):
+        # Read the Parquet file and extract the first data point
+        table = pq.read_table(parquet_path)
+        first_data_point = table.to_pandas().iloc[0]
+        return first_data_point
+    
+    # -------------------------------------------------------------------------------------------------  
+    def command_calling_data(self):
+        """ a method to collect the dicctionary of human datapoints and write a parquet datafile for
+            further data construction or training
+        """
+
+        self.command_calling_data = {
+            "data": [
+                {
+                    "SYSTEM": "You are a helpful assistant with access to the following functions. Use them if "
+                    "required - { \"name\": \"swap\", \"description\": \"Swap the current state\", \"parameters\": {} }",
+                    "CHAT": "USER: Hi, I need to swap the current state. Can you help me with that? ASSISTANT: Of course, "
+                    "I can help you with that. I will perform the swap now. "
+                    "ASSISTANT: <functioncall> {\"name\": \"swap\", \"arguments\": {}} "
+                    "FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The state has been swapped successfully.",
+                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"swap\", \"description\": \"Swap the current state\", \"parameters\": {} } user"
+                    "Hi, I need to swap the current state. Can you help me with that? assistantOf course, I can help you with that. "
+                    "I will perform the swap now. assistant<functioncall> {\"name\": \"swap\", \"arguments\": {}} assistant"
+                    "The state has been swapped successfully."
+                },
+                {
+                    "SYSTEM": "You are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"system_select\", \"description\": \"Select a system prompt\", \"parameters\": {} }",
+                    "CHAT": "USER: Hi, can you select a different system prompt? ASSISTANT: Sure, I will select a different system prompt now. "
+                    "ASSISTANT: <functioncall> {\"name\": \"system_select\", \"arguments\": {}} "
+                    "FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The system prompt has been selected successfully.",
+                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"system_select\", \"description\": \"Select a system prompt\", \"parameters\": {} } user"
+                    "Hi, can you select a different system prompt? assistantSure, I will select a different system prompt now. "
+                    "assistant<functioncall> {\"name\": \"system_select\", \"arguments\": {}} assistantThe system prompt has been selected successfully."
+                },
+                {
+                    "SYSTEM": "You are a helpful assistant with access to the following functions. Use them if "
+                    "required - { \"name\": \"voice_swap\", \"description\": \"Swap the voice\", \"parameters\": {} }",
+                    "CHAT": "USER: Hi, can you swap the voice? ASSISTANT: Sure, I will swap the voice now. "
+                    "ASSISTANT: <functioncall> {\"name\": \"voice_swap\", \"arguments\": {}} "
+                    "FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The voice has been swapped successfully.",
+                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"voice_swap\", \"description\": \"Swap the voice\", \"parameters\": {} } user"
+                    "Hi, can you swap the voice? assistantSure, I will swap the voice now. assistant"
+                    "<functioncall> {\"name\": \"voice_swap\", \"arguments\": {}} assistantThe voice has been swapped successfully."
+                },
+                {
+                    "SYSTEM": "You are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"save_as\", \"description\": \"Save the current state to a "
+                    "file\", \"parameters\": { \"save_name\": { \"type\": \"string\", \"description\": \"The name of the save "
+                    "file\" }, \"user_input_model_select\": { \"type\": \"string\", \"description\": \"The model selection input by the user\" } } }",
+                    "CHAT": "USER: Hi, can you save the current state as a file? ASSISTANT: Sure, please provide the save file name and model selection input. "
+                    "USER: The save name is \"session1\" and the model selection is \"modelA\". "
+                    "ASSISTANT: <functioncall> {\"name\": \"save_as\", \"arguments\": {\"save_name\": \"session1\", \"user_input_model_select\": \"modelA\"}} "
+                    "FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The state has been saved as \"session1\" with model selection \"modelA\".",
+                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"save_as\", \"description\": \"Save the current "
+                    "state to a file\", \"parameters\": { \"save_name\": { \"type\": \"string\", \"description\": \"The name of the "
+                    "save file\" }, \"user_input_model_select\": { \"type\": \"string\", \"description\": \"The model selection input "
+                    "by the user\" } } } userHi, can you save the current state as a file? assistantSure, please provide the save f..."
+                },
+                {
+                    "SYSTEM": "You are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"load_as\", \"description\": \"Load a state "
+                    "from a file\", \"parameters\": { \"load_name\": { \"type\": \"string\", \"description\": \"The name of "
+                    "the load file\" }, \"user_input_model_select\": { \"type\": \"string\", \"description\": \"The model selection input by the user\" } } }",
+                    "CHAT": "USER: Hi, can you load the state from a file? ASSISTANT: Sure, please provide the load file name and model selection input. "
+                    "USER: The load name is \"session1\" and the model selection is \"modelA\". ASSISTANT: "
+                    "<functioncall> {\"name\": \"load_as\", \"arguments\": {\"load_name\": \"session1\", \"user_input_model_select\": \"modelA\"}} FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The state has been loaded from \"session1\" with model selection \"modelA\".",
+                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"load_as\", \"description\": \"Load a state "
+                    "from a file\", \"parameters\": { \"load_name\": { \"type\": \"string\", \"description\": \"The name of "
+                    "the load file\" }, \"user_input_model_select\": { \"type\": \"string\", \"description\": \"The model selection "
+                    "input by the user\" } } } userHi, can you load the state from a file? assistantSure, please provide the load file name and m..."
+                },
+                {
+                    "SYSTEM": "You are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"write_modelfile\", \"description\": \"Write the model file\", \"parameters\": {} }",
+                    "CHAT": "USER: Hi, can you write the model file? ASSISTANT: Sure, I will write the model file now. "
+                    "ASSISTANT: <functioncall> {\"name\": \"write_modelfile\", \"arguments\": {}} FUNCTION RESPONSE: {\"status\": \"success\"} "
+                    "ASSISTANT: The model file has been written successfully.",
+                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
+                    "Use them if required - { \"name\": \"write_modelfile\", \"description\": \"Write the model file\", \"parameters\": {} } user"
+                    "Hi, can you write the model file? assistantSure, I will write the model file now. assistant"
+                    "<functioncall> {\"name\": \"write_modelfile\", \"arguments\": {}} assistantThe model file has been written successfully."
+                }
+            ]
+        }
+
+    # -------------------------------------------------------------------------------------------------
+    def construct_parquet_from_dictionary(self):
+        """
+        A method to collect the dictionary of human datapoints and write a Parquet datafile for
+        further data construction or training.
+        """
+        # Assuming the dictionary is stored in self.command_calling_data
+        data = self.command_calling_data['data']
+        
+        # Convert the list of dictionaries to a pandas DataFrame
+        df = pd.DataFrame(data)
+        
+        # Define the schema for the Parquet file
+        schema = pa.schema([
+            ('SYSTEM', pa.string()),
+            ('CHAT', pa.string()),
+            ('TEXT', pa.string())
+        ])
+        
+        # Convert the DataFrame to a PyArrow Table with the defined schema
+        table = pa.Table.from_pandas(df, schema=schema)
+        
+        # Define the output directory and file name
+        output_dir = os.path.join(self.model_git_dir, "Finetune_Datasets", "function_calling_dataset", "data")
+        os.makedirs(output_dir, exist_ok=True)
+        output_file = os.path.join(output_dir, "function_calling_data.parquet")
+        
+        # Write the PyArrow Table to a Parquet file
+        with pq.ParquetWriter(output_file, schema) as writer:
+            writer.write_table(table)
+        
+        print(f"Parquet file has been written to: {output_file}")
+        
+        return output_file
+    
     # # -------------------------------------------------------------------------------------------------
     # def print_to_win(self, message):
     #     """
@@ -783,285 +1529,3 @@ class ollama_chatbot_base:
     #                 self.print_to_win(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
     #     except Exception as e:
     #         print(f"An error occurred in the thread for {self.user_input_model_select}: {e}")
-
-    # -------------------------------------------------------------------------------------------------   
-    def chunk_speech(self, value):
-        """
-        This method sets the chunk_flag to the given value and prints its state.
-        The chunk_flag is used to control whether the speech input should be chunked.
-
-        Args:
-            value (bool): The value to set the chunk_flag to.
-        """
-        # time.sleep(1)
-        self.chunk_flag = value
-        print(f"chunk_flag FLAG STATE: {self.chunk_flag}")
-
-    # -------------------------------------------------------------------------------------------------   
-    def auto_speech_set(self, value):
-        """
-        This method sets the auto_speech_flag and chunk_flag to the given value and False respectively, and prints the state of auto_speech_flag.
-        The auto_speech_flag is used to control whether the speech input should be automatically processed.
-
-        Args:
-            value (bool): The value to set the auto_speech_flag to.
-        """
-        self.auto_speech_flag = value
-        self.chunk_flag = False
-        print(f"auto_speech_flag FLAG STATE: {self.auto_speech_flag}")
-
-    # -------------------------------------------------------------------------------------------------
-    def instance_tts_processor(self, voice_type, voice_name):
-        """
-        This method creates a new instance of the tts_processor_class if it doesn't already exist, and returns it.
-        The tts_processor_class is used for processing text-to-speech responses.
-
-        Returns:
-            tts_processor_instance (tts_processor_class): The instance of the tts_processor_class.
-        """
-        if not hasattr(self, 'tts_processor_instance') or self.tts_processor_instance is None:
-            self.tts_processor_instance = tts_processor_class(self.colors, self.developer_tools_dict, voice_type, voice_name)
-        return self.tts_processor_instance
-    
-    # -------------------------------------------------------------------------------------------------   
-    def leap(self, flag):
-        """ a method for changing the leap flag 
-            args: flag
-            returns: none
-        """
-        #TODO add ERROR handling
-        if flag == True:
-            print(self.colors["OKBLUE"] + "- text to speech deactivated -" + self.colors["RED"])
-        self.leap_flag = flag
-        if flag == False:
-            print(self.colors["OKBLUE"] + "- text to speech activated -" + self.colors["RED"])
-            self.get_voice_selection()
-            self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
-        print(f"leap_flag FLAG STATE: {self.leap_flag}")
-        return
-    
-    # -------------------------------------------------------------------------------------------------   
-    def speech(self, flag1, flag2):
-        """ a method for changing the speech to speech flags 
-            args: flag1, flag2
-            returns: none
-        """
-        #TODO add ERROR handling
-        if flag2 == False:
-            print(self.colors["OKBLUE"] + "- speech to text deactivated -" + self.colors["RED"])
-            print(self.colors["OKBLUE"] + "- text to speech deactivated -" + self.colors["RED"])
-        if flag2 == True:
-            print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
-            print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
-            print(self.colors["OKBLUE"] + "- text to speech activated -" + self.colors["RED"])
-            self.get_voice_selection()
-            self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
-        self.leap_flag = flag1
-        self.listen_flag = flag2
-        print(f"listen_flag FLAG STATE: {self.listen_flag}")
-        print(f"leap_flag FLAG STATE: {self.leap_flag}")
-        return
-    # -------------------------------------------------------------------------------------------------   
-    def latex(self, flag):
-        """ a method for changing the latex render gui flag 
-            args: flag
-            returns: none
-        """
-        self.latex_flag = flag
-        print(f"latex_flag FLAG STATE: {self.latex_flag}")        
-        return
-    
-    # -------------------------------------------------------------------------------------------------   
-    def llava_flow(self, flag):
-        """ a method for changing the llava image recognition flag 
-            args: flag
-            returns: none
-        """
-        self.llava_flag = flag
-        print(f"llava_flag FLAG STATE: {self.llava_flag}")
-        return
-    
-    # -------------------------------------------------------------------------------------------------   
-    def voice_swap(self):
-        """ a method to call when swapping voices
-            args: none
-            returns: none
-        """
-        # Search for the name after 'forward slash voice swap'
-        print(f"Agent voice swapped to {self.voice_name}")
-        print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
-        return
-    
-    # -------------------------------------------------------------------------------------------------   
-    def listen(self, flag):
-        """ a method for changing the listen flag 
-            args: flag
-            return: none
-        """
-        self.listen_flag = flag
-        print(f"listen_flag FLAG STATE: {self.listen_flag}")
-
-        if flag == False:
-            print(self.colors["OKBLUE"] + "- speech to text deactivated -" + self.colors["RED"])
-
-        if flag == True:
-            print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
-            print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
-        return
-
-    # -------------------------------------------------------------------------------------------------   
-    def auto_commands(self, flag):
-        """ a method for auto_command flag 
-            args: flag
-            return: none
-        """
-        self.auto_commands_flag = flag
-        print(f"auto_commands FLAG STATE: {self.auto_commands_flag}")
-        return
-    
-    # -------------------------------------------------------------------------------------------------
-    def chatbot_main(self):
-        """ a method for managing the current chatbot instance loop 
-            args: None
-            returns: None
-        """
-
-        # wait to load tts & latex until needed
-        self.latex_render_instance = None
-        self.tts_processor_instance = None
-        # self.FileSharingNode = None
-
-        # print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
-
-        # keyboard.add_hotkey('ctrl+shift', self.auto_speech_set, args=(True,))
-        # keyboard.add_hotkey('ctrl+alt', self.chunk_speech, args=(True,))
-        # keyboard.add_hotkey('shift+alt', self.interrupt_speech)
-        while True:
-            user_input_prompt = ""
-            speech_done = False
-            cmd_run_flag = False
-
-            if self.listen_flag | self.auto_speech_flag is True:
-                # self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
-                while self.auto_speech_flag is True:  # user holds down the space bar
-                    keyboard.add_hotkey('ctrl+shift', self.auto_speech_set, args=(True,))
-                    keyboard.add_hotkey('ctrl+alt', self.chunk_speech, args=(True,))
-                    keyboard.add_hotkey('shift+alt', self.interrupt_speech)
-                    try:
-                        # Record audio from microphone
-                        audio = self.get_audio()
-                        if self.listen_flag is True:
-                            # Recognize speech to text from audio
-                            user_input_prompt = self.recognize_speech(audio)
-                            print(self.colors["GREEN"] + f"<<< 👂 SPEECH RECOGNIZED 👂 >>> ") # + self.colors["BRIGHT_YELLOW"] + f"{user_input_prompt} " + self.colors["GREEN"] + "<<")
-                            speech_done = True
-                            self.chunk_flag = False
-                            # print(f"CHUNK FLAG STATE: {self.chunk_flag}")
-                            self.auto_speech_flag = False
-                    except sr.UnknownValueError:
-                        #TODO REPLACE GOOGLE WITH WHISPER MODEL
-                        print(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
-                    except sr.RequestError as e:
-                        print(self.colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + self.colors["OKCYAN"])
-            elif self.listen_flag is False:
-                user_input_prompt = input(self.colors["GREEN"] + f"<<< 🧠 USER 🧠 >>> " + self.colors["END"])
-                speech_done = True
-            user_input_prompt = self.voice_command_select_filter(user_input_prompt)
-            cmd_run_flag = self.command_select(user_input_prompt)
-            # get screenshot
-            if self.llava_flag is True:
-                self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
-            # splice videos
-            if self.splice_flag == True:
-                self.data_set_video_process_instance.generate_image_data()
-            if cmd_run_flag == False and speech_done == True:
-                print(self.colors["YELLOW"] + f"{user_input_prompt}" + self.colors["OKCYAN"])
-                # Send the prompt to the assistant
-                if self.screen_shot_flag is True:
-                    response = self.send_prompt(user_input_prompt)
-                    self.screen_shot_flag = False
-                else:
-                    response = self.send_prompt(user_input_prompt)
-                print(self.colors["RED"] + f"<<< 🤖 {self.user_input_model_select} 🤖 >>> " + self.colors["BRIGHT_BLACK"] + f"{response}" + self.colors["RED"])
-                # Check for latex and add to queue
-                if self.latex_flag:
-                    # Create a new instance
-                    latex_render_instance = latex_render_class()
-                    latex_render_instance.add_latex_code(response, self.user_input_model_select)
-                # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
-                # Clear speech cache and split the response into sentences for next TTS cache
-                #TODO alternative option for shut up fetature?
-                # if self.leap_flag is not None and not self.leap_flag:
-                #     self.tts_processor_instance.process_tts_responses(response, self.tts_processor_instance.voice_name)
-                
-                if self.leap_flag is not None and isinstance(self.leap_flag, bool):
-                    if self.leap_flag != True:
-                        self.tts_processor_instance.process_tts_responses(response, self.voice_name)
-                        #TODO COMPLETE SHUTUP FEATURE INTERRUPT
-                        if self.speech_interrupted:  # Add this check
-                            print("Speech was interrupted. Ready for next input.")
-                            self.speech_interrupted = False
-                elif self.leap_flag is None:
-                    pass
-                # Start the mainloop in the main thread
-                # print(self.colors["GREEN"] + f"<<< 🧠 USER 🧠 >>> " + self.colors["END"])
-
-    # -------------------------------------------------------------------------------------------------        
-    def interrupt_speech(self):
-        self.speech_interrupted = True
-        if hasattr(self, 'tts_processor_instance'):
-            sd.stop()  # Stop any currently playing audio
-
-    # -------------------------------------------------------------------------------------------------
-    def generate_synthetic_data(self):
-        """
-        Generates synthetic data based on the given dataset and model prompt function.
-
-        Returns:
-            datasets.Dataset: A new dataset containing synthetic data.
-        """
-        # Prompt user for the old dataset name
-        old_dataset_name = input("Enter the name of the old dataset: ")
-        dataset_lib_dir = os.path.join(self.model_git_dir, "Finetune_Datasets")
-
-        # Prompt user for the new dataset name
-        new_dataset_name = input("Enter the name for the new dataset: ")
-
-        # Construct the old dataset directory path
-        old_dataset_dir = os.path.join(dataset_lib_dir, old_dataset_name, "data")
-
-        # Create a new directory for the new dataset
-        new_dataset_dir = os.path.join(dataset_lib_dir, new_dataset_name, "data")
-        os.makedirs(new_dataset_dir, exist_ok=True)
-
-        synthetic_data = []  # Initialize an empty list to store synthetic examples
-
-        # Process Parquet files in the old dataset directory
-        for parquet_file in os.listdir(old_dataset_dir):
-            if parquet_file.endswith('.parquet'):
-                parquet_path = os.path.join(old_dataset_dir, parquet_file)
-                # Read the first data point from the Parquet file
-                first_data_point = self.read_first_data_point(parquet_path)
-                # Construct a prompt for each example
-                print(f"here is the first data point: {first_data_point}")
-                
-                construct_prompt = f"Please generate 10 alternative variations in phrasing and structure for the following Hugging Face data point for a user assistant conversation training set: {first_data_point}"
-                synthetic_example = self.shot_prompt(construct_prompt)  # Replace with your model call
-                synthetic_data.append({'text': synthetic_example})
-
-        # Create a new dataset from the synthetic data
-        synthetic_dataset = Dataset.from_dict({'text': [item['text'] for item in synthetic_data]})
-
-        # Write the synthetic dataset to a Parquet file
-        synthetic_parquet_file = os.path.join(new_dataset_dir, "synthetic_dataset.parquet")
-        synthetic_dataset.to_pandas().to_parquet(synthetic_parquet_file)
-
-        return synthetic_dataset
-
-    
-    # -------------------------------------------------------------------------------------------------
-    def read_first_data_point(self, parquet_path):
-        # Read the Parquet file and extract the first data point
-        table = pq.read_table(parquet_path)
-        first_data_point = table.to_pandas().iloc[0]
-        return first_data_point
