@@ -12,16 +12,10 @@ https://www.youtube.com/watch?v=szd1wIOc034&t=53s
 
 **V0.27.0 DEMO's 2 through 5 XTTS Finetune Manager:**
 
-https://streamable.com/73ner6?src=player-page-share
-
-https://streamable.com/6t6mhj?src=player-page-share
-
-https://streamable.com/v50in8?src=player-page-share
-
-https://streamable.com/hldmzh?src=player-page-share
+***[OARC 0.27.0 BETA DEMO 2](https://streamable.com/73ner6?src=player-page-share)***
 
 ***[OARC 0.27.0 BETA DEMO 3 - C3PO: Moisture Farm](https://streamable.com/6t6mhj?src=player-page-share)***
 
 ***[OARC 0.27.0 DEMO 4 - ADD NEW XTTS MODEL](https://streamable.com/v50in8?src=player-page-share)***
 
-***[OARC 0.27.0 DEMO 5 - HF S_Dogg model](https://streamable.com/hldmzh?src=player-page-share)***
+***[OARC 0.27.0 DEMO 5 - HF XTTS Snoop Dogg model](https://streamable.com/hldmzh?src=player-page-share)***
