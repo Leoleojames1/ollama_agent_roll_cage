@@ -21,12 +21,9 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 
 ***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
 
-## Ollama Agent Roll Cage Video Demo's
-https://www.youtube.com/watch?v=xfQSfTJcPpA&t=481s
+## Ollama Agent Roll Cage Demo Videos
 
-***[OARC 0.27.0 BETA DEMO 3 - C3PO: Moisture Farm](https://streamable.com/6t6mhj?src=player-page-share)***
-
-***[OARC 0.27.0 DEMO 4 - ADD NEW XTTS MODEL](https://streamable.com/v50in8?src=player-page-share)***
+***[Development Cycle Road Map](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/docs/demo_videos.md)***
 
 ***[OARC 0.27.0 DEMO 5 - HF S_Dogg model](https://streamable.com/hldmzh?src=player-page-share)***
 
@@ -78,15 +75,17 @@ Also Please Follow these tutorials for understanding and installing Ollama:
 
 ***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)***
 
+***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)***
+
+***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
+
+***[Tmux: Terminal Multiplexor](https://github.com/tmux/tmux)
+
 After installing ollama in the users directory automatically it will be in:
 ```
   C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama
 ```
-(Sadly we have to put it here but we move the model files directory to ollama_agent_roll_cage/AgentFiles/IgnoredModels where blobs dir is transported by hand from Programs\Ollama dir)
-
-For more steps beyond just moving your model files to the ignored models folder, you can follow this tutorial to setup a better folder structure than what I have laid out:
-
-***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)***
+(During installation you can choose the install location or you can move the model files directory to ollama_agent_roll_cage/AgentFiles/IgnoredModels where blobs dir is transported by hand from Programs\Ollama dir)
 
 Now open a new cmd, and type
 ```
