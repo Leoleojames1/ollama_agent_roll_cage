@@ -76,7 +76,6 @@ class tts_processor_class:
         # print("initializing tts")
         # self.initialize_tts_model()
 
-        print("made it here")
         fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
         fine_tuned_model_path = os.path.join(fine_tuned_dir, f"XTTS-v2_{self.voice_name}")
         reference_wav_path = os.path.join(fine_tuned_model_path, "reference.wav")
@@ -99,7 +98,6 @@ class tts_processor_class:
 
     # -------------------------------------------------------------------------------------------------
     def initialize_tts_model(self):
-        print("made it here")
         fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
         fine_tuned_model_path = os.path.join(fine_tuned_dir, f"XTTS-v2_{self.voice_name}")
         reference_wav_path = os.path.join(fine_tuned_model_path, "reference.wav")
@@ -230,6 +228,13 @@ class tts_processor_class:
             self.clear_remaining_audio_files(ticker, len(tts_response_sentences))
             
     # -------------------------------------------------------------------------------------------------
+    def interrupt_generation(self):
+        """A method to interrupt the ongoing speech generation."""
+        self.audio_queue.queue.clear()  # Clear the audio queue to stop any further audio processing
+        sd.stop()  # Stop any currently playing audio
+        print("Speech generation interrupted.")
+        
+    # -------------------------------------------------------------------------------------------------
     def clear_remaining_audio_files(self, start_ticker, total_sentences):
         """ a method to clear the audio cache from the current splicing session
         """
@@ -292,4 +297,17 @@ class tts_processor_class:
                 combined_sentences.append(sentences[i])
                 i += 1
 
-        return combined_sentences
+        # Ensure sentences are no longer than 250 characters
+        final_sentences = []
+        for sentence in combined_sentences:
+            while len(sentence) > 250:
+                # Find the nearest space before the 250th character
+                split_index = sentence.rfind(' ', 0, 249)
+                if split_index == -1:  # No space found, force split at 249
+                    split_index = 249
+                final_sentences.append(sentence[:split_index].strip())
+                sentence = sentence[split_index:].strip()
+            final_sentences.append(sentence)
+
+        return final_sentences
+

@@ -1,2 +1,3 @@
 #__init__.py
 from .tts_processor_class import tts_processor_class
+from .speech_recognizer_class import speech_recognizer_class

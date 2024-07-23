@@ -7,6 +7,7 @@ import time
 import subprocess
 from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
 import shutil
+import json
 
 # -------------------------------------------------------------------------------------------------
 class create_convert_manager:
@@ -63,3 +64,24 @@ class create_convert_manager:
         # Copy the file from self.gguf_path to create_ollama_model_dir
         shutil.copy(self.gguf_path, self.create_ollama_model_dir)
         return
+    
+    # -------------------------------------------------------------------------------------------------
+    def write_dict_to_json(self, dictionary, file_path):
+        """ a method to write dict to json
+        """
+        with open(file_path, 'w') as json_file:
+            json.dump(dictionary, json_file, indent=4)
+
+        # write_dict_to_json(general_navigator_agent, 'general_navigator_agent.json')
+
+    # -------------------------------------------------------------------------------------------------
+    def read_json_to_dict(file_path):
+
+        # # Example usage
+        # general_navigator_agent = read_json_to_dict('general_navigator_agent.json')
+        # print(general_navigator_agent)
+
+
+        with open(file_path, 'r') as json_file:
+            dictionary = json.load(json_file)
+        return dictionary
