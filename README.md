@@ -23,9 +23,11 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 
 ## Ollama Agent Roll Cage Demo Videos
 
-***[Development Cycle Road Map](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/docs/demo_videos.md)***
+***[OARC Demo Videos Compilation](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/docs/demo_videos.md)***
 
 ***[OARC 0.27.0 DEMO 5 - HF S_Dogg model](https://streamable.com/hldmzh?src=player-page-share)***
+***[OARC V0.26.0 - Llava Vision Demo](https://www.youtube.com/watch?v=szd1wIOc034)***
+***[Ollama Agent Roll Cage V0.24.0 Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
 
 ## Installing Ollama Agent Roll Cage
 The full video guide for installing and setting up ollama agent roll cage can be found here. This is for version V0.24.0, an updated install guide will be released soon.
