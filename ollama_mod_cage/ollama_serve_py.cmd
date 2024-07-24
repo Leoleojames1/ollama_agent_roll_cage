@@ -8,7 +8,7 @@ start cmd.exe /c "ollama serve"
 ping localhost -n 2 >nul
 
 :: Activate Conda environment
-call %CONDA_PATH%\Scripts\activate.bat %CONDA_PATH%\envs\py311_ollama
+call conda activate py311_ollama
 
 set OLLAMA_NUM_PARALLEL=2
 set OLLAMA_MAX_LOADED_MODELS=2
