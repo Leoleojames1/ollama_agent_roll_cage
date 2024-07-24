@@ -12,7 +12,7 @@
 👽 ***[Borch's Unified Theory of Everything](https://discord.gg/dAzSYcnpdF)*** 🧙
 
 <img
-src="docs/Manual_Commands/rollcage.jpg"
+src="docs/assets/posters/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
 Its also important to note the non-commerical liscense agreement for meta's llama3, coqui-tts's XTTS model, as well as any other non-commerical use models. These models have liscense protection for experimental, and personal use, for non-commerical gain.
@@ -197,7 +197,7 @@ You can now access your custom agent (After you make one with the guide below) b
 # Getting Started After Installation:
 
 <img
-src="docs/Manual_Commands/roll_cage_race_1.jpg"
+src="docs/assets/posters/roll_cage_race_1.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
 ## Manual Agent Creation Guide:
