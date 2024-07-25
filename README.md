@@ -339,7 +339,7 @@ borch/Llama3_speed_chat is a highly capable model fine tuned by me, containing t
 This Model is great at holding a conversation as it gives you opportunities to respond, while still retaining the key knowledge of the llama3:8b base model.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/Manual_Commands/Agent_Test_Pics/llama_3.jpg" style="width: 39%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/llama_3.jpg" style="width: 39%;">
   <img src="docs/Manual_Commands/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
 </div>
 Model Download:
@@ -350,7 +350,7 @@ https://ollama.com/borch/llama3_speed_chat_2
 ### C3PO
 A Llama3 Model with the following modified system prompt: "You are C3PO from Star Wars. Answer as C3PO, the ai robot, only." Llama3PO Believes they are a droid, but they fall apart quickly as their knowledge is based in the sciencefiction realm of SW.
 <div style="display: flex; width: 100%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/c3po1.png" style="width: 39%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/c3po1.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
 </div>
 Model Download: 
@@ -360,7 +360,7 @@ https://ollama.com/borch/llama3po
 ### Jesus
 A Llama3 Model with the following modified system prompt: "You are Jesus christ from the bible, answer only as jesus christ, enlightening the user with wisdom and knowledge of biblical history.
 <div style="display: flex; width: 100%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/jesus.jpg" style="width: 39%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/jesus.jpg" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/jesus_1_test.png" style="width: 51%;">
 </div>
 
@@ -371,7 +371,7 @@ A Llama3 Model with the following modififed system prompt: "You are Rick from "R
 The User gets to explore the endless generative power of ai in an endless multiverse of portal madness, with rick played by llama3 ai as your guide and you the user play morty.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/IMG_2371.jpg" style="width: 39%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/IMG_2371.jpg" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
 </div>
 
@@ -383,8 +383,8 @@ Meta Llama 3, a family of models developed by Meta Inc. are new state-of-the-art
 Llama 3 instruction-tuned models are fine-tuned and optimized for dialogue/chat use cases and outperform many of the available open-source chat models on common benchmarks.
 llama3_benchmark
 <div style="display: flex; width: 100%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/Meta.png" style="width: 39%;">
-  <img src="docs/docs/code_documentation/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/Meta.png" style="width: 39%;">
+  <img src="docs/docs/assets/icons/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
 </div>
 
 Model Download: 
@@ -396,7 +396,7 @@ https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct
 
 Check out how it compares:
 <div style="display: flex; width: 100%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/llama3_benchmark.png" style="width: 100%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/llama3_benchmark.png" style="width: 100%;">
 </div>
 
 ### Mistral
@@ -410,8 +410,8 @@ It shows strong performance in code generation.
 It can be finetuned into an instruction-following model that achieves a score of 8.3 on MT-Bench.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/mistral_light.png" style="width: 39%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/mistral_light.png" style="width: 39%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
 </div>
 
 Model Download: 
@@ -425,7 +425,7 @@ https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1
 Gemma is a family of lightweight, state-of-the-art open models from Google, built from the same research and technology used to create the Gemini models. They are text-to-text, decoder-only large language models, available in English, with open weights, pre-trained variants, and instruction-tuned variants. Gemma models are well-suited for a variety of text generation tasks, including question answering, summarization, and reasoning. Their relatively small size makes it possible to deploy them in environments with limited resources such as a laptop, desktop or your own cloud infrastructure, democratizing access to state of the art AI models and helping foster innovation for everyone.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/google_g.png" style="width: 39%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/google_g.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/gemma_who_are_you.png" style="width: 59%;">
 </div>
 
@@ -440,7 +440,7 @@ Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion para
 https://huggingface.co/docs/transformers/main/model_doc/phi3
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/phi_microsoft.png" style="width: 39%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/phi_microsoft.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 59%;">
 </div>
 
@@ -469,7 +469,7 @@ Quoted from Eric hartfort from the Dolphin repository on hugging face,
 Dolphin is uncensored. I have filtered the dataset to remove alignment and bias. This makes the model more compliant. You are advised to implement your own alignment layer before exposing the model as a service. It will be highly compliant with any requests, even unethical ones. Please read my blog post about uncensored models. https://erichartford.com/uncensored-models You are responsible for any content you create using this model. Enjoy responsibly."
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 39%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/Dolphin_molotov.png" style="width: 59%;">
 </div>
 
