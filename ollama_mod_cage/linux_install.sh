@@ -6,10 +6,19 @@ PARENT_DIR=$(dirname "$CURRENT_DIR")
 AGENT_FILES_DIR="$CURRENT_DIR/AgentFiles"
 IGNORED_TTS_DIR="$CURRENT_DIR/AgentFiles/Ignored_TTS"
 
+# Log file
+LOG_FILE="$CURRENT_DIR/linux_install.log"
+
+# Function to log messages
+log_message() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOG_FILE"
+}
+
 # Ollama installation
 curl -o OllamaSetup.sh https://ollama.com/download/OllamaSetup.sh
 chmod +x OllamaSetup.sh
-./OllamaSetup.sh --silent --install --path="/usr/local/bin/ollama"
+./OllamaSetup.sh --silent --install --path="/usr/local/bin/ollama" >> "$LOG_FILE" 2>&1
+log_message "Ollama installation completed."
 
 # Miniconda installation
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -18,7 +27,8 @@ export PATH="$HOME/miniconda/bin:$PATH"
 
 # CUDA installation
 wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
-sudo sh cuda_11.8.0_520.61.05_linux.run --silent --toolkit
+sudo sh cuda_11.8.0_520.61.05_linux.run --silent --toolkit >> "$LOG_FILE" 2>&1
+log_message "CUDA installation completed."
 
 # cuDNN installation
 wget https://developer.download.nvidia.com/compute/redist/cudnn/v8.4.1/cudnn-11.8-linux-x64-v8.4.1.50.tgz
@@ -47,3 +57,4 @@ curl -L -o vs_buildtools.sh https://aka.ms/vs/17/release/vs_buildtools.sh
 chmod +x vs_buildtools.sh
 sudo ./vs_buildtools.sh --quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended
 echo "Installation complete!"
+log_message "Installation complete."
