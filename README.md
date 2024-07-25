@@ -43,8 +43,11 @@ The full video guide for installing and setting up ollama agent roll cage can be
 
 ***[Ollama Agent Roll Cage V0.24.0 Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
 
-<a href="https://www.youtube.com/watch?v=xfQSfTJcPpA">
-  <img src="https://img.youtube.com/vi/xfQSfTJcPpA/0.jpg" alt="Ollama Agent Roll Cage V0.24.0 Install & User Guide" style="width:100%; max-width:600px; height:auto;">
+<a href="https://www.youtube.com/watch?v=xfQSfTJcPpA" target="_blank" style="display:block; position:relative; width:100%; max-width:600px; margin:auto;">
+  <img src="https://img.youtube.com/vi/xfQSfTJcPpA/0.jpg" alt="Ollama Agent Roll Cage V0.24.0 Install & User Guide" style="width:100%; height:auto; border:1px solid #ccc; background-color:#000;">
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/YouTube_play_button_icon_%282013-2017%29.svg" alt="Play Button" style="width:60px; height:60px; opacity:0.8;">
+  </div>
 </a>
 
 ## Installing Miniconda & Setting Up Python Virtual Environment
