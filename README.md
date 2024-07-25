@@ -15,10 +15,6 @@
 
   ollama_agent_roll_cage includes the /create command, allowing the user to define a model, and system prompt for a custom modelfile, via text and speech commands. This is not the same as the /unsloth fine-tune command tune which requires the unsloth package import, and the correct model training data, which will be added in OARC update 0.3, system prompt modifications are very useful for specific use cases, more advanced options stack modified system prompts with fine tuned models in an agent framework like OARC does 😄. Ultimately we want to investigate our Agent at every level, and take care wherever possible. More functions are coming soon, and as such new models to match, hope you have a good install, join the Ollama community & the OARC community on discord below for more help and join in on OARC community mod pack development,
 
-🦙 ***[Ollama Discord Server](https://discord.gg/dAzSYcnpdF)*** 🦙
-
-👽 ***[Borch's Unified Theory of Everything](https://discord.gg/dAzSYcnpdF)*** 🧙
-
 <img
 src="docs/assets/posters/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
