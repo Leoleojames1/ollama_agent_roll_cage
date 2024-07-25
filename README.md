@@ -1,6 +1,6 @@
-<div style="text-align: center;">
+<p align="center">
   <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="200"/>
-</div>
+</p>
 
 # 🤖👽 ollama_agent_roll_cage (OARC) V0.27.0 🤬🧙
 
