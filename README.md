@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="200"/>
+  <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="225"/>
 </p>
 
 # 🤖👽 ollama_agent_roll_cage (OARC) V0.27.0 🤬🧙
