@@ -1,7 +1,13 @@
+<p align="center">
+  <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="200"/>
+</p>
+<p align="center">
+  <a href="https://ko-fi.com/unsloth"><img src="docs/assets/icons/buy me a coffee button.png" height="48"></a>
+</p>
+
 # 🤖👽 ollama_agent_roll_cage (OARC) V0.27.0 🤬🧙
 
 ***[🦾Borch's AI Development Guide🦿](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)***
-
 ## About
   **ollama_agent_roll_cage** (OARC) is a local python agent fusing **ollama** llm's with **Coqui-TTS** speech models, **Keras** classifiers, **Llava** vision, **Whisper** recognition, and more to create a unified chatbot agent for local, custom automation. This program manages, and automates the creation of **chatbots** through **conversation history**, **model management**, **function calling**, and ultimately defining a **base reality** for your agent to build its world view via an **interaction space** for windows **software**, local files, and callable screenshots giving the user more control over the likely output of the agent through **multimodal** agentic **chain of thought**, and a mixture of exterior software tools. 
 
