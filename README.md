@@ -1,4 +1,5 @@
-![OARC LOGO](docs/assets/icons/ollama_agent_roll_cage_icon.png)
+<img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="200"/>
+
 # 🤖👽 ollama_agent_roll_cage (OARC) V0.27.0 🤬🧙
 
 ***[🦾Borch's AI Development Guide🦿](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)***
