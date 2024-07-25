@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="225"/>
+  <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="200"/>
+</p>
+<p align="center">
+  <a href="https://ko-fi.com/unsloth"><img src="docs/assets/icons/buy me a coffee button.png" height="48"></a>
 </p>
 
 # 🤖👽 ollama_agent_roll_cage (OARC) V0.27.0 🤬🧙
