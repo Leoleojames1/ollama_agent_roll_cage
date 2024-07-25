@@ -3,6 +3,7 @@
 </p>
 <p align="center">
   <a href="https://ko-fi.com/theborch"><img src="docs/assets/icons/buy me a coffee button.png" height="48"></a>
+  <a href="https://discord.gg/dAzSYcnpdF"><img src="docs/assets/icons/discord_button.png" height="48"></a>
 </p>
 
 # 🤖👽 ollama_agent_roll_cage (OARC) V0.27.0 🤬🧙
