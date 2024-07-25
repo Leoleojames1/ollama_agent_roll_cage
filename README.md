@@ -326,7 +326,7 @@ as you can see the tkinter Gui is capable of parsing and rendering latex formula
 ## Ollama Model's and Modififed System Prompting
 
 <img
-src="docs/code_documentation/roll_cage_wizard.png"
+src="docs/assets/posters/roll_cage_wizard.png"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
 Check out the following summary tests for the following models:
