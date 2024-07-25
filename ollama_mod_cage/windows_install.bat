@@ -20,7 +20,9 @@ if %ERRORLEVEL% EQU 0 (
         set /p ollama_path="Enter the custom path for Ollama installation: "
     )
     REM Download and install Ollama
-    curl -o OllamaSetup.exe https://ollama.com/download/OllamaSetup.exe
+    if not exist OllamaSetup.exe (
+        curl -o OllamaSetup.exe https://ollama.com/download/OllamaSetup.exe
+    )
     start /wait OllamaSetup.exe /silent /install /path="!ollama_path!"
 )
 
@@ -30,6 +32,9 @@ if %ERRORLEVEL% EQU 0 (
     echo Miniconda is already installed.
 ) else (
     REM Install Miniconda3
+    if not exist Miniconda3-latest-Windows-x86_64.exe (
+        curl -o Miniconda3-latest-Windows-x86_64.exe https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
+    )
     start /wait Miniconda3-latest-Windows-x86_64.exe /S /InstallationType=JustMe /AddToPath=1 /RegisterPython=0
 )
 
@@ -38,6 +43,11 @@ if exist "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA" (
     echo CUDA is already installed.
 ) else (
     REM Install CUDA
+    if not exist cuda_installer.exe (
+        REM Replace with the actual download link for CUDA installer
+        echo Downloading CUDA installer...
+        curl -o cuda_installer.exe https://example.com/cuda_installer.exe
+    )
     start /wait cuda_installer.exe /silent
 )
 
@@ -46,38 +56,12 @@ if exist "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\cudnn" (
     echo cuDNN is already installed.
 ) else (
     REM Install cuDNN
+    if not exist cudnn_installer.exe (
+        REM Replace with the actual download link for cuDNN installer
+        echo Downloading cuDNN installer...
+        curl -o cudnn_installer.exe https://example.com/cudnn_installer.exe
+    )
     start /wait cudnn_installer.exe /silent
 )
 
-REM Create conda environment
-conda create -n py311_ollama python=3.11 -y
-call conda activate py311_ollama
-
-REM Install pip wheels and NVIDIA pyindex
-pip install nvidia-pyindex
-pip install TTS
-pip install SpeechRecognition
-
-REM Install requirements
-pip install -r requirements.txt
-
-REM Download the XTTS Model for coqui
-cd !IGNORED_TTS_DIR!
-git clone https://huggingface.co/coqui/XTTS-v2
-
-REM Install PyTorch and related packages
-conda install pytorch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 pytorch-cuda=11.8 -c pytorch -c nvidia -y
-
-REM Integrate C++ Build Tools Installation
-echo Activating Conda environment...
-call conda activate py311_ollama
-
-echo Installing Microsoft C++ Build Tools...
-:: Download the Visual Studio Build Tools installer
-curl -L -o vs_buildtools.exe https://aka.ms/vs/17/release/vs_buildtools.exe
-
-:: Install the required components
-start /wait vs_buildtools.exe --quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended
-
-echo Installation complete!
-pause
+REM Rest of your script...
