@@ -353,7 +353,7 @@ The User gets to explore the endless generative power of ai in an endless multiv
 
 <div style="display: flex; width: 100%;">
   <img src="docs/assets/icons/Agent_Test_Pics/IMG_2371.jpg" style="width: 39%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
 </div>
 
 ## Models
@@ -365,7 +365,7 @@ Llama 3 instruction-tuned models are fine-tuned and optimized for dialogue/chat 
 llama3_benchmark
 <div style="display: flex; width: 100%;">
   <img src="docs/assets/icons/Agent_Test_Pics/Meta.png" style="width: 39%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
 </div>
 
 Model Download: 
@@ -391,8 +391,8 @@ It shows strong performance in code generation.
 It can be finetuned into an instruction-following model that achieves a score of 8.3 on MT-Bench.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/mistral_light.png" style="width: 39%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
+  <img src="docs/assets/icons/mistral_light.png" style="width: 39%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
 </div>
 
 Model Download: 
@@ -406,7 +406,7 @@ https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1
 Gemma is a family of lightweight, state-of-the-art open models from Google, built from the same research and technology used to create the Gemini models. They are text-to-text, decoder-only large language models, available in English, with open weights, pre-trained variants, and instruction-tuned variants. Gemma models are well-suited for a variety of text generation tasks, including question answering, summarization, and reasoning. Their relatively small size makes it possible to deploy them in environments with limited resources such as a laptop, desktop or your own cloud infrastructure, democratizing access to state of the art AI models and helping foster innovation for everyone.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/google_g.png" style="width: 39%;">
+  <img src="docs/assets/icons/google_g.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/gemma_who_are_you.png" style="width: 59%;">
 </div>
 
@@ -421,7 +421,7 @@ Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion para
 https://huggingface.co/docs/transformers/main/model_doc/phi3
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/phi_microsoft.png" style="width: 39%;">
+  <img src="docs/assets/icons/phi_microsoft.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 59%;">
 </div>
 
