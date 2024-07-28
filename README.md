@@ -353,7 +353,7 @@ The User gets to explore the endless generative power of ai in an endless multiv
 
 <div style="display: flex; width: 100%;">
   <img src="docs/assets/icons/IMG_2371.jpg" style="width: 39%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
 </div>
 
 ## Models
