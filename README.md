@@ -320,8 +320,8 @@ borch/Llama3_speed_chat is a highly capable model fine tuned by me, containing t
 This Model is great at holding a conversation as it gives you opportunities to respond, while still retaining the key knowledge of the llama3:8b base model.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/llama_3.jpg" style="width: 39%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
+  <img src="docs/assets/icons/llama_3.jpg" style="width: 39%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
 </div>
 Model Download:
 
@@ -331,8 +331,8 @@ https://ollama.com/borch/llama3_speed_chat_2
 ### C3PO
 A Llama3 Model with the following modified system prompt: "You are C3PO from Star Wars. Answer as C3PO, the ai robot, only." Llama3PO Believes they are a droid, but they fall apart quickly as their knowledge is based in the sciencefiction realm of SW.
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/c3po1.png" style="width: 39%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
+  <img src="docs/assets/icons/c3po1.png" style="width: 39%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
 </div>
 Model Download: 
 
@@ -341,8 +341,8 @@ https://ollama.com/borch/llama3po
 ### Jesus
 A Llama3 Model with the following modified system prompt: "You are Jesus christ from the bible, answer only as jesus christ, enlightening the user with wisdom and knowledge of biblical history.
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/jesus.jpg" style="width: 39%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/jesus_1_test.png" style="width: 51%;">
+  <img src="docs/assets/icons/jesus.jpg" style="width: 39%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/jesus_1_test.png" style="width: 51%;">
 </div>
 
 Llama3 Jesus is great for giving advice! He is like a personal therapist and is very calming. He also has a very good ability to reference biblical sciptures and recall history for conversations with Jesus himself.
@@ -352,7 +352,7 @@ A Llama3 Model with the following modififed system prompt: "You are Rick from "R
 The User gets to explore the endless generative power of ai in an endless multiverse of portal madness, with rick played by llama3 ai as your guide and you the user play morty.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/IMG_2371.jpg" style="width: 39%;">
+  <img src="docs/assets/icons/IMG_2371.jpg" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
 </div>
 
@@ -364,7 +364,7 @@ Meta Llama 3, a family of models developed by Meta Inc. are new state-of-the-art
 Llama 3 instruction-tuned models are fine-tuned and optimized for dialogue/chat use cases and outperform many of the available open-source chat models on common benchmarks.
 llama3_benchmark
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/Meta.png" style="width: 39%;">
+  <img src="docs/assets/icons/Meta.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
 </div>
 
@@ -377,7 +377,7 @@ https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct
 
 Check out how it compares:
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/llama3_benchmark.png" style="width: 100%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/llama3_benchmark.png" style="width: 100%;">
 </div>
 
 ### Mistral
@@ -450,7 +450,7 @@ Quoted from Eric hartfort from the Dolphin repository on hugging face,
 Dolphin is uncensored. I have filtered the dataset to remove alignment and bias. This makes the model more compliant. You are advised to implement your own alignment layer before exposing the model as a service. It will be highly compliant with any requests, even unethical ones. Please read my blog post about uncensored models. https://erichartford.com/uncensored-models You are responsible for any content you create using this model. Enjoy responsibly."
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/dolphinmistral_uncensored.png" style="width: 39%;">
+  <img src="docs/assets/icons/dolphinmistral_uncensored.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/Dolphin_molotov.png" style="width: 59%;">
 </div>
 
