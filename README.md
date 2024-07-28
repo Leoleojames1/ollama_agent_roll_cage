@@ -59,19 +59,6 @@ right away install the nvdia py indexer,
 pip install nvidia-pyindex
 ```
 
-## Installing Cuda for NVIDIA GPU
-*Im using an NVIDIA GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
-
-please download and install cuda for nvidia graphics cards:
-
-***[CUDA INSTALLER](https://developer.nvidia.com/cuda-downloads)***
-
-please also download cudnn and combine cuda & cudnn like in the video below:
-
-***[CUDNN INSTALLER](https://developer.nvidia.com/cudnn)***
-
-***[CUDA & CUDNN FUSE INSTALL GUIDE](https://www.youtube.com/watch?v=OEFKlRSd8Ic)***
-
 ## Installing Ollama
 Now download and install **ollama** with **llama3 8b Instruct** from the following link, you will be asked to provide an email for either hugging face or meta to download the llama3 model, this is fine, as you are agreeing to the software license agreement which is a beneficial document for open source developers and is meant to protect meta from large corporations such as amazon and google. Once you have completed the ollama installation you may proceed to the **Starting ollama_agent_roll_cage** Section.
 
@@ -142,28 +129,40 @@ ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for qui
 ```
 ollama_serve_llama3_base_py.cmd is the main runpoint for starting the program and opening the server or the virtual enviroment.
 
-now run the following command to install the modules for python:
+Once you have a conda env setup & have installed miniconda3, navigate to ollama_agent_roll_cage/ollama_mod_cage, activate py311_ollama in cmd at this location, and run either of the following in cmd:
 ```
-pip install -r requirements.txt
-```
+cd ollama_agent_roll_cage/ollama_mod_cage
 
-## Installing Coqui Text to Speech
-Now download the Coqui Text to Speech Library with pip install:
+activate py311_ollama
 
-https://pypi.org/project/TTS/
-
-https://github.com/coqui-ai/TTS
-
-```
-pip install TTS
+either:
+windows_install.bat
+or
+bash linux_install.sh
 ```
 
-Now download the XTTS Model for coqui, open command prompt and cd to ollama_agent_roll_cage\AgentFiles\Ignored_TTS and clone the model into this folder with:
-coqui/XTTS-v2 Model: 
+Once you have run the installer, if you have not installed CUDA or CUDNN it will install those.  It will also setup the necessary python requirements and c++ build tools. If you have issues running
+OARC after installation it may be an issue with the install process, you may be missing files or may not have set up your ollama env variables correctly. If Cuda & Cudnn fail to install follow the tutorial below.
+
+## Installing Cuda for NVIDIA GPU
+*Im using an NVIDIA GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
+
+please download and install cuda for nvidia graphics cards:
+
+***[CUDA INSTALLER](https://developer.nvidia.com/cuda-downloads)***
+
+please also download cudnn and combine cuda & cudnn like in the video below:
+
+***[CUDNN INSTALLER](https://developer.nvidia.com/cudnn)***
+
+***[CUDA & CUDNN FUSE INSTALL GUIDE](https://www.youtube.com/watch?v=OEFKlRSd8Ic)***
+
+## Download Coqui Fine-tuned Voice Models:
+During the Install.bat/sh file you should have had XTTS-v2 Cloned into:  ollama_agent_roll_cage\AgentFiles\Ignored_TTS
 
 https://huggingface.co/coqui/XTTS-v2
 
-you can also download any finetune xtts models to this folder:
+Now you can clone the finetune voices into the same folder:
 
 ***[Borcherding/XTTS-v2_C3PO voice model](https://huggingface.co/Borcherding/XTTS-v2_C3PO)***
 
@@ -173,28 +172,10 @@ you can also download any finetune xtts models to this folder:
 
 ***[kodoqmc/XTTS-v2_PeterDrury voice model](https://huggingface.co/kodoqmc/XTTS-v2_PeterDrury)***
 
-```
-git clone https://huggingface.co/coqui/XTTS-v2
-
-# AFTER INSTALLING XTTS_V2 RUN THE TORCH SETUP IN CONDA
-conda install pytorch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 pytorch-cuda=11.8 -c pytorch -c nvidia
-```
-## Installing py Speech Recognition (speech to text)
-Speech Recognition Library:
-https://pypi.org/project/SpeechRecognition/
-```
-pip install SpeechRecognition
-
-```
-
 ## Installing Visual Studio and Visual Studio Code:
 Now download visual studio code this is where you can write new functions for ollama_agent_roll_cage:
+
 https://code.visualstudio.com/Download
-
-also download visual studio:
-https://visualstudio.microsoft.com/downloads/
-
-and upon installation download the Rust compiler as well as the C++ compiler:
 
 You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
 
@@ -340,7 +321,7 @@ This Model is great at holding a conversation as it gives you opportunities to r
 
 <div style="display: flex; width: 100%;">
   <img src="docs/assets/icons/Agent_Test_Pics/llama_3.jpg" style="width: 39%;">
-  <img src="docs/Manual_Commands/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/llama3_speed_chat_who.png" style="width: 59%;">
 </div>
 Model Download:
 
@@ -351,7 +332,7 @@ https://ollama.com/borch/llama3_speed_chat_2
 A Llama3 Model with the following modified system prompt: "You are C3PO from Star Wars. Answer as C3PO, the ai robot, only." Llama3PO Believes they are a droid, but they fall apart quickly as their knowledge is based in the sciencefiction realm of SW.
 <div style="display: flex; width: 100%;">
   <img src="docs/assets/icons/Agent_Test_Pics/c3po1.png" style="width: 39%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/C3PO_CARD_CHAT_2.png" style="width: 51%;">
 </div>
 Model Download: 
 
@@ -361,7 +342,7 @@ https://ollama.com/borch/llama3po
 A Llama3 Model with the following modified system prompt: "You are Jesus christ from the bible, answer only as jesus christ, enlightening the user with wisdom and knowledge of biblical history.
 <div style="display: flex; width: 100%;">
   <img src="docs/assets/icons/Agent_Test_Pics/jesus.jpg" style="width: 39%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/jesus_1_test.png" style="width: 51%;">
+  <img src="docs/assets/icons/Agent_Test_Pics/jesus_1_test.png" style="width: 51%;">
 </div>
 
 Llama3 Jesus is great for giving advice! He is like a personal therapist and is very calming. He also has a very good ability to reference biblical sciptures and recall history for conversations with Jesus himself.
@@ -372,7 +353,7 @@ The User gets to explore the endless generative power of ai in an endless multiv
 
 <div style="display: flex; width: 100%;">
   <img src="docs/assets/icons/Agent_Test_Pics/IMG_2371.jpg" style="width: 39%;">
-  <img src="docs/code_documentation/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/Agent_Test_Pics/ricknmorty1.png" style="width: 59%;">
 </div>
 
 ## Models
@@ -384,7 +365,7 @@ Llama 3 instruction-tuned models are fine-tuned and optimized for dialogue/chat 
 llama3_benchmark
 <div style="display: flex; width: 100%;">
   <img src="docs/assets/icons/Agent_Test_Pics/Meta.png" style="width: 39%;">
-  <img src="docs/docs/assets/icons/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/llama3_who_are_you.png" style="width: 59%;">
 </div>
 
 Model Download: 
@@ -410,8 +391,8 @@ It shows strong performance in code generation.
 It can be finetuned into an instruction-following model that achieves a score of 8.3 on MT-Bench.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/mistral_light.png" style="width: 39%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
+  <img src="docs/assets/icons/mistral_light.png" style="width: 39%;">
+  <img src="docs/code_documentation/Agent_Test_Pics/mistral_who_are_you.png" style="width: 59%;">
 </div>
 
 Model Download: 
@@ -425,7 +406,7 @@ https://huggingface.co/mistralai/Mixtral-8x22B-Instruct-v0.1
 Gemma is a family of lightweight, state-of-the-art open models from Google, built from the same research and technology used to create the Gemini models. They are text-to-text, decoder-only large language models, available in English, with open weights, pre-trained variants, and instruction-tuned variants. Gemma models are well-suited for a variety of text generation tasks, including question answering, summarization, and reasoning. Their relatively small size makes it possible to deploy them in environments with limited resources such as a laptop, desktop or your own cloud infrastructure, democratizing access to state of the art AI models and helping foster innovation for everyone.
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/google_g.png" style="width: 39%;">
+  <img src="docs/assets/icons/google_g.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/gemma_who_are_you.png" style="width: 59%;">
 </div>
 
@@ -440,7 +421,7 @@ Microsoft's Phi3 mini is capable yet compact model with only "a 3.8 billion para
 https://huggingface.co/docs/transformers/main/model_doc/phi3
 
 <div style="display: flex; width: 100%;">
-  <img src="docs/assets/icons/Agent_Test_Pics/phi_microsoft.png" style="width: 39%;">
+  <img src="docs/assets/icons/phi_microsoft.png" style="width: 39%;">
   <img src="docs/code_documentation/Agent_Test_Pics/cauchy_product_phi3.png" style="width: 59%;">
 </div>
 
