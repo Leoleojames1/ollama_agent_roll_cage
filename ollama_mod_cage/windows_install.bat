@@ -1,67 +1,48 @@
 @echo off
-setlocal enabledelayedexpansion
 
 REM Define relative paths
 set CURRENT_DIR=%cd%
-set PARENT_DIR=%cd%\..
-set AGENT_FILES_DIR=%cd%\AgentFiles
-set IGNORED_TTS_DIR=%cd%\AgentFiles\Ignored_TTS
+for %%i in ("%CURRENT_DIR%") do set PARENT_DIR=%%~dpi
+set AGENT_FILES_DIR=%CURRENT_DIR%\AgentFiles
+set IGNORED_TTS_DIR=%CURRENT_DIR%\AgentFiles\Ignored_TTS
 
-REM Check if Ollama is in PATH
-echo %PATH% | findstr /i /c:"ollama" >nul
-if %ERRORLEVEL% EQU 0 (
-    echo Ollama is already installed.
-) else (
-    REM Prompt for custom Ollama installation path
-    set /p ollama_path="Ollama is not found. Do you want to install it in the default path (C:\Program Files\Ollama)? (Y/N): "
-    if /i "!ollama_path!"=="Y" (
-        set ollama_path="C:\Program Files\Ollama"
-    ) else (
-        set /p ollama_path="Enter the custom path for Ollama installation: "
-    )
-    REM Download and install Ollama
-    if not exist OllamaSetup.exe (
-        curl -o OllamaSetup.exe https://ollama.com/download/OllamaSetup.exe
-    )
-    start /wait OllamaSetup.exe /silent /install /path="!ollama_path!"
-)
+REM Log file
+set LOG_FILE=%CURRENT_DIR%\windows_install.log
 
-REM Check if Miniconda is in PATH
-echo %PATH% | findstr /i /c:"conda" >nul
-if %ERRORLEVEL% EQU 0 (
-    echo Miniconda is already installed.
-) else (
-    REM Install Miniconda3
-    if not exist Miniconda3-latest-Windows-x86_64.exe (
-        curl -o Miniconda3-latest-Windows-x86_64.exe https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
-    )
-    start /wait Miniconda3-latest-Windows-x86_64.exe /S /InstallationType=JustMe /AddToPath=1 /RegisterPython=0
-)
+REM Function to log messages
+:log_message
+echo %date% %time% - %1 >> %LOG_FILE%
+goto :eof
 
-REM Check if CUDA is installed
-if exist "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA" (
-    echo CUDA is already installed.
-) else (
-    REM Install CUDA
-    if not exist cuda_installer.exe (
-        REM Replace with the actual download link for CUDA installer
-        echo Downloading CUDA installer...
-        curl -o cuda_installer.exe https://example.com/cuda_installer.exe
-    )
-    start /wait cuda_installer.exe /silent
-)
+REM CUDA installation
+powershell -Command "Invoke-WebRequest -Uri https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_windows.exe -OutFile cuda_11.8.0_520.61.05_windows.exe"
+cuda_11.8.0_520.61.05_windows.exe -s -toolkit >> %LOG_FILE% 2>&1
+call :log_message "CUDA installation completed."
 
-REM Check if cuDNN is installed
-if exist "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\cudnn" (
-    echo cuDNN is already installed.
-) else (
-    REM Install cuDNN
-    if not exist cudnn_installer.exe (
-        REM Replace with the actual download link for cuDNN installer
-        echo Downloading cuDNN installer...
-        curl -o cudnn_installer.exe https://example.com/cudnn_installer.exe
-    )
-    start /wait cudnn_installer.exe /silent
-)
+REM cuDNN installation
+powershell -Command "Invoke-WebRequest -Uri https://developer.download.nvidia.com/compute/redist/cudnn/v8.4.1/cudnn-11.8-windows-x64-v8.4.1.50.zip -OutFile cudnn-11.8-windows-x64-v8.4.1.50.zip"
+powershell -Command "Expand-Archive -Path cudnn-11.8-windows-x64-v8.4.1.50.zip -DestinationPath ."
+xcopy cuda\include\cudnn*.h "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\include" /Y
+xcopy cuda\lib\x64\cudnn*.dll "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin" /Y
+xcopy cuda\lib\x64\cudnn*.lib "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\lib\x64" /Y
 
-REM Rest of your script...
+REM Create conda environment
+call conda create -n py311_ollama python=3.11 -y
+call conda activate py311_ollama
+
+REM Install required packages
+pip install nvidia-pyindex TTS SpeechRecognition
+pip install -r requirements.txt
+
+REM Download XTTS Model for coqui
+cd /d %IGNORED_TTS_DIR%
+git clone https://huggingface.co/coqui/XTTS-v2
+
+REM Install PyTorch and Microsoft C++ Build Tools
+call conda install pytorch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 pytorch-cuda=11.8 -c pytorch -c nvidia -y
+echo Activating Conda environment...
+call conda activate py311_ollama
+powershell -Command "Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools.exe"
+vs_buildtools.exe --quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended
+echo Installation complete!
+call :log_message "Installation complete."

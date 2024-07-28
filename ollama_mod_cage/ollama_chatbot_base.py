@@ -539,52 +539,7 @@ class ollama_chatbot_base:
             self.LLM_BOOSTER_PROMPT = False
             self.VISION_SYSTEM_PROMPT = False
             self.VISION_BOOSTER_PROMPT = False
-
-    # # -------------------------------------------------------------------------------------------------
-    # def llm_system_prompt(self):
-    #     """ a method for returning the agent's llm system prompt
-    #     """
-    #     if self.LLM_SYSTEM_PROMPT_FLAG == True:
-    #         self.chat_history.append({"role": "system", "content": self.agent_dict["LLM_SYSTEM_PROMPT"]})
-    #     else:
-    #         print("Invalid choice. Please select a valid prompt.")
-    #     return
-    
-    # # -------------------------------------------------------------------------------------------------
-    # def vision_system_prompt(self):
-    #     """ a method for returning the agent's llm system prompt
-    #     """
-    #     if self.VISION_SYSTEM_PROMPT == True:
-    #         self.llava_history.append({"role": "system", "content": self.agent_dict["VISION_SYSTEM_PROMPT"]})
-    #     else:
-    #         print("Invalid choice. Please select a valid prompt.")
-    #     return
-    
-    # # -------------------------------------------------------------------------------------------------      
-    # def llm_booster_prompt(self):
-    #     """ a method for managing the intermediate llm prompts
-    #         args: none
-    #         returns: none
-    #     """
-    #     if self.LLM_BOOSTER_PROMPT == True:
-    #         self.chat_history.append({"role": "assistant", "content": f"VISION_DATA: {self.llava_response}"})
-    #         self.chat_history.append({"role": "user", "content": self.agent_dict["LLM_BOOSTER_PROMPT"]})
-    #     else:
-    #         print("Invalid choice. Please select a valid prompt.")
-    #     return
-    
-    # # -------------------------------------------------------------------------------------------------      
-    # def vision_booster_prompt(self):
-    #     """ a method for managing the intermediate vision prompts
-    #         args: none
-    #         returns: none
-    #     """
-    #     if self.VISION_BOOSTER_PROMPT == True:
-    #         self.vision_booster_return = self.agent_dict["VISION_BOOSTER_PROMPT"]
-    #     else:
-    #         print("Invalid choice. Please select a valid prompt.")
-    #     return
-    
+            
     # -------------------------------------------------------------------------------------------------
     def shot_prompt(self, prompt):
         # Clear chat history
@@ -891,6 +846,13 @@ class ollama_chatbot_base:
         else:
             args = None
 
+        # If Listen off
+        if command == "/listen off":
+            self.listen_flag = False
+            self.speech_recognizer_instance.auto_speech_flag = False
+            print("- speech to text deactivated -")
+            return True  # Ensure this returns True to indicate the command was processed
+        
         # If /llava flow, 
         if command == "/llava flow":
             # user select the vision model, #TODO SHOW OLLAMA LIST AND SUGGEST POSSIBLE VISION MODELS, ULTIMATLEY YOU NEED THE OLLAMA MODEL NAME
@@ -1136,21 +1098,29 @@ class ollama_chatbot_base:
         # print(f"Agent voice swapped to {self.voice_name}")
         # print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
         # return
-    
+        
+    # -------------------------------------------------------------------------------------------------   
+    def update_speech_flags(self, value):
+        self.listen_flag = value
+        self.speech_recognizer_instance.auto_speech_flag = value
+        print(f"Speech recognition {'activated' if value else 'deactivated'}")
+        
     # -------------------------------------------------------------------------------------------------   
     def listen(self):
         """ a method for changing the listen flag 
             args: flag
             return: none
         """
-        if not self.listen_flag:
-            self.listen_flag = True
-            print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
-            print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
-        else:
-            print(self.colors["OKBLUE"] + "- speech to text deactivated -" + self.colors["RED"])
+        # if not self.listen_flag:
+        #     self.listen_flag = True
+        #     print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
+        #     print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
+        # else:
+        #     print(self.colors["OKBLUE"] + "- speech to text deactivated -" + self.colors["RED"])
 
-        return
+        # return
+        self.update_speech_flags(not self.listen_flag)
+        return True
 
     # -------------------------------------------------------------------------------------------------   
     def auto_commands(self, flag):
@@ -1193,7 +1163,7 @@ class ollama_chatbot_base:
         self.tts_processor_instance = None
         # self.FileSharingNode = None
 
-        keyboard.add_hotkey('ctrl+shift', self.speech_recognizer_instance.auto_speech_set, args=(True,))
+        keyboard.add_hotkey('ctrl+shift', self.speech_recognizer_instance.auto_speech_set, args=(True, self.listen_flag))
         keyboard.add_hotkey('ctrl+alt', self.speech_recognizer_instance.chunk_speech, args=(True,))
         keyboard.add_hotkey('shift+alt', self.interrupt_speech)
         keyboard.add_hotkey('tab+ctrl', self.speech_recognizer_instance.toggle_wake_commands)
@@ -1204,8 +1174,14 @@ class ollama_chatbot_base:
             cmd_run_flag = False
             
             # check for speech recognition
-            if self.listen_flag or self.speech_recognizer_instance.auto_speech_flag:
+            # if self.listen_flag or self.speech_recognizer_instance.auto_speech_flag:
+            if self.listen_flag:
                 # user input speech request from keybinds
+                # Wait for the key press to start speech recognition
+                keyboard.wait('ctrl+shift')
+                
+                # Start speech recognition
+                self.speech_recognizer_instance.auto_speech_flag = True
                 while self.speech_recognizer_instance.auto_speech_flag:
                     try:
                         # Record audio from microphone
@@ -1464,199 +1440,3 @@ class ollama_chatbot_base:
         print(f"Parquet file has been written to: {output_file}")
         
         return output_file
-    
-    # # -------------------------------------------------------------------------------------------------
-    # def print_to_win(self, message):
-    #     """
-    #     Print the given message to the chatbot's window and refresh the window.
-
-    #     Args:
-    #         message (str): The message to print.
-    #     """
-    #     if self.win is None:
-    #         raise ValueError("self.win is None")
-    #     if not isinstance(message, str):
-    #         raise TypeError("message must be a string")
-    #     try:
-    #         self.win.addstr(message)
-    #         self.win.refresh()
-    #     except curses.error as e:
-    #         raise RuntimeError(f"An error occurred while printing to the window: {e}") from e
-
-    # # -------------------------------------------------------------------------------------------------
-    # def update_pad(self):
-    #     """
-    #     Continuously update the chatbot's pad with the user's input and refresh the pad.
-    #     """
-    #     while True:
-    #         if self.user_input_prompt:
-    #             try:
-    #                 with self.lock:  # Acquire the lock before updating the UI
-    #                     self.pad.addstr(self.user_input_prompt)  # Add the user input to the pad
-    #                     self.win.refresh()
-    #                     self.pad.refresh(0, 0, 0, 0, self.win.getmaxyx()[0], self.win.getmaxyx()[1])  # Refresh the pad after adding the user's input
-    #                     self.user_input_prompt = ""
-    #             except curses.error as e:
-    #                 print(f"An error occurred while updating the pad: {e}")
-
-    # # -------------------------------------------------------------------------------------------------
-    # def capture_keys(self):
-    #     """
-    #     Continuously capture keys from the user and update the user's input accordingly.
-    #     """
-    #     user_input = ""
-    #     self.win.nodelay(True)
-    #     while True:
-    #         key = self.win.getch()
-    #         if key == ord('\n'):
-    #             self.user_input_prompt = user_input
-    #             print(f"user_input_prompt is set to: {user_input}")
-    #             user_input = ""
-    #             self.update_pad()  # Update the pad after a newline is entered
-    #         elif key == curses.KEY_BACKSPACE:
-    #             user_input = user_input[:-1]
-    #         elif key >= ord(' ') and key <= ord('~'):
-    #             user_input += chr(key)
-    #         elif key == -1:
-    #             continue
-
-    # # -------------------------------------------------------------------------------------------------
-    # def handle_resize(self):
-    #     """
-    #     Handles screen resizing. Updates the size and position of each chatbot's
-    #     window and pad to fit the new screen size.
-
-    #     Args:
-    #         None
-    #     Returns:
-    #         None
-    #     """
-    #     if self.chatbot is None:
-    #         return
-
-    #     max_y, max_x = self.stdscr.getmaxyx()
-    #     win_height = max_y
-    #     win_width = max_x - 2
-    #     win_y = 0
-    #     win_x = 1
-    #     try:
-    #         self.chatbot.win.resize(win_height, win_width)
-    #         self.chatbot.win.mvwin(win_y, win_x)
-    #         self.chatbot.pad.resize(100, win_width)
-    #     except curses.error as e:
-    #         self.stdscr.addstr(0, 0, f"Resize error: {e}\n")
-    #         self.stdscr.refresh()
-
-    # # -------------------------------------------------------------------------------------------------
-    # def highlight_current_chatbot(self):
-    #     """
-    #     Highlights the currently selected chatbot by drawing a box around its window.
-    #     All other chatbots are unhighlighted.
-
-    #     Args:
-    #         None
-
-    #     Returns:
-    #         None
-    #     """
-    #     # Only highlight if a chatbot instance is currently selected
-    #     if self.chatbot is not None:
-    #         # Set the color of the chatbot window to highlight
-    #         self.chatbot.win.attron(curses.color_pair(2))
-    #         # Draw a box around the chatbot window
-    #         self.chatbot.win.box()
-    #         # Turn off the highlight color
-    #         self.chatbot.win.attroff(curses.color_pair(2))
-    #         # Refresh the screen after updating the frame
-    #         self.stdscr.refresh()  # Refresh the screen after updating the frame
-            
-    # # -------------------------------------------------------------------------------------------------
-    # def chatbot_main(self):
-    #     """
-    #     The main loop for the chatbot. This method manages the chatbot instance, handling user input and chatbot responses.
-    #     """
-
-    #     try:
-    #         # Get the model name
-    #         self.stdscr.addstr("<<< PROVIDE MODEL NAME >>> ", curses.color_pair(1))
-    #         self.stdscr.refresh()
-    #         self.user_input_model_select = self.stdscr.getstr().decode('utf-8')
-
-    #         print(f"chatbot_main is being called for {self.user_input_model_select}")
-
-    #         # Start the update method in a separate thread
-    #         update_pad_thread = threading.Thread(target=self.update_pad)
-    #         update_pad_thread.start()
-
-    #         self.latex_render_instance = None
-    #         self.tts_processor_instance = None
-
-    #         self.print_to_win("Press space bar to record audio:")
-    #         self.print_to_win("<<< USER >>> ")
-
-    #         keyboard.add_hotkey('ctrl+w', self.auto_speech_set, args=(True,))
-    #         keyboard.add_hotkey('ctrl+s', self.chunk_speech, args=(True,))
-
-    #         # Start the capture_keys method in a separate thread
-    #         capture_keys_thread = threading.Thread(target=self.capture_keys)
-    #         capture_keys_thread.start()
-
-    #         while True:
-    #             user_input_prompt = ""
-    #             speech_done = False
-    #             cmd_run_flag = False
-
-    #             if self.listen_flag or self.auto_speech_flag:
-    #                 self.tts_processor_instance = self.instance_tts_processor()
-    #                 while self.auto_speech_flag:  # user holds down the space bar
-    #                     try:
-    #                         # Record audio from microphone
-    #                         audio = self.get_audio()
-    #                         if self.listen_flag:
-    #                             # Recognize speech to text from audio
-    #                             user_input_prompt = self.recognize_speech(audio)
-    #                             self.print_to_win(f">>SPEECH RECOGNIZED<< >> {user_input_prompt} <<")
-    #                             speech_done = True
-    #                             self.chunk_flag = False
-    #                             self.print_to_win(f"CHUNK FLAG STATE: {self.chunk_flag}")
-    #                             self.auto_speech_flag = False
-    #                     except sr.UnknownValueError:
-    #                         self.print_to_win(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
-    #                     except sr.RequestError as e:
-    #                         self.print_to_win(self.colors["OKCYAN"] + f"Could not request results from Google Speech Recognition service: {e}" + self.colors["OKCYAN"])
-    #             elif not self.listen_flag:
-    #                 self.print_to_win(self.colors["OKCYAN"] + "Please type your selected prompt:" + self.colors["OKCYAN"])
-    #                 user_input_prompt = input(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
-    #                 speech_done = True
-    #             user_input_prompt = self.voice_command_select_filter(user_input_prompt)
-    #             cmd_run_flag = self.command_select(user_input_prompt)
-    #             # get screenshot
-    #             if self.llava_flag:
-    #                 self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
-    #             # splice videos
-    #             if self.splice_flag:
-    #                 self.data_set_video_process_instance.generate_image_data()
-    #             if not cmd_run_flag and speech_done:
-    #                 self.print_to_win(f"{user_input_prompt}\n")
-    #                 # Send the prompt to the assistant
-    #                 if self.screen_shot_flag:
-    #                     response = self.send_prompt(user_input_prompt)
-    #                     self.screen_shot_flag = False
-    #                 else:
-    #                     response = self.send_prompt(user_input_prompt)
-    #                 self.print_to_win(f"<<< {self.user_input_model_select} >>> {response}\n")
-
-    #                 if self.latex_flag:
-    #                     # Create a new instance
-    #                     latex_render_instance = latex_render_class()
-    #                     latex_render_instance.add_latex_code(response, self.user_input_model_select)
-    #                 # Preprocess for text to speech, add flag for if text to speech enable handle canche otherwise do /leap or smt
-    #                 # Clear speech cache and split the response into sentences for next TTS cache
-    #                 if self.leap_flag is not None and not self.leap_flag:
-    #                     self.tts_processor_instance.process_tts_responses(response, self.voice_name)
-    #                 elif self.leap_flag is None:
-    #                     pass
-    #                 # Start the mainloop in the main thread
-    #                 self.print_to_win(self.colors["GREEN"] + f"<<< USER >>> " + self.colors["END"])
-    #     except Exception as e:
-    #         print(f"An error occurred in the thread for {self.user_input_model_select}: {e}")

@@ -1,1 +1,1 @@
-wsl
+wsl -d Ubuntu

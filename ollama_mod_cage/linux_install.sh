@@ -14,17 +14,6 @@ log_message() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOG_FILE"
 }
 
-# Ollama installation
-curl -o OllamaSetup.sh https://ollama.com/download/OllamaSetup.sh
-chmod +x OllamaSetup.sh
-./OllamaSetup.sh --silent --install --path="/usr/local/bin/ollama" >> "$LOG_FILE" 2>&1
-log_message "Ollama installation completed."
-
-# Miniconda installation
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
-export PATH="$HOME/miniconda/bin:$PATH"
-
 # CUDA installation
 wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
 sudo sh cuda_11.8.0_520.61.05_linux.run --silent --toolkit >> "$LOG_FILE" 2>&1

@@ -73,8 +73,12 @@ class speech_recognizer_class:
             else:
                 print(self.colors["BLUE"] + "Silence detected, continuing to listen...")
 
-    def auto_speech_set(self, flag):
+    def auto_speech_set(self, flag, listen_flag):
         self.auto_speech_flag = flag
+        if listen_flag == False:
+            self.auto_speech_flag = False
+        if not flag:
+            print("- speech to text deactivated -")
         print(f"auto_speech_flag FLAG STATE: {self.auto_speech_flag}")
 
     def chunk_speech(self, flag):
