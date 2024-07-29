@@ -6,7 +6,7 @@
   <a href="https://discord.gg/dAzSYcnpdF"><img src="docs/assets/icons/Discord button.png" height="48"></a>
 </p>
 
-# 🤖👽 ollama_agent_roll_cage (OARC) V0.27.0 🤬🧙
+# 🤖👽 ollama_agent_roll_cage (OARC) V0.28.0 🤬🧙
 
 ***[🦾Borch's AI Development Guide🦿](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)*** ***[🦙 Ollama Discord Server 🦙](https://discord.gg/ollama)***
 
@@ -26,6 +26,7 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 ***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
 
 ## Ollama Agent Roll Cage Demo Videos
+***[Ollama Agent Roll Cage V0.28.0 - Speech to Speech with Vision, & Agent Library](https://www.youtube.com/watch?v=W7TusPTnNXA)***
 
 ***[OARC Demo Videos Compilation](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/docs/demo_videos.md)***
 
@@ -33,12 +34,12 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 
 ***[OARC V0.26.0 - Llava Vision Demo](https://www.youtube.com/watch?v=szd1wIOc034)***
 
-***[Ollama Agent Roll Cage V0.24.0 Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
+***[Ollama Agent Roll Cage V0.24.0 OLD Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
 
 ## Installing Ollama Agent Roll Cage
 The full video guide for installing and setting up ollama agent roll cage can be found here. This is for version V0.24.0, an updated install guide will be released soon.
 
-***[Ollama Agent Roll Cage V0.24.0 Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
+***[Ollama Agent Roll Cage V0.28.0 - Speech to Speech with Vision, & Agent Library](https://www.youtube.com/watch?v=W7TusPTnNXA)***
 
 ## Installing Miniconda & Setting Up Python Virtual Environment
 Miniconda for modular python virtual environments:
