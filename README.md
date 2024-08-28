@@ -74,17 +74,9 @@ Also Please Follow these tutorials for understanding and installing Ollama:
 
 ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
 
+Optional Terminal Multiplexor requires setup (not recommended):
+
 ***[Tmux: Terminal Multiplexor](https://github.com/tmux/tmux)
-
-## Updating Developertools File
-
-Copy the developer_tools_template.json file and place it in the ollama_mod_cage folder. Then Replace all paths with the install location for your OARC:
-
-***[developer_tools_template.json](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/ollama_mod_cage/developer_tools_template.json)
-
-```
-convert save as developer_tools.json
-```
 
 After installing ollama in the users directory automatically it will be in:
 ```
@@ -153,6 +145,16 @@ bash linux_install.sh
 
 Once you have run the installer, if you have not installed CUDA or CUDNN it will install those.  It will also setup the necessary python requirements and c++ build tools. If you have issues running
 OARC after installation it may be an issue with the install process, you may be missing files or may not have set up your ollama env variables correctly. If Cuda & Cudnn fail to install follow the tutorial below.
+
+## Updating Developertools File
+
+Copy the developer_tools_template.json file and place it in the ollama_mod_cage folder. Then Replace all paths with the install location for your OARC:
+
+***[developer_tools_template.json](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/ollama_mod_cage/developer_tools_template.json)
+
+```
+convert save as developer_tools.json
+```
 
 ## Installing Cuda for NVIDIA GPU
 *Im using an NVIDIA GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
