@@ -76,6 +76,16 @@ Also Please Follow these tutorials for understanding and installing Ollama:
 
 ***[Tmux: Terminal Multiplexor](https://github.com/tmux/tmux)
 
+## Updating Developertools File
+
+Copy the developer_tools_template.json file and place it in the ollama_mod_cage folder. Then Replace all paths with the install location for your OARC:
+
+***[developer_tools_template.json](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/ollama_mod_cage/developer_tools_template.json)
+
+```
+convert save as developer_tools.json
+```
+
 After installing ollama in the users directory automatically it will be in:
 ```
   C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama
