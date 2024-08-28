@@ -153,7 +153,7 @@ Copy the developer_tools_template.json file and place it in the ollama_mod_cage 
 ***[developer_tools_template.json](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/ollama_mod_cage/developer_tools_template.json)***
 
 ```
-edit paths to match your system and save as developer_tools.json, model git and be anywhere
+edit paths to match your system and save as developer_tools.json, $(modelgit) path can be anywhere this is for your hugging face models.
 ```
 
 ## Installing Cuda for NVIDIA GPU
