@@ -76,7 +76,7 @@ Also Please Follow these tutorials for understanding and installing Ollama:
 
 Optional Terminal Multiplexor requires setup (not recommended):
 
-***[Tmux: Terminal Multiplexor](https://github.com/tmux/tmux)
+***[Tmux: Terminal Multiplexor](https://github.com/tmux/tmux)***
 
 After installing ollama in the users directory automatically it will be in:
 ```
@@ -150,7 +150,7 @@ OARC after installation it may be an issue with the install process, you may be 
 
 Copy the developer_tools_template.json file and place it in the ollama_mod_cage folder. Then Replace all paths with the install location for your OARC:
 
-***[developer_tools_template.json](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/ollama_mod_cage/developer_tools_template.json)
+***[developer_tools_template.json](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/ollama_mod_cage/developer_tools_template.json)***
 
 ```
 convert save as developer_tools.json
