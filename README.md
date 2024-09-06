@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="200"/>
+  <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="250"/>
 </p>
 <p align="center">
   <a href="https://ko-fi.com/theborch"><img src="docs/assets/icons/buy me a coffee button.png" height="48"></a>
