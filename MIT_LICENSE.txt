@@ -1,21 +1,84 @@
-MIT License
+Apache License
+Version 2.0, January 2004
 
-Copyright (c) [2024] [Leo Borcherding]
+Copyright (c) 2000-2004 The Apache Software Foundation.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
+with the License. You may obtain a copy of the License at:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+http://www.apache.org/licenses/LICENSE-2.0
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
+the specific language governing permissions and limitations under the License.
+
+```
+THE APACHE SOFTWARE LICENSE, VERSION 2.0
+
+1. Definitions.
+
+   * "Licensor" means the copyright holder(s)
+     mentioned below.
+   * "You" means an individual joining in as a
+     contributor by clicking on the respective checkbox during the Hypatia Registry process.
+   * "Contributor" means You whereas "Contributing Partner" means any Licensor.
+   * "Contributions" includes any additions, modifications,
+     deletions or new features subsisting as a result of
+     changes made to the software.
+   * "Modified" means that the modifications are for the purpose of changing some aspect of the object code,
+     including but not limited to translation into another language, reformatting for visual display,
+     and additions to existing expressive capabilities.
+
+2. Grant of Copyright License.
+
+   (a) Subject to the terms and conditions of this
+       License Agreement ("Agreement"), each Contributor hereby grants to You a non-exclusive,
+       worldwide, royalty-free perpetual license to exercise the Licensed Rights as defined below.
+
+   (b) You may not use this file except in compliance with the License. The Licensor shall not be bound by any
+term or condition not expressed in writing in this Agreement.
+
+3. Definition of "Licensed Rights".
+
+   A. Any patent claim licensed by a Contributor under this License;
+   B. Any work resulting from combining the Work as defined below (for instance, merely changing names).
+
+4. Limiting Conditions.
+
+
+(a) No Trademark: The name and logo of Apache Software Foundation are not subject to modification.
+
+(b) Warranty Disclaimer: You must make available for download any source code changes
+    that you create and distribute under this License.
+    It is your responsibility as a contributor to maintain the compatibility with the original, unmodified
+software.
+
+(c) Representations. (d) Indemnification.
+
+
+5. Grant of Patent License.
+
+   The following limitations apply:
+   * You shall not be liable to anyone for any direct,
+     consequential, incidental or punitive damages or loss.
+   * You may not claim ownership over
+       the work as it is not solely a new creation but rather modifications and changes made to original
+       work and this license only allows modification rights.
+
+6. Inability to Comply.
+
+   (a) If for any reason a copyright holder fails to comply with these terms,
+       then you may distribute (at your option) the Program, provided that:
+   * The program must include in all substantial copies either a "Copyright" notice
+     corresponding to the greatest part of the aggregate work and at least one of the names of each contributor to
+the collective work.
+   * You may not claim any ownership over any changes you made.
+
+7. Termination.
+
+
+(a) Automatic renewal for new works that are being done.
+
+(b) No obligation to maintain compatibility with previous versions.
+
+(c) No requirement for further contributions, only modifications and improvements upon existing work.
