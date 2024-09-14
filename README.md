@@ -120,7 +120,7 @@ You are now conversing with the local ai through an api accessing cmd seperated 
 ## Installing ollama_agent_roll_cage:
 Next pull down the ollama_agent_roll_cage repository using the following command:
 ```
-git clone git@github.com:Leoleojames1/ollama_agent_roll_cage.git
+git clone https://github.com/Leoleojames1/ollama_agent_roll_cage.git
 ```
 After pulling down ollama_agent_roll_cage from github using gitbash (download gitbash), navigate in the folders to ollama_agent_roll_cage/ollama_mod_cage directory,
 here you will find the following files:
