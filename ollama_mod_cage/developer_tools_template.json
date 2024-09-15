@@ -16,6 +16,10 @@
     "$(conversation_library_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\conversation_library",
     "$(image_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\image_set",
     "$(video_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\video_set",
+    "$(speech_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library",
+    "$(recognize_speech_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library\recognize_speech",
+    "$(generate_speech_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library\generate_speech",
+    "$(tts_voice_ref_wav_pack_path_dir.developer_tools)" : "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\public_speech\Public_Voice_Reference_Pack",
     "$(ollama_url.developer_tools)" : "http://localhost:11434/api/chat",
     "$(model_git_dir.developer_tools)" : "D:\CodingGit_StorageHDD\model_git",
     "$(api_key_example.developer_tools)" : "dSaNPwghPs07oGGxIwCwNEjrz6xPvlITpNSVvIjldj3EUx7OKYbdP3t0ZpLm0lKTV1VsxJWXQZ9DmWmCYZ1DMvhCLp2QiEQMNpR27N9E3ntz2NB6kKP6XQeyD18ueOnU"
