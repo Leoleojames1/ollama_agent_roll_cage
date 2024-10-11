@@ -200,6 +200,10 @@ src="docs/assets/posters/roll_cage_race_1.jpg"
 ## Manual Agent Creation Guide:
 Next Navigate to the ollama_agent_roll_cage/AgentFiles directory, here you will find the Modelfile for each Model agent.
 
+<img
+src="docs/assets/flow_charts/AGENT_ROLL_CAGE_Article_B4.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
+
 By modifying the Modelfile and running the create command
 accross the given model file, such as llama3, this Sym prompt is stored within the model when you boot up the given agent. These Agents
 appear under "ollama list" in cmd.
