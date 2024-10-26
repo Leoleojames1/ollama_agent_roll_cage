@@ -1,0 +1,5 @@
+{
+    "$(ollama_url.developer_custom)" : "http://localhost:11434/api/chat",
+    "$(model_git_dir.developer_custom)" : "D:\CodingGit_StorageHDD\model_git",
+    "$(api_key_example.developer_custom)" : "dSaNPwghPs07oGGxIwCwNEjrz6xPvlITpNSVvIjldj3EUx7OKYbdP3t0ZpLm0lKTV1VsxJWXQZ9DmWmCYZ1DMvhCLp2QiEQMNpR27N9E3ntz2NB6kKP6XQeyD18ueOnU"
+}

@@ -173,6 +173,10 @@ class tts_processor_class:
         sf.write(filename, tts_audio, 22050)
     
     # -------------------------------------------------------------------------------------------------
+    def get_audio_data(self):
+        return self.audio_data
+    
+    # -------------------------------------------------------------------------------------------------
     def generate_play_audio_loop(self, tts_response_sentences):
         """ a method to generate and play the audio for the chatbot
             args: tts_sentences

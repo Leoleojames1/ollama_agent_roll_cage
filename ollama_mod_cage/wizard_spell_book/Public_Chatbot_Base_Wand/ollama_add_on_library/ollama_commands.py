@@ -69,47 +69,33 @@ class ollama_commands:
         """ a method for quitting the program """
         sys.exit()
 
-    def ollama_show_loaded_models(self):
+    async def ollama_show_loaded_models(self):
         ollama_loaded_models = ollama.ps()
-        print(self.colors['RED'] + f"<<< CURRENTLY LOADED OLLAMA MODELS >>> ")
-        for items in ollama_loaded_models:
-            print(self.colors['OKBLUE'] + f"{items}")
+        return ollama_loaded_models
 
-    def ollama_show_template(self):
-        """ a method for getting the model template """
+    async def ollama_show_template(self):
         modelfile_data = ollama.show(f'{self.user_input_model_select}')
-        for key, value in modelfile_data.items():
-            if key == 'template':
-                self.template = value
-        return
+        return modelfile_data.get('template', '')
     
-    def ollama_show_license(self):
-        """ a method for showing the model license """
+    async def ollama_show_license(self):
         modelfile_data = ollama.show(f'{self.user_input_model_select}')
-        for key, value in modelfile_data.items():
-            if key == 'license':
-                print(self.colors['RED'] + f"<<< {self.user_input_model_select} >>> " + self.colors['OKBLUE'] + f"{key}: {value}")
-        return
+        return modelfile_data.get('license', '')
 
-    def ollama_show_modelfile(self):
-        """ a method for showing the modelfile """
-        modelfile_data = ollama.show(f'{self.user_input_model_select}')
-        for key, value in modelfile_data.items():
-            if key != 'license':
-                print(self.colors['RED'] + f"<<< {self.user_input_model_select} >>> " + self.colors['OKBLUE'] + f"{key}: {value}")
-        return
+    async def ollama_show_modelfile(self):
+        return ollama.show(f'{self.user_input_model_select}')
 
-    def ollama_list(self):
-        """ a method for showing the ollama model list """
+    async def ollama_list(self):
         ollama_list = ollama.list()
-        for model_info in ollama_list.get('models', []):
-            model_name = model_info.get('name')
-            model = model_info.get('model')
-            print(self.colors['RED'] + f"<<< {self.user_input_model_select} >>> " + self.colors['OKBLUE'] + f"{model_name}" + self.colors['RED'] + " <<< ")
-        return
+        return [model_info.get('name') for model_info in ollama_list.get('models', [])]
+
+    async def ollama_create(self):
+        # Implement this method to create a new Ollama model
+        # Return the result instead of printing it
+        #TODO IMPLEMENT
+        pass
     
-    def ollama_create(self):
-        """ a method for running the ollama create command across the current agent """
-        self.model_write_class.write_model_file_and_run_agent_create_ollama(self.listen_flag)
-        print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
-        return
+    # def ollama_create(self):
+    #     """ a method for running the ollama create command across the current agent """
+    #     self.model_write_class.write_model_file_and_run_agent_create_ollama(self.listen_flag)
+    #     print(self.colors['GREEN'] + f"<<< USER >>> " + self.colors['OKGREEN'])
+    #     return

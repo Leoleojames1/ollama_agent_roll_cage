@@ -5,7 +5,7 @@ import glob
 import pyautogui
 import time
 import subprocess
-from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
+# from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
 import shutil
 import json
 

@@ -22,7 +22,7 @@
     with proper citation of the developers and repositories. Be weary that some
     software may not be licensed for commerical use.
 
-    By: Leo Borcherding
+    By: Leo Borcherding, 4/20/2024
         on github @ 
             leoleojames1/ollama_agent_roll_cage
 
@@ -39,17 +39,17 @@ import json
 import asyncio
 import numpy as np
 
-from Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
-from Public_Chatbot_Base_Wand.speech_to_speech import tts_processor_class
-from Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
-from Public_Chatbot_Base_Wand.latex_render import latex_render_class
-from Public_Chatbot_Base_Wand.data_set_manipulator import data_set_constructor
-from Public_Chatbot_Base_Wand.write_modelfile import model_write_class
-from Public_Chatbot_Base_Wand.read_write_symbol_collector import read_write_symbol_collector
-from Public_Chatbot_Base_Wand.data_set_manipulator import screen_shot_collector
-from Public_Chatbot_Base_Wand.create_convert_model import create_convert_manager
-from Public_Chatbot_Base_Wand.node_custom_methods import FileSharingNode
-from Public_Chatbot_Base_Wand.speech_to_speech import speech_recognizer_class
+from wizard_spell_book.Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
+from wizard_spell_book.Public_Chatbot_Base_Wand.speech_to_speech import tts_processor_class
+from wizard_spell_book.Public_Chatbot_Base_Wand.directory_manager import directory_manager_class
+from wizard_spell_book.Public_Chatbot_Base_Wand.latex_render import latex_render_class
+from wizard_spell_book.Public_Chatbot_Base_Wand.data_set_manipulator import data_set_constructor
+from wizard_spell_book.Public_Chatbot_Base_Wand.write_modelfile import model_write_class
+from wizard_spell_book.Public_Chatbot_Base_Wand.read_write_symbol_collector import read_write_symbol_collector
+from wizard_spell_book.Public_Chatbot_Base_Wand.data_set_manipulator import screen_shot_collector
+from wizard_spell_book.Public_Chatbot_Base_Wand.create_convert_model import create_convert_manager
+from wizard_spell_book.Public_Chatbot_Base_Wand.node_custom_methods import FileSharingNode
+from wizard_spell_book.Public_Chatbot_Base_Wand.speech_to_speech import speech_recognizer_class
 
 import pandas as pd
 import pyarrow as pa
@@ -95,8 +95,8 @@ class ollama_chatbot_base:
         self.speech_interrupted = False
         
         # get user input model selection
-        self.get_model()
-        self.user_input_model_select = self.user_input_model_select
+        # self.set_model()
+        # self.user_input_model_select = self.user_input_model_select
 
         # initialize chat
         self.chat_history = []
@@ -153,11 +153,11 @@ class ollama_chatbot_base:
         # build conversation save path #TODO ADD TO DEV DICT
         self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\Ignored_pipeline\\conversation_library\\{self.user_input_model_select}\\{self.save_name}.json")
 
-        # TEXT SECTION:
+        # text section
         self.latex_flag = False
         self.cmd_run_flag = None
 
-        # AGENT SELECT FLAG
+        # agent select flag
         self.agent_flag = False
         self.memory_clear = False
         
@@ -165,24 +165,31 @@ class ollama_chatbot_base:
         self.ollama_command_instance = ollama_commands(self.user_input_model_select, self.developer_tools_dict)
         self.colors = self.ollama_command_instance.colors
         
-        # Initialize speech_recognizer_class
+        # initialize speech_recognizer_class
         self.speech_recognizer_instance = speech_recognizer_class(self.colors)
         self.speech_interrupted = False
         
-        # SPEECH SECTION:
-        self.leap_flag = True # TODO TURN OFF FOR MINECRAFT
-        self.listen_flag = False # TODO TURN ON FOR MINECRAFT
-        self.chunk_flag = False
-        self.auto_speech_flag = False #TODO KEEP OFF BY DEFAULT FOR MINECRAFT, TURN ON TO START
+        self.hotkeys = {
+            'ctrl+shift': self.start_speech_recognition,
+            'ctrl+alt': self.stop_speech_recognition,
+            'shift+alt': self.interrupt_speech,
+        }
+        self.audio_data = np.array([])
+        self.speech_recognition_active = False
 
-        # VISION SECTION:
+        # speech flags:
+        self.leap_flag = True # TODO turn off for minecraft
+        self.listen_flag = False # TODO turn off for minecraft
+        self.chunk_flag = False
+        self.auto_speech_flag = False #TODO keep off BY DEFAULT FOR MINECRAFT, TURN ON TO START
+
+        # vision flags:
         self.llava_flag = False # TODO TURN ON FOR MINECRAFT
         self.splice_flag = False
         self.screen_shot_flag = False
 
-
+        # get directory data
         self.directory_manager_class = directory_manager_class()
-        
         # get data
         self.screen_shot_collector_instance = screen_shot_collector(self.developer_tools_dict)
         # splice data
@@ -192,23 +199,117 @@ class ollama_chatbot_base:
         self.create_convert_manager_instance = create_convert_manager(self.colors, self.developer_tools_dict)
         # peer2peer node
         self.FileSharingNode_instance = FileSharingNode(host="127.0.0.1", port=9876)
+
+    # ------------------------------------------------------------------------------------------------- 
+    def set_model(self, model_name):
+        self.user_input_model_select = model_name
+        print(f"Model set to {model_name}")
         
-    # -------------------------------------------------------------------------------------------------  
-    def get_model(self):
-        """ a method for collecting the model name from the user input
-        """
-        HEADER = '\033[95m'
-        OKBLUE = '\033[94m'
-        self.user_input_model_select = input(HEADER + "<<< PROVIDE MODEL NAME >>> " + OKBLUE)
-    
-    # -------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------- 
     def swap(self):
-        """ a method to call when swapping models
-        """
         self.chat_history = []
-        self.user_input_model_select = input(self.colors['HEADER']+ "<<< PROVIDE AGENT NAME TO SWAP >>> " + self.colors['OKBLUE'])
         print(f"Model changed to {self.user_input_model_select}")
         return
+
+    # ------------------------------------------------------------------------------------------------- 
+    def set_voice(self, voice_type, voice_name):
+        self.voice_type = voice_type
+        self.voice_name = voice_name
+        self.tts_processor_instance = self.instance_tts_processor(voice_type, voice_name)
+        print(f"Voice set to {voice_name} (Type: {voice_type})")
+
+    # ------------------------------------------------------------------------------------------------- 
+    async def get_available_voices(self):
+        fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
+        fine_tuned_voices = [d[8:] for d in os.listdir(fine_tuned_dir) if os.path.isdir(os.path.join(fine_tuned_dir, d)) and d.startswith("XTTS-v2_")]
+        reference_voices = [d for d in os.listdir(self.tts_voice_ref_wav_pack_path) if os.path.isdir(os.path.join(self.tts_voice_ref_wav_pack_path, d))]
+        return {"fine_tuned": fine_tuned_voices, "reference": reference_voices}
+    
+    # ------------------------------------------------------------------------------------------------- 
+    
+    def set_speech(self, enabled: bool):
+        self.speech_enabled = enabled
+        return f"Speech {'enabled' if enabled else 'disabled'}"
+            
+    # ------------------------------------------------------------------------------------------------- 
+    def setup_hotkeys(self):
+        for hotkey, callback in self.hotkeys.items():
+            keyboard.add_hotkey(hotkey, callback)
+            
+    # ------------------------------------------------------------------------------------------------- 
+    def remove_hotkeys(self):
+        for hotkey in self.hotkeys:
+            keyboard.remove_hotkey(hotkey)
+
+    # -------------------------------------------------------------------------------------------------
+    def start_speech_recognition(self):
+        self.speech_recognition_active = True
+        # Start recording audio
+        self.start_audio_stream()
+        
+    # -------------------------------------------------------------------------------------------------
+    def stop_speech_recognition(self):
+        self.speech_recognition_active = False
+        # Stop recording audio and process the recorded speech
+        self.stop_audio_stream()
+        recognized_text = self.process_speech()
+        return recognized_text
+
+    # -------------------------------------------------------------------------------------------------
+    def interrupt_speech(self):
+        if hasattr(self, 'tts_processor_instance'):
+            self.tts_processor_instance.interrupt_generation()
+
+    # -------------------------------------------------------------------------------------------------
+    def start_audio_stream(self):
+        self.audio_data = np.array([])
+        self.p = pyaudio.PyAudio()
+        self.stream = self.p.open(format=pyaudio.paFloat32,
+                                  channels=1,
+                                  rate=44100,
+                                  input=True,
+                                  frames_per_buffer=1024,
+                                  stream_callback=self.audio_callback)
+        self.stream.start_stream()
+
+    # -------------------------------------------------------------------------------------------------
+    def stop_audio_stream(self):
+        if hasattr(self, 'stream'):
+            self.stream.stop_stream()
+            self.stream.close()
+        if hasattr(self, 'p'):
+            self.p.terminate()
+
+    # -------------------------------------------------------------------------------------------------
+    def audio_callback(self, in_data, frame_count, time_info, status):
+        audio_data = np.frombuffer(in_data, dtype=np.float32)
+        self.audio_data = np.concatenate((self.audio_data, audio_data))
+        return (in_data, pyaudio.paContinue)
+    
+    # -------------------------------------------------------------------------------------------------
+    def get_user_audio_data(self):
+        return self.speech_recognizer_instance.get_audio_data()
+    
+    # -------------------------------------------------------------------------------------------------
+    def get_llm_audio_data(self):
+        return self.tts_processor_instance.get_audio_data()
+    
+    # # -------------------------------------------------------------------------------------------------  
+    # def get_model(self):
+    #     """ a method for collecting the model name from the user input
+    #     """
+    #     HEADER = '\033[95m'
+    #     OKBLUE = '\033[94m'
+    #     self.user_input_model_select = input(HEADER + "<<< PROVIDE MODEL NAME >>> " + OKBLUE)
+    
+    # # -------------------------------------------------------------------------------------------------
+    # def swap(self):
+    #     """ a method to call when swapping models
+    #     """
+    #     self.chat_history = []
+    #     self.user_input_model_select = input(self.colors['HEADER']+ "<<< PROVIDE AGENT NAME TO SWAP >>> " + self.colors['OKBLUE'])
+    #     print(f"Model changed to {self.user_input_model_select}")
+    #     return
     
     # ------------------------------------------------------------------------------------------------
     def get_vision_model(self):
@@ -1142,15 +1243,90 @@ class ollama_chatbot_base:
         print(f"use_wake_commands FLAG STATE: {self.speech_recognizer_instance.use_wake_commands}")
         return
     
-    # -------------------------------------------------------------------------------------------------    
-    def interrupt_speech(self):
-        self.speech_interrupted = True
-        if hasattr(self, 'tts_processor_instance'):
-            # Stop any currently playing audio 
-            sd.stop()
-            # cut off speech generation as well
-            self.tts_processor_instance.interrupt_generation()
-        self.listen_flag = False  # Reset the listen flag
+    # # -------------------------------------------------------------------------------------------------    
+    # def interrupt_speech(self):
+    #     self.speech_interrupted = True
+    #     if hasattr(self, 'tts_processor_instance'):
+    #         # Stop any currently playing audio 
+    #         sd.stop()
+    #         # cut off speech generation as well
+    #         self.tts_processor_instance.interrupt_generation()
+    #     self.listen_flag = False  # Reset the listen flag
+    
+    # # ------------------------------------------------------------------------------------------------- 
+    # def chatbot_main1(self):
+    #     self.latex_render_instance = None
+    #     self.tts_processor_instance = None
+
+    #     keyboard.add_hotkey('ctrl+shift', self.speech_recognizer_instance.auto_speech_set, args=(True, self.listen_flag))
+    #     keyboard.add_hotkey('ctrl+alt', self.speech_recognizer_instance.chunk_speech, args=(True,))
+    #     keyboard.add_hotkey('shift+alt', self.interrupt_speech)
+    #     keyboard.add_hotkey('tab+ctrl', self.speech_recognizer_instance.toggle_wake_commands)
+
+    #     while True:
+    #         user_input_prompt = ""
+    #         speech_done = False
+    #         cmd_run_flag = False
+            
+    #         if self.listen_flag:
+    #             keyboard.wait('ctrl+shift')
+                
+    #             self.speech_recognizer_instance.auto_speech_flag = True
+    #             while self.speech_recognizer_instance.auto_speech_flag:
+    #                 try:
+    #                     if self.listen_flag:
+    #                         if self.speech_recognizer_instance.use_wake_commands:
+    #                             user_input_prompt = self.speech_recognizer_instance.wake_words(audio)
+    #                         else:
+    #                             audio = self.speech_recognizer_instance.get_audio()
+    #                             user_input_prompt = self.speech_recognizer_instance.recognize_speech(audio)
+                                
+    #                         if user_input_prompt:
+    #                             self.speech_recognizer_instance.chunk_flag = False
+    #                             self.speech_recognizer_instance.auto_speech_flag = False
+                                
+    #                             user_input_prompt = self.voice_command_select_filter(user_input_prompt)
+    #                             cmd_run_flag = self.command_select(user_input_prompt)
+                                
+    #                             if self.listen_flag and not cmd_run_flag:
+    #                                 response = self.send_prompt(user_input_prompt)
+    #                                 response_processed = False
+    #                                 if self.listen_flag is False and self.leap_flag is not None and isinstance(self.leap_flag, bool):
+    #                                     if not self.leap_flag and not response_processed:
+    #                                         self.tts_processor_instance.process_tts_responses(response, self.voice_name)
+    #                                         response_processed = True
+    #                                         if self.speech_interrupted:
+    #                                             print("Speech was interrupted. Ready for next input.")
+    #                                             self.speech_interrupted = False
+    #                             break
+                                
+    #                 except sr.UnknownValueError:
+    #                     print(self.colors["OKCYAN"] + "Google Speech Recognition could not understand audio" + self.colors["OKCYAN"])
+                    
+    #                 except sr.RequestError as e:
+    #                     print(self.colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + self.colors["OKCYAN"])
+                        
+    #         if not self.listen_flag:
+    #             user_input_prompt = input(self.colors["GREEN"] + f"<<< 🧠 USER 🧠 >>> " + self.colors["END"])
+    #             speech_done = True
+            
+    #         user_input_prompt = self.voice_command_select_filter(user_input_prompt)
+    #         cmd_run_flag = self.command_select(user_input_prompt)
+            
+    #         if self.llava_flag:
+    #             self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
+                
+    #         if self.splice_flag:
+    #             self.data_set_video_process_instance.generate_image_data()
+            
+    #         if not cmd_run_flag and speech_done:
+    #             print(self.colors["YELLOW"] + f"{user_input_prompt}" + self.colors["OKCYAN"])
+                
+    #             response = self.send_prompt(user_input_prompt)
+
+    #             if self.latex_flag:
+    #                 latex_render_instance = latex_render_class()
+    #                 latex_render_instance.add_latex_code(response, self.user_input_model_select)
 
     # -------------------------------------------------------------------------------------------------    
     def chatbot_main(self):
@@ -1266,177 +1442,260 @@ class ollama_chatbot_base:
                     # Create a new instance
                     latex_render_instance = latex_render_class()
                     latex_render_instance.add_latex_code(response, self.user_input_model_select)
+                    
+import logging
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List
+import ollama
+import json
+import asyncio
 
-    # -------------------------------------------------------------------------------------------------
-    def generate_synthetic_data(self):
-        """
-        Generates synthetic data based on the given dataset and model prompt function.
+from ollama_chatbot_base import ollama_chatbot_base
 
-        Returns:
-            datasets.Dataset: A new dataset containing synthetic data.
-        """
-        # Prompt user for the old dataset name
-        old_dataset_name = input("Enter the name of the old dataset: ")
-        dataset_lib_dir = os.path.join(self.model_git_dir, "Finetune_Datasets")
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-        # Prompt user for the new dataset name
-        new_dataset_name = input("Enter the name for the new dataset: ")
+app = FastAPI()
 
-        # Construct the old dataset directory path
-        old_dataset_dir = os.path.join(dataset_lib_dir, old_dataset_name, "data")
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-        # Create a new directory for the new dataset
-        new_dataset_dir = os.path.join(dataset_lib_dir, new_dataset_name, "data")
-        os.makedirs(new_dataset_dir, exist_ok=True)
+class ChatRequest(BaseModel):
+    message: str
 
-        synthetic_data = []  # Initialize an empty list to store synthetic examples
+class ChatResponse(BaseModel):
+    response: str
+    type: str
 
-        # Process Parquet files in the old dataset directory
-        for parquet_file in os.listdir(old_dataset_dir):
-            if parquet_file.endswith('.parquet'):
-                parquet_path = os.path.join(old_dataset_dir, parquet_file)
-                # Read the first data point from the Parquet file
-                first_data_point = self.read_first_data_point(parquet_path)
-                # Construct a prompt for each example
-                print(f"here is the first data point: {first_data_point}")
+class ModelRequest(BaseModel):
+    model: str
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+        logger.info(f"New WebSocket connection: {websocket.client}")
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+        logger.info(f"WebSocket disconnected: {websocket.client}")
+
+    async def broadcast(self, message: str):
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+manager = ConnectionManager()
+
+chatbot = ollama_chatbot_base()
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        await websocket.send_json({
+            "type": "connection_status",
+            "status": "connected"
+        })
+        
+        while True:
+            try:
+                data = await websocket.receive_text()
+                logger.info(f"Received WebSocket message: {data}")
                 
-                construct_prompt = f"Please generate 10 alternative variations in phrasing and structure for the following Hugging Face data point for a user assistant conversation training set: {first_data_point}"
-                synthetic_example = self.shot_prompt(construct_prompt)  # Replace with your model call
-                synthetic_data.append({'text': synthetic_example})
+                json_data = json.loads(data)
+                message_type = json_data.get('type')
+                content = json_data.get('message')
 
-        # Create a new dataset from the synthetic data
-        synthetic_dataset = Dataset.from_dict({'text': [item['text'] for item in synthetic_data]})
+                if not message_type or not content:
+                    raise ValueError("Invalid message format")
 
-        # Write the synthetic dataset to a Parquet file
-        synthetic_parquet_file = os.path.join(new_dataset_dir, "synthetic_dataset.parquet")
-        synthetic_dataset.to_pandas().to_parquet(synthetic_parquet_file)
+                if message_type == 'chat':
+                    if not chatbot.user_input_model_select:
+                        await websocket.send_json({
+                            "type": "error",
+                            "message": "No model selected. Please select a model first."
+                        })
+                        continue
 
-        return synthetic_dataset
+                    chatbot.chat_history.append({"role": "user", "content": content})
+                    
+                    try:
+                        response = ollama.chat(
+                            model=chatbot.user_input_model_select,
+                            messages=chatbot.chat_history,
+                            stream=True
+                        )
+                        
+                        full_response = ''
+                        for chunk in response:
+                            if 'message' in chunk and 'content' in chunk['message']:
+                                content_chunk = chunk['message']['content']
+                                full_response += content_chunk
+                                
+                                await websocket.send_json({
+                                    "type": "chat_response",
+                                    "response": content_chunk
+                                })
+                                await asyncio.sleep(0.01)  # Small delay to prevent overwhelming the frontend
+                        
+                        chatbot.chat_history.append({"role": "assistant", "content": full_response})
+                        
+                        await websocket.send_json({
+                            "type": "chat_response_end",
+                            "response": full_response
+                        })
+                        
+                        if not chatbot.leap_flag:
+                            await chatbot.tts_processor_instance.process_tts_responses(full_response, chatbot.voice_name)
+                        
+                    except Exception as e:
+                        logger.error(f"Error in chat response: {str(e)}")
+                        await websocket.send_json({
+                            "type": "error",
+                            "message": f"Chat error: {str(e)}"
+                        })
+                        
+                elif message_type == 'command':
+                    try:
+                        result = chatbot.command_select(content)
+                        await  websocket.send_json({
+                            "type": "command_result",
+                            "response": str(result)
+                        })
+                    except Exception as e:
+                        logger.error(f"Error executing command: {str(e)}")
+                        await websocket.send_json({
+                            "type": "error",
+                            "message": f"Command error: {str(e)}"
+                        })
+                else:
+                    raise ValueError(f"Unknown message type: {message_type}")
 
-    # -------------------------------------------------------------------------------------------------
-    def read_first_data_point(self, parquet_path):
-        # Read the Parquet file and extract the first data point
-        table = pq.read_table(parquet_path)
-        first_data_point = table.to_pandas().iloc[0]
-        return first_data_point
-    
-    # -------------------------------------------------------------------------------------------------  
-    def command_calling_data(self):
-        """ a method to collect the dicctionary of human datapoints and write a parquet datafile for
-            further data construction or training
-        """
+            except json.JSONDecodeError as e:
+                logger.error(f"Invalid JSON received: {data}")
+                await websocket.send_json({
+                    "type": "error",
+                    "message": f"Invalid JSON: {str(e)}"
+                })
+                
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        logger.info("WebSocket disconnected")
+    except Exception as e:
+        logger.error(f"Unexpected error in WebSocket connection: {str(e)}")
+        manager.disconnect(websocket)
 
-        self.command_calling_data = {
-            "data": [
-                {
-                    "SYSTEM": "You are a helpful assistant with access to the following functions. Use them if "
-                    "required - { \"name\": \"swap\", \"description\": \"Swap the current state\", \"parameters\": {} }",
-                    "CHAT": "USER: Hi, I need to swap the current state. Can you help me with that? ASSISTANT: Of course, "
-                    "I can help you with that. I will perform the swap now. "
-                    "ASSISTANT: <functioncall> {\"name\": \"swap\", \"arguments\": {}} "
-                    "FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The state has been swapped successfully.",
-                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"swap\", \"description\": \"Swap the current state\", \"parameters\": {} } user"
-                    "Hi, I need to swap the current state. Can you help me with that? assistantOf course, I can help you with that. "
-                    "I will perform the swap now. assistant<functioncall> {\"name\": \"swap\", \"arguments\": {}} assistant"
-                    "The state has been swapped successfully."
-                },
-                {
-                    "SYSTEM": "You are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"system_select\", \"description\": \"Select a system prompt\", \"parameters\": {} }",
-                    "CHAT": "USER: Hi, can you select a different system prompt? ASSISTANT: Sure, I will select a different system prompt now. "
-                    "ASSISTANT: <functioncall> {\"name\": \"system_select\", \"arguments\": {}} "
-                    "FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The system prompt has been selected successfully.",
-                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"system_select\", \"description\": \"Select a system prompt\", \"parameters\": {} } user"
-                    "Hi, can you select a different system prompt? assistantSure, I will select a different system prompt now. "
-                    "assistant<functioncall> {\"name\": \"system_select\", \"arguments\": {}} assistantThe system prompt has been selected successfully."
-                },
-                {
-                    "SYSTEM": "You are a helpful assistant with access to the following functions. Use them if "
-                    "required - { \"name\": \"voice_swap\", \"description\": \"Swap the voice\", \"parameters\": {} }",
-                    "CHAT": "USER: Hi, can you swap the voice? ASSISTANT: Sure, I will swap the voice now. "
-                    "ASSISTANT: <functioncall> {\"name\": \"voice_swap\", \"arguments\": {}} "
-                    "FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The voice has been swapped successfully.",
-                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"voice_swap\", \"description\": \"Swap the voice\", \"parameters\": {} } user"
-                    "Hi, can you swap the voice? assistantSure, I will swap the voice now. assistant"
-                    "<functioncall> {\"name\": \"voice_swap\", \"arguments\": {}} assistantThe voice has been swapped successfully."
-                },
-                {
-                    "SYSTEM": "You are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"save_as\", \"description\": \"Save the current state to a "
-                    "file\", \"parameters\": { \"save_name\": { \"type\": \"string\", \"description\": \"The name of the save "
-                    "file\" }, \"user_input_model_select\": { \"type\": \"string\", \"description\": \"The model selection input by the user\" } } }",
-                    "CHAT": "USER: Hi, can you save the current state as a file? ASSISTANT: Sure, please provide the save file name and model selection input. "
-                    "USER: The save name is \"session1\" and the model selection is \"modelA\". "
-                    "ASSISTANT: <functioncall> {\"name\": \"save_as\", \"arguments\": {\"save_name\": \"session1\", \"user_input_model_select\": \"modelA\"}} "
-                    "FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The state has been saved as \"session1\" with model selection \"modelA\".",
-                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"save_as\", \"description\": \"Save the current "
-                    "state to a file\", \"parameters\": { \"save_name\": { \"type\": \"string\", \"description\": \"The name of the "
-                    "save file\" }, \"user_input_model_select\": { \"type\": \"string\", \"description\": \"The model selection input "
-                    "by the user\" } } } userHi, can you save the current state as a file? assistantSure, please provide the save f..."
-                },
-                {
-                    "SYSTEM": "You are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"load_as\", \"description\": \"Load a state "
-                    "from a file\", \"parameters\": { \"load_name\": { \"type\": \"string\", \"description\": \"The name of "
-                    "the load file\" }, \"user_input_model_select\": { \"type\": \"string\", \"description\": \"The model selection input by the user\" } } }",
-                    "CHAT": "USER: Hi, can you load the state from a file? ASSISTANT: Sure, please provide the load file name and model selection input. "
-                    "USER: The load name is \"session1\" and the model selection is \"modelA\". ASSISTANT: "
-                    "<functioncall> {\"name\": \"load_as\", \"arguments\": {\"load_name\": \"session1\", \"user_input_model_select\": \"modelA\"}} FUNCTION RESPONSE: {\"status\": \"success\"} ASSISTANT: The state has been loaded from \"session1\" with model selection \"modelA\".",
-                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"load_as\", \"description\": \"Load a state "
-                    "from a file\", \"parameters\": { \"load_name\": { \"type\": \"string\", \"description\": \"The name of "
-                    "the load file\" }, \"user_input_model_select\": { \"type\": \"string\", \"description\": \"The model selection "
-                    "input by the user\" } } } userHi, can you load the state from a file? assistantSure, please provide the load file name and m..."
-                },
-                {
-                    "SYSTEM": "You are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"write_modelfile\", \"description\": \"Write the model file\", \"parameters\": {} }",
-                    "CHAT": "USER: Hi, can you write the model file? ASSISTANT: Sure, I will write the model file now. "
-                    "ASSISTANT: <functioncall> {\"name\": \"write_modelfile\", \"arguments\": {}} FUNCTION RESPONSE: {\"status\": \"success\"} "
-                    "ASSISTANT: The model file has been written successfully.",
-                    "TEXT": "systemYou are a helpful assistant with access to the following functions. "
-                    "Use them if required - { \"name\": \"write_modelfile\", \"description\": \"Write the model file\", \"parameters\": {} } user"
-                    "Hi, can you write the model file? assistantSure, I will write the model file now. assistant"
-                    "<functioncall> {\"name\": \"write_modelfile\", \"arguments\": {}} assistantThe model file has been written successfully."
-                }
-            ]
-        }
+@app.post("/chat", response_model=ChatResponse)
+async def chat(request: ChatRequest):
+    try:
+        if request.message.startswith('/'):
+            result = chatbot.command_select(request.message)
+            return ChatResponse(response=result, type="command_result")
+        else:
+            response = await chatbot.send_prompt(request.message)
+            return ChatResponse(response=response, type="chat_response")
+    except Exception as e:
+        logger.error(f"Error in chat endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-    # -------------------------------------------------------------------------------------------------
-    def construct_parquet_from_dictionary(self):
-        """
-        A method to collect the dictionary of human datapoints and write a Parquet datafile for
-        further data construction or training.
-        """
-        # Assuming the dictionary is stored in self.command_calling_data
-        data = self.command_calling_data['data']
-        
-        # Convert the list of dictionaries to a pandas DataFrame
-        df = pd.DataFrame(data)
-        
-        # Define the schema for the Parquet file
-        schema = pa.schema([
-            ('SYSTEM', pa.string()),
-            ('CHAT', pa.string()),
-            ('TEXT', pa.string())
-        ])
-        
-        # Convert the DataFrame to a PyArrow Table with the defined schema
-        table = pa.Table.from_pandas(df, schema=schema)
-        
-        # Define the output directory and file name
-        output_dir = os.path.join(self.model_git_dir, "Finetune_Datasets", "function_calling_dataset", "data")
-        os.makedirs(output_dir, exist_ok=True)
-        output_file = os.path.join(output_dir, "function_calling_data.parquet")
-        
-        # Write the PyArrow Table to a Parquet file
-        with pq.ParquetWriter(output_file, schema) as writer:
-            writer.write_table(table)
-        
-        print(f"Parquet file has been written to: {output_file}")
-        
-        return output_file
+@app.post("/set_model")
+async def set_model(request: ModelRequest):
+    try:
+        chatbot.set_model(request.model)
+        return {"message": f"Model set to {request.model}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/current_model")
+async def get_current_model():
+    return {"model": chatbot.user_input_model_select}
+
+@app.get("/available_models")
+async def get_available_models():
+    try:
+        models = await chatbot.ollama_command_instance.ollama_list()
+        return {"models": models}
+    except Exception as e:
+        logger.error(f"Error getting available models: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/command_library")
+async def get_command_library():
+    if hasattr(chatbot, 'command_library'):
+        return {"commands": list(chatbot.command_library.keys())}
+    else:
+        return {"commands": []}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+@app.websocket("/audio")
+async def websocket_audio(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            user_audio_data = chatbot.get_user_audio_data()
+            llm_audio_data = chatbot.get_llm_audio_data()
+            await websocket.send_json({
+                "user_audio_data": user_audio_data.tolist(),
+                "llm_audio_data": llm_audio_data.tolist()
+            })
+            await asyncio.sleep(0.1)  # Send audio data every 100ms
+    except WebSocketDisconnect:
+        logger.info("Audio WebSocket disconnected")
+
+@app.post("/hotkeys/{action}")
+async def manage_hotkeys(action: str):
+    if action == "setup":
+        chatbot.setup_hotkeys()
+        return {"message": "Hotkeys set up"}
+    elif action == "remove":
+        chatbot.remove_hotkeys()
+        return {"message": "Hotkeys removed"}
+    else:
+        raise HTTPException(status_code=400, detail="Invalid action")
+
+@app.get("/speech_recognition_status")
+async def get_speech_recognition_status():
+    return {"active": chatbot.speech_recognition_active}
+
+@app.get("/ollama/loaded_models")
+async def get_loaded_models():
+    return await chatbot.ollama_command_instance.ollama_show_loaded_models()
+
+@app.get("/ollama/template")
+async def get_template():
+    return await chatbot.ollama_command_instance.ollama_show_template()
+
+@app.get("/ollama/license")
+async def get_license():
+    return await chatbot.ollama_command_instance.ollama_show_license()
+
+@app.get("/ollama/modelfile")
+async def get_modelfile():
+    return await chatbot.ollama_command_instance.ollama_show_modelfile()
+
+@app.get("/ollama/list")
+async def get_ollama_list():
+    return await chatbot.ollama_command_instance.ollama_list()
+
+@app.post("/ollama/create")
+async def create_ollama_model():
+    return await chatbot.ollama_command_instance.ollama_create()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=2020)
