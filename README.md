@@ -1,15 +1,14 @@
 <p align="center">
-  <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="200"/>
+  <img src="docs/assets/icons/ollama_agent_roll_cage_icon.png" alt="OARC LOGO" width="250"/>
 </p>
 <p align="center">
   <a href="https://ko-fi.com/theborch"><img src="docs/assets/icons/buy me a coffee button.png" height="48"></a>
   <a href="https://discord.gg/dAzSYcnpdF"><img src="docs/assets/icons/Discord button.png" height="48"></a>
 </p>
 
-# 🤖👽 ollama_agent_roll_cage (OARC) V0.27.0 🤬🧙
+# 🤖👽 ollama_agent_roll_cage (OARC) V0.28.0 🤬🧙
 
-***[🦾Borch's AI Development Guide🦿](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)*** ***[🦙 Ollama Discord Server 🦙](https://discord.gg/ollama)***
-
+***[🦾Borch's AI Development Guide🦿](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)***   ***[🦙 Ollama Discord Server 🦙](https://discord.gg/ollama)***   ***[🤖 OARC V0.28 VIDEO GUIDE 🧙](https://www.youtube.com/watch?v=W7TusPTnNXA)***
 ## About
   **ollama_agent_roll_cage** (OARC) is a local python agent fusing **ollama** llm's with **Coqui-TTS** speech models, **Keras** classifiers, **Llava** vision, **Whisper** recognition, and more to create a unified chatbot agent for local, custom automation. This program manages, and automates the creation of **chatbots** through **conversation history**, **model management**, **function calling**, and ultimately defining a **base reality** for your agent to build its world view via an **interaction space** for windows **software**, local files, and callable screenshots giving the user more control over the likely output of the agent through **multimodal** agentic **chain of thought**, and a mixture of exterior software tools. 
 
@@ -26,6 +25,7 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 ***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
 
 ## Ollama Agent Roll Cage Demo Videos
+***[Ollama Agent Roll Cage V0.28.0 - Speech to Speech with Vision, & Agent Library](https://www.youtube.com/watch?v=W7TusPTnNXA)***
 
 ***[OARC Demo Videos Compilation](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/docs/demo_videos.md)***
 
@@ -33,12 +33,12 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 
 ***[OARC V0.26.0 - Llava Vision Demo](https://www.youtube.com/watch?v=szd1wIOc034)***
 
-***[Ollama Agent Roll Cage V0.24.0 Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
+***[Ollama Agent Roll Cage V0.24.0 OLD Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
 
 ## Installing Ollama Agent Roll Cage
 The full video guide for installing and setting up ollama agent roll cage can be found here. This is for version V0.24.0, an updated install guide will be released soon.
 
-***[Ollama Agent Roll Cage V0.24.0 Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
+***[Ollama Agent Roll Cage V0.28.0 - Speech to Speech with Vision, & Agent Library](https://www.youtube.com/watch?v=W7TusPTnNXA)***
 
 ## Installing Miniconda & Setting Up Python Virtual Environment
 Miniconda for modular python virtual environments:
@@ -74,7 +74,9 @@ Also Please Follow these tutorials for understanding and installing Ollama:
 
 ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
 
-***[Tmux: Terminal Multiplexor](https://github.com/tmux/tmux)
+Optional Terminal Multiplexor requires setup (not recommended):
+
+***[Tmux: Terminal Multiplexor](https://github.com/tmux/tmux)***
 
 After installing ollama in the users directory automatically it will be in:
 ```
@@ -118,14 +120,14 @@ You are now conversing with the local ai through an api accessing cmd seperated 
 ## Installing ollama_agent_roll_cage:
 Next pull down the ollama_agent_roll_cage repository using the following command:
 ```
-git clone git@github.com:Leoleojames1/ollama_agent_roll_cage.git
+git clone https://github.com/Leoleojames1/ollama_agent_roll_cage.git
 ```
 After pulling down ollama_agent_roll_cage from github using gitbash (download gitbash), navigate in the folders to ollama_agent_roll_cage/ollama_mod_cage directory,
 here you will find the following files:
 ```
 ollama_chatbot_class.py - a python class for managing the ollama api communication, TTS/STT Methods, and Conversation Memory.
-ollama_serve_llama3_base_curl.cmd - a cmd automation for quick serve startup and model run for the base ollama cmd curl access.
-ollama_serve_llama3_base_py.cmd - main program run point, cmd automation for quick serve startup and model run with ollama_chatbot_class.py integration for STT, TTS, conversation history, and more.
+ollama_serve_curl.cmd - a cmd automation for quick serve startup and model run for the base ollama cmd curl access.
+ollama_serve_py.cmd - main program run point, cmd automation for quick serve startup and model run with ollama_chatbot_class.py integration for STT, TTS, conversation history, and more.
 ```
 ollama_serve_llama3_base_py.cmd is the main runpoint for starting the program and opening the server or the virtual enviroment.
 
@@ -143,6 +145,16 @@ bash linux_install.sh
 
 Once you have run the installer, if you have not installed CUDA or CUDNN it will install those.  It will also setup the necessary python requirements and c++ build tools. If you have issues running
 OARC after installation it may be an issue with the install process, you may be missing files or may not have set up your ollama env variables correctly. If Cuda & Cudnn fail to install follow the tutorial below.
+
+## Updating Developertools File
+
+Copy the developer_tools_template.json file and place it in the ollama_mod_cage folder. Then Replace all paths with the install location for your OARC:
+
+***[developer_tools_template.json](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/ollama_mod_cage/developer_tools_template.json)***
+
+```
+edit paths to match your system and save as developer_tools.json, $(modelgit) path can be anywhere this is for your hugging face models.
+```
 
 ## Installing Cuda for NVIDIA GPU
 *Im using an NVIDIA GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
@@ -187,6 +199,10 @@ src="docs/assets/posters/roll_cage_race_1.jpg"
 
 ## Manual Agent Creation Guide:
 Next Navigate to the ollama_agent_roll_cage/AgentFiles directory, here you will find the Modelfile for each Model agent.
+
+<img
+src="docs/assets/flow_charts/AGENT_ROLL_CAGE_Article_B4.png"
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
 
 By modifying the Modelfile and running the create command
 accross the given model file, such as llama3, this Sym prompt is stored within the model when you boot up the given agent. These Agents
