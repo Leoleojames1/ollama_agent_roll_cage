@@ -6,7 +6,7 @@
   <a href="https://discord.gg/dAzSYcnpdF"><img src="docs/assets/icons/Discord button.png" height="48"></a>
 </p>
 
-# 🤖👽 ollama_agent_roll_cage (OARC) V0.28.0 🤬🧙
+# ollama_agent_roll_cage 👽🧙 (OARC) V0.28.0  🤬🤖
 
 ***[🦾Borch's AI Development Guide🦿](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)***   ***[🦙 Ollama Discord Server 🦙](https://discord.gg/ollama)***   ***[🤖 OARC V0.28 VIDEO GUIDE 🧙](https://www.youtube.com/watch?v=W7TusPTnNXA)***
 ## About
