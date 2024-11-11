@@ -15,7 +15,17 @@ import os
 import torch
 import re
 import queue
-# from Garden_chatbot_Base_Wand.coqui import TTS #TODO import new eginhard fork
+
+# TODO import new eginhard fork
+# eginhard fork of coqui provides constant updates and 
+# advanced features for coqui post shutdown
+# from Garden_chatbot_Base_Wand.coqui import TTS
+
+# TODO import F5 TTS model, setup coqui bark, tortoise, piper & more
+
+# TODO look into setting up whisper speech, with whisper for
+# custom audio embedding token access
+
 from TTS.api import TTS
 import numpy as np
 import shutil
@@ -26,16 +36,109 @@ import keyboard
 class tts_processor_class:
     """ a class for managing the text to speech conversation between the user, ollama, & coqui-tts.
     """
+    # # -------------------------------------------------------------------------------------------------
+    # def __init__(self, colors, developer_tools_dict, voice_type, voice_name):
+    #     """a method for initializing the class
+    #     """ 
+    #     self.voice_type = voice_type
+    #     self.voice_name = voice_name
+    #     self.colors = colors
+    #     self.is_multi_speaker = None
+        
+    #     # get file paths from developer tools dictionary
+    #     self.developer_tools_dict = developer_tools_dict
+    #     self.current_dir = developer_tools_dict['current_dir']
+    #     self.parent_dir = developer_tools_dict['parent_dir']
+    #     self.speech_dir = developer_tools_dict['speech_dir']
+    #     self.recognize_speech_dir = developer_tools_dict['recognize_speech_dir']
+    #     self.generate_speech_dir = developer_tools_dict['generate_speech_dir']
+    #     self.tts_voice_ref_wav_pack_path = developer_tools_dict['tts_voice_ref_wav_pack_path_dir']
+    #     self.conversation_library = developer_tools_dict['conversation_library_dir']
+    #     self.voice_name_reference_speech_path = None  # Initialize the attribute
+    #     self.audio_data = np.array([])  # Initialize audio data buffer
+        
+    #     if torch.cuda.is_available():
+    #         self.device = "cuda"
+    #     else:
+    #         self.device = "cpu"
+    #         print("CUDA-compatible GPU is not available. Using CPU instead. If you believe this should not be the case, reinstall torch-audio with the correct version.")
+
+    #     #TODO XTTS fine-tune selector and path manager
+    #     # create instances for each voice model, tts processor should re instance if voice is changed, and if name is not in fine tune folder, then search for voice in default voice reference
+        
+    #     #======================
+    #     #TODO for each xtts finetune print each name and ask user to select which to instance, 1, 2, 3, 4, ...
+
+    #     # self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
+
+    #     # self.tts = \
+    #     #         TTS(model_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_C3PO/", 
+    #     #                     config_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_C3PO/config.json", progress_bar=False, gpu=True).to(self.device)
+
+    #     #TODO implement default voice on startup with voice selector on /voice swap
+    #     # self.tts = \
+    #     #         TTS(model_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_CarliG/", 
+    #     #                     config_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_CarliG/config.json", progress_bar=False, gpu=True).to(self.device)
+
+    #     # ask for voice selection from user? or have default
+    #     # print("initializing tts")
+    #     # self.initialize_tts_model()
+
+    #     fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
+    #     fine_tuned_model_path = os.path.join(fine_tuned_dir, f"XTTS-v2_{self.voice_name}")
+    #     reference_wav_path = os.path.join(fine_tuned_model_path, "reference.wav")
+    #     print(f"{fine_tuned_model_path}")
+        
+    #     if os.path.exists(fine_tuned_model_path):
+    #         # Use fine-tuned model (single-speaker)
+    #         print("taking finetune path.")
+    #         config_path = os.path.join(fine_tuned_model_path, "config.json")
+    #         self.tts = TTS(model_path=fine_tuned_model_path, config_path=config_path, progress_bar=False, gpu=True).to(self.device)
+    #         self.is_multi_speaker = False
+    #         self.voice_name_reference_speech_path = reference_wav_path  # Not needed for fine-tuned model
+    #     else:
+    #         print("taking base xtts path.")
+    #         # Use base XTTS model with voice reference (multi-speaker)
+    #         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
+    #         self.is_multi_speaker = True
+    #         self.voice_name_reference_speech_path = os.path.join(self.tts_voice_ref_wav_pack_path, self.voice_name, "clone_speech.wav")
+
+    #     self.audio_queue = queue.Queue()
+    
     # -------------------------------------------------------------------------------------------------
     def __init__(self, colors, developer_tools_dict, voice_type, voice_name):
-        """a method for initializing the class
-        """ 
         self.voice_type = voice_type
         self.voice_name = voice_name
         self.colors = colors
         self.is_multi_speaker = None
+        self.speech_interrupted = False
+        self.is_generating = False
+        self.current_chunk_index = 0
         
-        # get file paths from developer tools dictionary
+        # Audio buffer for streaming
+        self.audio_buffer = np.array([], dtype=np.float32)
+        self.chunk_size = 1024
+        self.sample_rate = 22050
+        self.stream_buffer = queue.Queue()
+        
+        # Configure device
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        if self.device == "cpu":
+            print("CUDA not available. Using CPU for TTS.")
+            
+        # Initialize paths from developer tools
+        self.setup_paths(developer_tools_dict)
+        
+        # Initialize TTS model
+        self.initialize_tts_model()
+        
+        # Create audio stream
+        self.audio_output_stream = None
+        self.stream_active = False
+        
+    # -------------------------------------------------------------------------------------------------
+    def setup_paths(self, developer_tools_dict):
+        """Setup paths from developer tools dictionary"""
         self.developer_tools_dict = developer_tools_dict
         self.current_dir = developer_tools_dict['current_dir']
         self.parent_dir = developer_tools_dict['parent_dir']
@@ -43,97 +146,92 @@ class tts_processor_class:
         self.recognize_speech_dir = developer_tools_dict['recognize_speech_dir']
         self.generate_speech_dir = developer_tools_dict['generate_speech_dir']
         self.tts_voice_ref_wav_pack_path = developer_tools_dict['tts_voice_ref_wav_pack_path_dir']
-        self.conversation_library = developer_tools_dict['conversation_library_dir']
-        self.voice_name_reference_speech_path = None  # Initialize the attribute
-
-        # get colors
-        # self.colors = colors
         
-        if torch.cuda.is_available():
-            self.device = "cuda"
-        else:
-            self.device = "cpu"
-            print("CUDA-compatible GPU is not available. Using CPU instead. If you believe this should not be the case, reinstall torch-audio with the correct version.")
-
-        #TODO XTTS fine-tune selector and path manager
-        # create instances for each voice model, tts processor should re instance if voice is changed, and if name is not in fine tune folder, then search for voice in default voice reference
-        
-        #======================
-        #TODO for each xtts finetune print each name and ask user to select which to instance, 1, 2, 3, 4, ...
-
-        # self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
-
-        # self.tts = \
-        #         TTS(model_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_C3PO/", 
-        #                     config_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_C3PO/config.json", progress_bar=False, gpu=True).to(self.device)
-
-        #TODO implement default voice on startup with voice selector on /voice swap
-        # self.tts = \
-        #         TTS(model_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_CarliG/", 
-        #                     config_path=f"{self.parent_dir}/AgentFiles/Ignored_TTS/XTTS-v2_CarliG/config.json", progress_bar=False, gpu=True).to(self.device)
-
-        # ask for voice selection from user? or have default
-        # print("initializing tts")
-        # self.initialize_tts_model()
-
-        fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
-        fine_tuned_model_path = os.path.join(fine_tuned_dir, f"XTTS-v2_{self.voice_name}")
-        reference_wav_path = os.path.join(fine_tuned_model_path, "reference.wav")
-        print(f"{fine_tuned_model_path}")
-        if os.path.exists(fine_tuned_model_path):
-            # Use fine-tuned model (single-speaker)
-            print("taking finetune path.")
-            config_path = os.path.join(fine_tuned_model_path, "config.json")
-            self.tts = TTS(model_path=fine_tuned_model_path, config_path=config_path, progress_bar=False, gpu=True).to(self.device)
-            self.is_multi_speaker = False
-            self.voice_name_reference_speech_path = reference_wav_path  # Not needed for fine-tuned model
-        else:
-            print("taking base xtts path.")
-            # Use base XTTS model with voice reference (multi-speaker)
-            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
-            self.is_multi_speaker = True
-            self.voice_name_reference_speech_path = os.path.join(self.tts_voice_ref_wav_pack_path, self.voice_name, "clone_speech.wav")
-
-        self.audio_queue = queue.Queue()
-
     # -------------------------------------------------------------------------------------------------
     def initialize_tts_model(self):
+        """ a method to initialize the appropriate finetuned text to speech with coqui
+
+            args: none
+            returns: none
+        """
         fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
         fine_tuned_model_path = os.path.join(fine_tuned_dir, f"XTTS-v2_{self.voice_name}")
-        reference_wav_path = os.path.join(fine_tuned_model_path, "reference.wav")
-        print(f"{fine_tuned_model_path}")
+        
         if os.path.exists(fine_tuned_model_path):
-            # Use fine-tuned model (single-speaker)
-            print("taking finetune path.")
+            # Use fine-tuned model
             config_path = os.path.join(fine_tuned_model_path, "config.json")
-            self.tts = TTS(model_path=fine_tuned_model_path, config_path=config_path, progress_bar=False, gpu=True).to(self.device)
+            self.tts = TTS(model_path=fine_tuned_model_path, 
+                          config_path=config_path, 
+                          progress_bar=False, 
+                          gpu=True).to(self.device)
             self.is_multi_speaker = False
-            self.voice_name_reference_speech_path = reference_wav_path  # Not needed for fine-tuned model
+            self.voice_reference_path = os.path.join(fine_tuned_model_path, "reference.wav")
         else:
-            print("taking base xtts path.")
-            # Use base XTTS model with voice reference (multi-speaker)
+            # Use base model with reference
             self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(self.device)
             self.is_multi_speaker = True
-            self.voice_name_reference_speech_path = os.path.join(self.tts_voice_ref_wav_pack_path, self.voice_name, "clone_speech.wav")
+            self.voice_reference_path = os.path.join(self.tts_voice_ref_wav_pack_path, 
+                                                   self.voice_name, 
+                                                   "clone_speech.wav")
 
+    # # -------------------------------------------------------------------------------------------------
+    # def process_tts_responses(self, response, voice_name):
+    #     """A method for managing the response preprocessing methods.
+    #         args: response, voice_name
+    #         returns: none
+    #     """
+    #     # Clear VRAM cache
+    #     torch.cuda.empty_cache()
+    #     # Call Sentence Splitter
+    #     tts_response_sentences = self.split_into_sentences(response)
+        
+    #     # Clear the directories
+    #     self.clear_directory(self.recognize_speech_dir)
+    #     self.clear_directory(self.generate_speech_dir)
+
+    #     self.generate_play_audio_loop(tts_response_sentences)
+    #     return
+    
     # -------------------------------------------------------------------------------------------------
-    def process_tts_responses(self, response, voice_name):
-        """A method for managing the response preprocessing methods.
+    def process_tts_responses(self, response, voice_name):  
+        """ A method for managing the response preprocessing methods.
             args: response, voice_name
             returns: none
         """
         # Clear VRAM cache
         torch.cuda.empty_cache()
+        
         # Call Sentence Splitter
         tts_response_sentences = self.split_into_sentences(response)
         
         # Clear the directories
         self.clear_directory(self.recognize_speech_dir)
         self.clear_directory(self.generate_speech_dir)
-
+        
+        # Clear audio buffer
+        self.audio_data = np.array([])
+        
+        # Generate and store audio
+        # TODO this for loop should be done with the generate audio loop
         self.generate_play_audio_loop(tts_response_sentences)
-        return
-
+        
+        #TODO remove and replace with generate play aduio loop above but upgrade to stream through chatbot api, 
+        # it can still use the storage file
+        for sentence in tts_response_sentences:
+            if self.is_multi_speaker:
+                audio = self.tts.tts(text=sentence, speaker_wav=self.voice_name_reference_speech_path, language="en", speed=3)
+            else:
+                audio = self.tts.tts(text=sentence, language="en", speed=3)
+            
+            # Convert to numpy array and append to buffer
+            audio_np = np.array(audio, dtype=np.float32)
+            self.audio_data = np.append(self.audio_data, audio_np)
+            
+            # Play audio if needed
+            if not self.speech_interrupted:
+                sd.play(audio_np, 22050)
+                sd.wait()
+                
     # -------------------------------------------------------------------------------------------------
     def play_audio_from_file(self, filename):
         """A method for audio playback from file."""
@@ -153,7 +251,6 @@ class tts_processor_class:
             print(f"Failed to play audio from file {filename}. Reason: {e}")
 
     # -------------------------------------------------------------------------------------------------
-    # def generate_audio(self, sentence, voice_name_reference_speech_path, ticker):
     def generate_audio(self, sentence, ticker):
         """ a method to generate the audio for the chatbot
             args: sentence, voice_name_path, ticker
@@ -174,7 +271,8 @@ class tts_processor_class:
     
     # -------------------------------------------------------------------------------------------------
     def get_audio_data(self):
-        return self.audio_data
+        """Get the current audio buffer for visualization"""
+        return self.audio_buffer[-1024:] if len(self.audio_buffer) > 0 else np.array([])
     
     # -------------------------------------------------------------------------------------------------
     def generate_play_audio_loop(self, tts_response_sentences):
@@ -182,12 +280,47 @@ class tts_processor_class:
             args: tts_sentences
             returns: none
         """
-        # Shut up Feature - during audio playback loop, interupt model and allow user to overwride chat at current audio out to stop the model from talking and input new speech.
-        #TODO add, if "spacebar pressed". or "microphone input on" or "smart whisper prompting" with speech recognized 
-        # data decomposition combined with alternative methods for quitting the speech and moving to the next message or question for the model
-        # write conversation history and explain which line the user cut the model off at and explain that the user is now on the next prompt and didnt care to hear
-        # the audio out from the last conversation.
-        #TODO smart listen & whisper, smart listen_v2 podcast moderator and fact checker.
+        # TODO /interrupt "mode" - added Shut up Feature - during audio playback loop, interupt model and allow user to overwride 
+        # chat at current audio out to stop the model from talking and input new speech. 
+        # Should probably make it better though, the interrupt loop doesnt function in the nextjs frontend 
+        # through the api, it instead functions in the api terminal with hotkeys.
+        
+        # TODO /input audio "mode" "discord" - add, if modes "spacebar pressed". or "microphone input on" or "smart whisper prompting" with 
+        # speech recognized and microphone "silence prompting" all as selections. Also add 2nd arg for discord audio, transcription.
+        
+        # TODO /decompose "mode" - pipe in Yolo, OCR, screen/game etc data decomposition, 
+        # managing what data should be sent through text to speech and what should not
+        
+        # TODO /cut off speech "mode" - pipe interrupt data to write conversation history and mark/explain 
+        # which audio chunk the user cut the model off at with the following modalities;
+        #
+        # (mode1) have model explain from there (always assume they didnt hear you), or 
+        # (mode2) prompt the model with the marked conversation showcasing to the llm model/agent what 
+        # the user did not hear through tts, but may have read on the screen text. 
+        #
+        # These modalities, essentially explaining to the agent wether or not the user can read the text, 
+        # or can only hear, for the application of the system. This will provide for more smooth transitions 
+        # for conversation, depending on modes 1 & 2.
+        
+        #TODO /smart listen "feature" - smart whisper/listen podcast moderator and fact checker.
+        #
+        #   feature set:
+        #       wake commands/name call,
+        #       long form whisper and audio chunking, storing processing,
+        #       presume wether or not you are being spoken to, or listening to others
+        #       when others are speaking, do not interrupt them, listen and whisper rec,
+        #       while building conversation history, context, links, research, then
+        #       forumalate possible response or responses, and when the conversation seems like
+        #       both parties have felt they have been respected in their ability
+        #       to uphold their free speech, the agent can jump in and say "hey guys! on
+        #       that thought maybe you should try this?" 
+        #
+        #   tools:
+        #       feature1: "longform whisper unless namecalled" on/off 
+        #       feature2: "combine research data from conversation with /decompose"
+        #       feature3: "listen and jump in not based on namecall, but instead based on
+        #       respecting the conversation participants, and giving equal opporunities to
+        #       contribute to the evolving (podcast) conversation"
 
         audio_queue = queue.Queue(maxsize=2)  # Queue to hold generated audio
         interrupted = False
@@ -271,10 +404,15 @@ class tts_processor_class:
         Returns:
             list[str]: List of sentences.
 
+            #TODO split by * * as well, for roleplay text such as *ahem*, *nervous laughter*, etc. when this
+            is sent to a diffusion model such as bark or f5, the tts will process them as emotional sounds,
+            as well as handling them as seperate chunks split from the rest which will increase speed.
+            
             #TODO retrain c3po with shorter sentences and more even volume distribution
 
             #TODO maximum split must be less than 250 token
-                - no endless sentences, ->blocks of 11 seconds, if more the model will speed up to fit it in that space where you control multiple generations
+                - no endless sentences, -> blocks of 11 seconds, if more the model will speed up to fit it in 
+                that space where you control multiple generations, instead split out chunks and handle properly.
         """
         # Add spaces around punctuation marks for consistent splitting
         text = " " + text + " "

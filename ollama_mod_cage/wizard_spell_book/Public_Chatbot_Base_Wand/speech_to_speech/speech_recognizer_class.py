@@ -7,7 +7,6 @@ import threading
 
 # -------------------------------------------------------------------------------------------------
 class speech_recognizer_class:
-    # -------------------------------------------------------------------------------------------------
     def __init__(self, colors):
         self.colors = colors
         self.auto_speech_flag = False
@@ -16,10 +15,76 @@ class speech_recognizer_class:
         self.wake_word = "Yo Jaime"
         self.recognizer = sr.Recognizer()
         self.use_wake_commands = False
-        self.use_whisper = True  # Flag to toggle Whisper on/off
+        self.use_whisper = True
         self.whisper_model = whisper.load_model("turbo") if self.use_whisper else None
-        # self.whisper_model = whisper.load_model("base") if self.use_whisper else None
-        
+        self.audio_data = np.array([])
+        self.audio_buffer = []  # Buffer to store incoming audio chunks
+        self.is_recording = False
+    
+    # -------------------------------------------------------------------------------------------------
+    async def process_audio_stream(self, websocket):
+        """Process incoming audio stream from WebSocket"""
+        self.is_recording = True
+        try:
+            while self.is_recording:
+                try:
+                    data = await websocket.receive_bytes()
+                    audio_chunk = np.frombuffer(data, dtype=np.float32)
+                    self.audio_data = np.concatenate([self.audio_data, audio_chunk])
+                    self.audio_buffer.append(data)
+                    
+                    # Check if we have enough audio data to process
+                    if len(self.audio_buffer) >= 32:  # About 1 second of audio at 32 chunks
+                        audio_data = b''.join(self.audio_buffer)
+                        self.audio_buffer = []  # Clear buffer
+                        
+                        # Convert to AudioData object for recognition
+                        audio = sr.AudioData(audio_data, 16000, 2)
+                        
+                        # Process with selected recognition method
+                        if self.use_whisper:
+                            audio_np = np.frombuffer(audio.frame_data, dtype=np.int16)
+                            audio_np = audio_np.astype(np.float32) / 32768.0
+                            result = self.whisper_model.transcribe(audio_np)
+                            text = result["text"]
+                        else:
+                            text = self.recognizer.recognize_google(audio)
+                            
+                        # Send recognition result back to client
+                        await websocket.send_json({
+                            "type": "recognition_result",
+                            "text": text
+                        })
+                        
+                        # Send audio visualization data
+                        await websocket.send_json({
+                            "type": "audio_data",
+                            "data": self.audio_data.tolist()[-1024:]  # Send last 1024 samples for visualization
+                        })
+                        
+                except Exception as e:
+                    print(f"Error processing audio: {e}")
+                    
+        except Exception as e:
+            print(f"WebSocket error: {e}")
+        finally:
+            self.is_recording = False
+            self.audio_data = np.array([])
+            self.audio_buffer = []
+            
+    # -------------------------------------------------------------------------------------------------
+    def start_recording(self):
+        """Initialize recording state"""
+        self.is_recording = True
+        self.frames = []
+        self.audio_data = np.array([])
+    
+    # ------------------------------------------------------------------------------------------------- 
+    def stop_recording(self):
+        """Clean up recording state"""
+        self.is_recording = False
+        self.frames = []
+            
     # -------------------------------------------------------------------------------------------------
     def get_audio(self):
         """ a method for getting the user audio from the microphone
@@ -120,10 +185,15 @@ class speech_recognizer_class:
         
     # -------------------------------------------------------------------------------------------------
     def toggle_wake_commands(self):
-        """ a method for toggling the wake commands flag
-        """
+        """Toggle wake word detection"""
         self.use_wake_commands = not self.use_wake_commands
-        print(f"Wake commands {'enabled' if self.use_wake_commands else 'disabled'}")
+        print(f"Wake word detection {'enabled' if self.use_wake_commands else 'disabled'}")
+        
+    # -------------------------------------------------------------------------------------------------
+    def set_wake_word(self, wake_word: str):
+        """Set a new wake word"""
+        self.wake_word = wake_word
+        print(f"Wake word set to: {wake_word}")
 
     # -------------------------------------------------------------------------------------------------
     def toggle_whisper(self, enable):
@@ -210,3 +280,50 @@ class speech_recognizer_class:
         discord_thread.join()
 
         print(self.colors["OKBLUE"] + ">>> AUDIO RECOGNITION THREADS COMPLETED <<<")
+
+    def sickListen(self, threshold=1, silence_duration=0.25):
+            FORMAT = pyaudio.paInt32
+            CHANNELS = 1
+            RATE = 44100
+            CHUNK = 2
+
+            audio = pyaudio.PyAudio()
+            try:
+                stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+            except IOError:
+                print("Error: Could not access the microphone.")
+                audio.terminate()
+                return None
+
+            frames = []
+            silent_frames = 0
+            sound_detected = False
+
+            while True:
+                data = stream.read(CHUNK, exception_on_overflow=False)
+                frames.append(data)
+
+                rms = audioop.rms(data, 2)
+
+                if rms > threshold:
+                    silent_frames = 0
+                    sound_detected = True
+                else:
+                    silent_frames += 1
+
+                if sound_detected and (silent_frames * (CHUNK / RATE) > silence_duration):
+                    break
+
+            stream.stop_stream()
+            stream.close()
+            audio.terminate()
+
+            if sound_detected:
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+                with wave.open(temp_file.name, 'wb') as wf:
+                    wf.setnchannels(CHANNELS)
+                    wf.setsampwidth(audio.get_sample_size(FORMAT))
+                    wf.setframerate(RATE)
+                    wf.writeframes(b''.join(frames))
+                return temp_file.name
+            return None
