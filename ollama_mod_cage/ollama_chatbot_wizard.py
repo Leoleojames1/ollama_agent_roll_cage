@@ -326,12 +326,36 @@ class ollama_chatbot_base:
         """ a method to initialize the file path library for the agent tools
         """
         # get base path
+        # ollama_agent_roll_cage\ollama_mod_cage
         self.current_dir = os.getcwd()
+        # ollama_agent_roll_cage
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-
+        
+        #TODO relative path library
+        # ollama_agent_roll_cage\AgentFiles
+        # ollama_agent_roll_cage\AgentFiles\Ignored_Agents
+        # ollama_agent_roll_cage\AgentFiles\Ignored_Agentfiles
+        # ollama_agent_roll_cage\AgentFiles\Public_Agents
+        # ollama_agent_roll_cage\AgentFiles\Public_Agentfiles
+        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline
+        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\llava_library
+        # ollama_agent_roll_cage\ollama_mod_cage
+        # ollama_agent_roll_cage\ollama_mod_cage\Public_Chatbot_Base_Wand
+        # ollama_agent_roll_cage\ollama_mod_cage\Ignored_Chatbot_Custom_Wand
+        # ollama_agent_roll_cage\ollama_mod_cage\developer_tools.json
+        # ollama_agent_roll_cage\ollama_mod_cage\developer_custom.json
+        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\conversation_library
+        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\image_set
+        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\video_set
+        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library
+        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library\recognize_speech
+        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library\generate_speech
+        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\public_speech\Public_Voice_Reference_Pack
+        # model_git_dir: D:\CodingGit_StorageHDD\model_git
+        
         # setup developer_tool.json
         self.developer_tools = os.path.abspath(os.path.join(self.current_dir, "developer_tools.json"))
-        
+ 
         # get read write instance
         self.read_write_symbol_collector_instance = read_write_symbol_collector()
 
@@ -745,6 +769,9 @@ class ollama_chatbot_base:
         """
         
         # --------------------------------------------------------------------------------------------------
+        # TODO prompt base agent stays, while others are turned into config files, the prompt base agent will
+        # provide the base structure
+        # TODO also include general navigator and some other base agents.
         # base prompts:
         self.promptBase = {
             "agent_id" : "promptBase",
@@ -1334,7 +1361,104 @@ class ollama_chatbot_base:
                 "description": (
                     "The command, /auto speech on, allows the user to deactivate automatic speech to speech."
                 ),
-            }
+            },
+            "/quit": {
+                "method": lambda: self.ollama_command_instance.quit(),
+                "description": (
+                    "The command, /quit, allows the user to quit the ollama chatbot instance Shuting down "
+                    "all chatbot agent processes."
+                ),
+            },
+            "/ollama create": {
+                "method": lambda: self.ollama_command_instance.ollama_create(),
+                "description": (
+                    "The command, /ollama create, allows the user run the ollama model creation command. Starting "
+                    "the model creation menu, accepting the modelfile from /write modelfile. This will run the base "
+                    "ollama create command with the specified arguments."
+                    # TODO ADD LOCK ARG: ONLY RUN IN TEXT TO TEXT MODE
+                    # IF LISTEN & LEAP ARE NOT DISABLED, NO OLLAMA CREATE
+                ),
+            },
+            "/quit": {
+                "method": lambda: self.ollama_command_instance.quit(),
+                "description": (
+                    "The command, /quit, allows the user to quit the ollama chatbot instance Shuting down "
+                    "all chatbot agent processes."
+                ),
+            },
+            "/ollama show": {
+                "method": lambda: self.ollama_command_instance.ollama_show_modelfile(),
+                "description": (
+                    "The command, /ollama show, allows the user to quit the ollama chatbot instance Shuting down "
+                    "all chatbot agent processes."
+                ),
+            },
+            "/ollama template": {
+                "method": lambda: self.ollama_command_instance.ollama_show_template(),
+                "description": (
+                    "The command, /ollama template, displays the model template from the modelfile "
+                    "for the currently loaded ollama llm in the chatbot agent. The template structure defines the llm "
+                    "response patterns, and specifies the defined template for user, system, assistant roles, as well "
+                    "as prompt structure. "
+                ),
+            },
+            "/ollama license": {
+                "method": lambda: self.ollama_command_instance.ollama_show_license(),
+                "description": (
+                    "The command, /ollama license, displays the license from the LLM modelfile of the current "
+                    "model in the agent. This license comes from the distributor of the model and defines its usage "
+                    "capabilities. "
+                ),
+            },
+            "/ollama list": {
+                "method": lambda: self.ollama_command_instance.ollama_list(),
+                "description": (
+                    "The command, /ollama list, displays the list of ollama models on the users machine, specificially "
+                    "providing the response from the ollama list command through the ollama api. "
+                ),
+            },
+            "/ollama loaded": {
+                "method": lambda: self.ollama_command_instance.ollama_show_loaded_models(),
+                "description": (
+                    "The command, /ollama loaded, displayes all currently loaded ollama models. "
+                    "This information is retrieved with the ollama.ps() method."
+                ),
+            },
+            "/splice video": {
+                "method": lambda: self.data_set_video_process_instance.generate_image_data(),
+                "description": (
+                    "The command, /splice video, splices the provided video into and image set that can be used for labeling. "
+                    "Once this data is labeled in a tool such as Label Studio, it can be used for training Yolo, LlaVA and "
+                    "other vision models. "
+                ),
+            },
+            "/developer new": {
+                "method": lambda: self.read_write_symbol_collector_instance.developer_tools_generate(),
+                "description": (
+                    "The command, /developer new, generates a new developer tools variable library. (DEPRECATED)"
+                ),
+            },
+            "/start node": {
+                "method": lambda: self.FileSharingNode_instance.start_node(),
+                "description": (
+                    "The command, /start node, activates the peer-2-peer encrypted network node. This module "
+                    "provides the necessary toolset for encrypted agent networking for various tasks. "
+                ),
+            },
+            "/conversation parquet": {
+                "method": lambda: self.generate_synthetic_data(),
+                "description": (
+                    "The command, /conversation parquet, converts the specified conversation name to a parquet dataset. "
+                    "This dataset can be exported to huggingface for llm finetuning, and can be found in the conversation "
+                    "history library under the parquetDatasets folder."
+                ),
+            },
+            "/convert wav": {
+                "method": lambda: self.data_set_video_process_instance.call_convert(),
+                "description": (
+                    "The command, /convert wav, calls the audio wav conversion tool. (WIP: may not be functioning)"
+                ),
+            },
         }
         
         # Find the command in the command string
@@ -1520,7 +1644,7 @@ class ollama_chatbot_base:
     def get_llm_audio_data(self):
         return self.tts_processor_instance.get_audio_data()
     
-    # -------------------------------------------------------------------------------------------------
+    # ------TODO MOVE TO TTS FILE AND CLEAN UP CHATBOT WIZARD ---------------------------------------------------------------------
     def get_available_voices(self):
         # Get list of fine-tuned models
         fine_tuned_dir = f"{self.parent_dir}/AgentFiles/Ignored_TTS/"
