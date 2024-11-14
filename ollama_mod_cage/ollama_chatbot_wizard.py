@@ -1,17 +1,48 @@
 """ ollama_chatbot_wizard.py
 
-    ollama_agent_roll_cage, is an opensource command line toolkit & api for 
-    speech to text, & text to speech commands with LLMS api's, including local tools such as
-    ollama, transformers, keras, as well as api endpoint integration such as
-    openAI, anthropic, groq.
+    ===============================================================================================
+
+        ollama_agent_roll_cage, is an opensource toolkit api for speech to text, text to speech 
+    commands, multi-modal agent building with local LLM api's, including tools such as ollama, 
+    transformers, keras, as well as closed source api endpoint integration such as openAI, 
+    anthropic, groq, and more!
     
-        ollama_agent_roll_cage provides you with your own chatbot agent endpoint which
-    you can find in the fastAPI at the bottom of this file. 
+    ===============================================================================================
     
-    This custom api is what empowers oarc to bundle/wrap other api endpoints including;
+        OARC has its own chatbot agent endpoint which you can find in the fastAPI at the bottom 
+    of this file. This custom api is what empowers oarc to bundle/wrap AI models & other api endpoints 
+    into one cohesive agent including the following models;
     
-    ollama: llama & llava, 
-    coqui: speech, yolo, whisper, google speech-recognition, musetalk, 
+    Ollama -
+        Llama: Text to Text 
+        LLaVA: Text & Image to Text
+        
+    CoquiTTS -
+        XTTSv2: Non-Emotive Transformer Text to Speech, With Custom Finetuned Voices
+        Bark: Emotional Diffusion Text to Speech Model
+        
+    F5_TTS -
+        Emotional TTS model, With Custom Finetuned Voices (coming soon) 
+        
+    YoloVX - 
+        Object Recognition within image & video streams, providing bounding box location data.
+        Supports YoloV6, YoloV7, YoloV8, and beyond! I would suggest YoloV8 seems to have the 
+        highest accuracy. 
+        
+    Whisper -
+        Speech to Text recognition, allowing the user to interface with any model directly
+        using a local whisper model.
+        
+    Google python speech-recognition -
+        A free alternative Speech to Text offered by google, powered by their api servers, this
+        STT api is a good alternative especially if you need to offload the speech recognition 
+        to the google servers due to your computers limitations.
+        
+    Musetalk -
+        A local lypc sync, Avatar Image & Audio to Video model. Allowing the chatbot agent to
+        generate in real time, the Avatar lypc sync for the current chatbot agent in OARC.
+        
+    ===============================================================================================
     
         This software was designed by Leo Borcherding with the intent of creating an easy to use
     ai interface for anyone, through Speech to Text and Text to Speech.
@@ -35,8 +66,10 @@
     By: Leo Borcherding, 4/20/2024
         on github @ 
             leoleojames1/ollama_agent_roll_cage
-
+            
+    ===============================================================================================
 """
+
 import os
 import re
 import time
@@ -67,58 +100,6 @@ import pyarrow.parquet as pq
 from datasets import Dataset
 import sounddevice as sd
 import speech_recognition as sr
-
-# TODO setup sebdg emotional classifyer keras 
-# from tensorflow.keras.models import load_model
-# sentiment_model = load_model('D:\\CodingGit_StorageHDD\\model_git\\emotions_classifier\\emotions_classifier.keras')
-
-#TODO add create .agentfile with voice commands or text input
-#CSV CONSTRUCTION
-#TODO FUNCTION CALLING MODEL DATASET
-#TODO LATEX MATH MODEL DATASET
-#LABEL STUDIO
-#TODO MINECRAFT LLAVA DATASET
-#TODO WINDOWS LLAVA DATASET
-#TODO NAMECALL, SMART LISTEN, FAQ CHECKER
-#TODO DUCK DUCK GO SEARCH
-#TODO LATEX MODEL -> MATPLOT LIVE AI GRAPH CALC
-#TODO ROUTING FOR FUNTION CALLING MODEL TO EXECUTE FUNCTION CALLS
-#TODO SIMPLE LANGRAPH RAG
-#TODO SIMPLE USEFUL KERAS MODEL EITHER EMOTIONS OR SOMETHING ELSE
-#TODO ADD DUCKDUCKGO SEARCH PROMPT BOOST
-#TODO RECORD VOICE MEMO/CLONE DATA
-#TODO PLAY MUSIC, MOVIE, MP3, MP4 from library
-#TODO BOOK AUDIO, EITHER FROM TEXT OR AUDIO FILE
-#TODO LATEX PDF GENERATE FILE
-#TODO CSV DATA SYNTHESIS
-#TODO COMFYUI Image generation workflows
-#TODO text to image
-# img to video
-# img to img
-# uncrop image extender
-# new stable diffusion 3 models, img gen model library
-# lora select, workflow select
-# TODO FROG ANIMATED PORTRAIT
-# TODO LIP SYNC AVATAR LIVE
-# TODO WEBCAM LLAVA RECOGNIZER, objects, emotions, math, text, art, nature
-#TODO SMART LISTEN 1 -> listens afer long pause outputs /moderator, faq checker
-#TODO yo llama pull that up
-
-#TODO preload command list -> command.txt run desired default command setup with /preload command list [name]
-#TODO macro jobset for keyboard and mouse input for the entire program
-#TODO UPDATE/UPGRADE COMPREHENSIVE SENTENCE PARSER HANDLE BULLET POINTS, NUMBERS, "", code, emojis, and more, just something
-#TODO ^-- if great than 250 with no splice, then splice at the closest word under 250
-#TODO german, spanish, french, english whisper models
-#TODO that new ollama 0.2.1 multilingual model
-#TODO DESTINY DINKLEBOT AGENT
-#TODO MTG ASSIST AGENT
-#TODO YOUTUBE REVIEW AGENT
-#TODO PEER TO PEER NETWORK
-#TODO EMAIL SHARING AGENT
-#TODO CREW AI?
-#TODO UNSLOTH AUTOMATIONS
-#TODO LLAMACPP, GGUF AND SAFETENSOR CONVERT UPGRADE
-#TODO MAIN TODO's BEFORE AI MAKERSPACE SESSION
         
 # -------------------------------------------------------------------------------------------------
 class ollama_chatbot_base:
@@ -135,117 +116,6 @@ class ollama_chatbot_base:
         returns: none
         
         """
-        # # chatbot core
-        # self.agent_id = "default"
-        # self.user_input_model_select = None
-        # self.user_input_prompt = ""
-
-        # # Default Agent Voice Reference
-        # self.voice_type = None
-        # self.voice_name = None
-
-        # # Default conversation name
-        # self.save_name = "default"
-        # self.load_name = "default"
-
-        # self.initializeAgentFlag()
-
-        # # speech flags:
-        # self.leap_flag = True # TODO turn off for minecraft
-        # self.listen_flag = False # TODO turn off for minecraft
-        # self.chunk_flag = False
-        # self.auto_speech_flag = False #TODO keep off BY DEFAULT FOR MINECRAFT, TURN ON TO START
-        
-        # # vision flags:
-        # self.llava_flag = False # TODO TURN ON FOR MINECRAFT
-        # self.splice_flag = False
-        # self.screen_shot_flag = False
-        
-        # # text section
-        # self.latex_flag = False
-        # self.cmd_run_flag = None
-
-        # # agent select flag
-        # self.agent_flag = False
-        # self.memory_clear = False
-        
-        # # initialize prompt args
-        # self.LLM_SYSTEM_PROMPT_FLAG = False
-        # self.LLM_BOOSTER_PROMPT_FLAG = False
-        # self.VISION_SYSTEM_PROMPT_FLAG = False
-        # self.VISION_BOOSTER_PROMPT_FLAG = False
-        
-        # # initialize chat
-        # self.chat_history = []
-        # self.llava_history = []
-        # self.agent_library = []
-        # self.agent_dict = []
-        
-        # # TODO Connect api
-        # self.url = "http://localhost:11434/api/chat" #TODO REMOVE
-
-        # # Setup chat_history
-        # self.headers = {'Content-Type': 'application/json'}
-
-        # # get base path
-        # self.current_dir = os.getcwd()
-        # self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
-
-        # # setup developer_tool.json
-        # self.developer_tools = os.path.abspath(os.path.join(self.current_dir, "developer_tools.json"))
-        
-        # # get read write instance
-        # self.read_write_symbol_collector_instance = read_write_symbol_collector()
-
-        # # if the developer tools file exists, extract paths
-        # if hasattr(self, 'developer_tools'):
-        #     self.developer_tools_dict = self.read_write_symbol_collector_instance.read_developer_tools_json()
-
-        # # setup base paths from developer tools path library
-        # self.ignored_agents = self.developer_tools_dict['ignored_agents_dir']
-        # self.llava_library = self.developer_tools_dict['llava_library_dir']
-        # self.model_git_dir = self.developer_tools_dict['model_git_dir']
-        # self.conversation_library = self.developer_tools_dict['conversation_library_dir']
-        # self.tts_voice_ref_wav_pack_path = self.developer_tools_dict['tts_voice_ref_wav_pack_path_dir']
-
-        # #TODO ADD screen shot {clock & manager}
-        # self.screenshot_path = os.path.join(self.llava_library, "screenshot.png")
-        
-        # # build conversation save path #TODO ADD TO DEV DICT
-        # self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\Ignored_pipeline\\conversation_library\\{self.user_input_model_select}\\{self.save_name}.json")
-        
-        # # ollama chatbot base setup wand class instantiation
-        # self.ollama_command_instance = ollama_commands(self.user_input_model_select, self.developer_tools_dict)
-        # self.colors = self.ollama_command_instance.colors
-        
-        # # initialize speech flags
-        # self.audio_data = np.array([])
-        # self.speech_recognition_active = False
-        # self.audio_streaming = False
-        # self.speech_interrupted = False
-
-        # # initialize speech_recognizer_class
-        # self.speech_recognizer_instance = speech_recognizer_class(self.colors)
-        
-        # self.hotkeys = {
-        #     'ctrl+shift': self.start_speech_recognition(),
-        #     'ctrl+alt': self.stop_speech_recognition(),
-        #     'shift+alt': self.interrupt_speech(),
-        # }
-
-        # # get directory data
-        # self.directory_manager_class = directory_manager_class()
-        # # get data
-        # self.screen_shot_collector_instance = screen_shot_collector(self.developer_tools_dict)
-        # # splice data
-        # self.data_set_video_process_instance = data_set_constructor(self.developer_tools_dict)
-        # # write model files
-        # self.model_write_class_instance = model_write_class(self.colors, self.developer_tools_dict)
-        # # create model manager
-        # self.create_convert_manager_instance = create_convert_manager(self.colors, self.developer_tools_dict)
-        # # peer2peer node
-        # self.FileSharingNode_instance = FileSharingNode(host="127.0.0.1", port=9876)
-     
         # initialize agent metadata
         self.initializeAgent()
         self.initializeAgentFlags()
@@ -1011,8 +881,21 @@ class ollama_chatbot_base:
         user_input_prompt = re.sub(r"activate voice on", "/voice on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
         user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate lava flow", "/llava flow", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate lava freeze", "/llava freeze", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate vision assistant on", "/vision assistant on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate vision assistant off", "/vision assistant off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate yolo vision on", "/yolo vision on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate yolo vision off", "/yolo vision off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate shot prompt", "/shot prompt", user_input_prompt, flags=re.IGNORECASE)
+        
+        
+
+        # Parse for the name after 'forward slash voice swap'
+        match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.voice_name = match.group(2)
+            self.voice_name = self.tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
+        
+        self.shot_prompt(f"{self.promptSection}")
 
         # TODO replace /llava flow/freeze with lava flow/freeze
         
@@ -1110,7 +993,91 @@ class ollama_chatbot_base:
             
         """
         
-        command_str = self.voice_command_select_filter(user_input_prompt)
+        # command_str = self.voice_command_select_filter(user_input_prompt)
+        
+        # Parse for general commands (non token specific args)
+        #TODO ADD NEW FUNCTIONS and make llama -> ollama lava -> llava, etc
+        
+        # Voice command filter
+        user_input_prompt = re.sub(r"activate swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama create", "/ollama create", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama show", "/ollama show", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama template", "/ollama template", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama license", "/ollama license", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama list", "/ollama list", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama loaded", "/ollama loaded", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate listen on", "/listen on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate listen off", "/listen off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate speech on", "/speech on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate speech off", "/speech off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate voice off", "/voice off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate voice on", "/voice on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate vision assistant on", "/vision assistant on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate vision assistant off", "/vision assistant off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate yolo vision on", "/yolo vision on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate yolo vision off", "/yolo vision off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate shot prompt", "/shot prompt", user_input_prompt, flags=re.IGNORECASE)
+
+        # TODO replace /llava flow/freeze with lava flow/freeze
+        
+        # ================ Parse Token Specific Arg Commands ====================
+
+        # Parse for the name after 'forward slash voice swap'
+        match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.voice_name = match.group(2)
+            self.voice_name = self.tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
+
+        # Parse for the name after 'forward slash movie'
+        match = re.search(r"(activate movie|/movie) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.movie_name = match.group(2)
+            self.movie_name = self.file_name_conversation_history_filter(self.movie_name)
+        else:
+            self.movie_name = None
+
+        # Parse for the name after 'activate save'
+        match = re.search(r"(activate save as|/save as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.save_name = match.group(2)
+            self.save_name = self.file_name_conversation_history_filter(self.save_name)
+            print(f"save_name string: {self.save_name}")
+        else:
+            self.save_name = None
+
+        # Parse for the name after 'activate load'
+        match = re.search(r"(activate load as|/load as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.load_name = match.group(2)
+            self.load_name = self.file_name_conversation_history_filter(self.load_name)
+            print(f"load_name string: {self.load_name}")
+        else:
+            self.load_name = None
+
+        # Parse for the name after 'forward slash voice swap'
+        match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.tensor_name = match.group(2)
+            
+        # Parse for the name after 'activate agent select *agent_id*'
+        match = re.search(r"(activate agent select|/agent select) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.agent_id_selection = match.group(2)
+            self.agent_id_selection = self.file_name_conversation_history_filter(self.agent_id_selection)
+            print(f"agent_id_selection string: {self.agent_id_selection}")
+        else:
+            self.agent_id_selection = None
+
+        # Parse for the shot prompt, input prompt from the user, split from the command and sent as a shot prompt
+        match = re.search(r"(activate shot prompt|/shot prompt) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.shotPromptMatch1 = match.group(2)
+        
+        #TODO add command args like /voice swap c3po, such that the model can do the args in the command
+        # ==============================================
         
         self.command_library = {
             "/swap": lambda: self.swap(),
@@ -1150,10 +1117,40 @@ class ollama_chatbot_base:
             "/developer new" : lambda: self.read_write_symbol_collector_instance.developer_tools_generate(),
             "/start node": lambda: self.FileSharingNode_instance.start_node(),
             "/synthetic generator": lambda: self.generate_synthetic_data(),
-            "/convert wav": lambda: self.data_set_video_process_instance.call_convert()
+            "/convert wav": lambda: self.data_set_video_process_instance.call_convert(),
+            "/shot prompt": lambda: self.shot_prompt(f"{self.shotPromptMatch1}")
         }
         
-        #TODO add command args like /voice swap c3po, such that the model can do the args in the command
+        #TODO add method & commands to allow agent:
+        #   1.) /command auto on, command descriptions are loaded into the conversation history. And the following
+        #       features are enabled for the agent:
+        #       a.) can look up command descriptions, commands, and how to use them.
+        #       b.) can execute /commands by...
+        #           1.) executing multiple commands in one prompt
+        #           2.) utilizing chain of thought reasoning, executes prompt by prompt and readjusts based on the
+        #               conversation.
+        #       c.) can suggest /commands by...
+        #           1.) user input speech requests
+        #           2.) prime directive: what is the agents goal? what is it trying to accomplish?
+        #
+        #   2.) can create /command list config spell files such as:
+        #       /agent select exampleAgent
+        #       # shot prompt will load in a seperate new history
+        #       /shot prompt /search please help me find several ArXiv sources on botany, plant study, forests, and all things plants.
+        #       /synthetic generator /$/lastResponse/$/   
+        #       #ultimately this job config will load the example agent, search for botany research, and load the data received into the
+        #       /synthetic generator command to showcase how the commander can grab data, and prompt.
+        #
+        #   3.) /$/lastResponse/$/ and other quick metadata grab objects for prompting.
+        
+        #TODO add method to get just the commands and their descriptions, just the commands, just one
+        # command and its description, offer from a /help table, and allow the ai to look up its own
+        # command library. this should be part of the self prompting agent which gets the agent to 
+        # prompt itself and look for the command descriptions if they are not in the conversation history.
+        # maybe command auto should load them into the conversation history when its activated
+        # there should also be a native amount of info either in the artifacts system prompt, the model system prompt.
+        # the finetuned oarc model, or a rag database which encapsulates the command descriptions. 
+        
         self.commandLexicon = {
             "/swap": {
                 "method": lambda: self.swap(),
