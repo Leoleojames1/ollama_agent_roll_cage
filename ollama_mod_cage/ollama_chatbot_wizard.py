@@ -355,7 +355,7 @@ class ollama_chatbot_base:
         }
             
     # -------------------------------------------------------------------------------------------------   
-    def loadAgent(self, agent_id):
+    def setAgent(self, agent_id):
         """ a method to load the desired Agent Dictionary, changing the states for the agentcore to
         the selected agent_id promptset & flags
         """
@@ -570,18 +570,43 @@ class ollama_chatbot_base:
             return f"Error: {e}"
 
     # -------------------------------------------------------------------------------------------------
-    def shot_prompt(self, prompt):
-        """ a method to perform a shot promf with the selected model, this will not be recorded to
+    def shot_prompt(self, prompt, modelSelect="none", contextArg="new", conversationOut="base"):
+        """ a method to perform a shot prompt with the selected model, this will not be recorded to
         the conversation, history and can be used to extract direct data from a model
+        
+            args:
+                prompt - user input shot prompt data
+                modelSelect - user input model selection
+                #TODO Add LLaVA Arg, and Img are to allow for modular input, if speech recognition
+                is active take a screen shot and pipe in automatically, this allows for instant
+                llava shot prompts, in a text to text agent conversation where the agent itself does
+                not want to load up a llava model for every prompt, and instead can be used to seed
+                the conversation history with different models
+                #TODO add model name tag to conversation history,
+                #TODO conversation history arg -> select which chat history the shot prompt should
+                read from, and where it should be saved to. This can be saved to the main agent 
+                conversation history for shot prompt agent data references.
+            returns: 
+                model_response - model response data
         """
+        if modelSelect is "none":
+            modelSelect = self.user_input_model_select
+        
+        #TODO if contextArg is not "new", and is instead;
+        #       agentCoreConversation; spin up shot prompt selected conversation
+        #       
+        # if conversationOut is not base, store prompt to specified conversation
+        #       else append shot prompt and response to agentCoreConversation base conversation
+        #       add model name tags to allow the agent to infer when llms are being
+        #       swapped in and out of the conversation.
+        
         # Clear chat history
         self.shot_history = []
-
         # Append user prompt
         self.shot_history.append({"role": "user", "content": prompt})
 
         try:
-            response = ollama.generate(model=self.user_input_model_select, prompt=prompt, stream=True)
+            response = ollama.generate(model=modelSelect, prompt=prompt, stream=True)
             
             model_response = ''
             for chunk in response:
@@ -991,6 +1016,17 @@ class ollama_chatbot_base:
                 }
             }
             
+            TODO add currentGroup dict, includes prompt, command_str, and match groups
+            TODO feed this into the agentCore, when requesting the AgentCore, you should
+            specify when to save the agentCore. should the agent core be saved in the 
+            current
+            
+            self.currentGroup = {
+                "user_input_prompt": user_input_prompt
+                "command_str": command_str
+                "match groups": matchList[]
+            }
+            
         """
         
         # command_str = self.voice_command_select_filter(user_input_prompt)
@@ -1081,7 +1117,7 @@ class ollama_chatbot_base:
         
         self.command_library = {
             "/swap": lambda: self.swap(),
-            "/agent select": lambda: self.loadAgent(),
+            "/agent select": lambda: self.setAgent(),
             "/voice swap": lambda: self.voice_swap(),
             "/save as": lambda: self.save_to_json(self.save_name, self.user_input_model_select),
             "/load as": lambda: self.load_from_json(self.load_name, self.user_input_model_select),
@@ -1130,7 +1166,8 @@ class ollama_chatbot_base:
         #           2.) utilizing chain of thought reasoning, executes prompt by prompt and readjusts based on the
         #               conversation.
         #       c.) can suggest /commands by...
-        #           1.) user input speech requests
+        #           1.) user input speech requests, only outputs /commands when requested by the user
+        #               and only executes when confirmed by the user.
         #           2.) prime directive: what is the agents goal? what is it trying to accomplish?
         #
         #   2.) can create /command list config spell files such as:
@@ -1161,7 +1198,7 @@ class ollama_chatbot_base:
                 ),
             },
             "/agent select": {
-                "method": lambda: self.loadAgent(),
+                "method": lambda: self.setAgent(),
                 "description": ( 
                     "The command, /agent select, swaps the current agent metadata dictionary "
                     "for the specified agent metadata dictionary, such as llm system prompt, llm booster prompt, "
@@ -1467,6 +1504,13 @@ class ollama_chatbot_base:
                 "method": lambda: self.data_set_video_process_instance.call_convert(),
                 "description": (
                     "The command, /convert wav, calls the audio wav conversion tool. (WIP: may not be functioning)"
+                ),
+            },
+            "/shot prompt": {
+                "method": lambda: self.data_set_video_process_instance.call_convert(),
+                "description": (
+                    "The command, /shot prompt, prompts the ollama model with the args following the command. "
+                    "This prompt is done in a new conversation"
                 ),
             },
         }
