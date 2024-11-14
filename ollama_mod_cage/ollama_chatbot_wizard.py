@@ -135,17 +135,6 @@ class ollama_chatbot_base:
         returns: none
         
         """
-        self.initializeAgent()
-        self.initializeAgentFlags()
-        
-        self.initializeChat()
-        self.initializeTools()
-        
-        self.initializeSpeech()
-        self.initializeSpells()
-        
-        self.createAgentDict()
-        
         # # chatbot core
         # self.agent_id = "default"
         # self.user_input_model_select = None
@@ -257,10 +246,23 @@ class ollama_chatbot_base:
         # # peer2peer node
         # self.FileSharingNode_instance = FileSharingNode(host="127.0.0.1", port=9876)
      
+        # initialize agent metadata
+        self.initializeAgent()
+        self.initializeAgentFlags()
+        
+        # initialize chat
+        self.initializeChat()
+        self.initializeTools()
+        self.initializeSpeech()
+        self.initializeSpells()
+        
+        # create agent library
+        self.createAgentDict()
+        
     # -------------------------------------------------------------------------------------------------   
     def initializeAgent(self):
         # chatbot core
-        self.agent_id = "default"
+        self.agent_id = "defaultAgent"
         self.user_input_model_select = None
         self.user_input_prompt = ""
 
@@ -269,8 +271,8 @@ class ollama_chatbot_base:
         self.voice_name = None
 
         # Default conversation name
-        self.save_name = "default"
-        self.load_name = "default"
+        self.save_name = "defaultConversation"
+        self.load_name = "defaultConversation"
 
         self.initializeAgentFlag()
         
@@ -323,15 +325,21 @@ class ollama_chatbot_base:
 
     # -------------------------------------------------------------------------------------------------
     def initializeTools(self):
-        """ a method to initialize the file path library for the agent tools
+        """ a method to initialize the file path library for ollama agent roll cage
         """
-        # get base path
         # ollama_agent_roll_cage\ollama_mod_cage
         self.current_dir = os.getcwd()
+        
         # ollama_agent_roll_cage
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
         
         #TODO relative path library
+        # ollama_agent_roll_cage\ollama_mod_cage
+        # ollama_agent_roll_cage\ollama_mod_cage\Public_Chatbot_Base_Wand
+        # ollama_agent_roll_cage\ollama_mod_cage\Ignored_Chatbot_Custom_Wand
+        # ollama_agent_roll_cage\ollama_mod_cage\developer_tools.json
+        # ollama_agent_roll_cage\ollama_mod_cage\developer_custom.json
+        
         # ollama_agent_roll_cage\AgentFiles
         # ollama_agent_roll_cage\AgentFiles\Ignored_Agents
         # ollama_agent_roll_cage\AgentFiles\Ignored_Agentfiles
@@ -339,11 +347,6 @@ class ollama_chatbot_base:
         # ollama_agent_roll_cage\AgentFiles\Public_Agentfiles
         # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline
         # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\llava_library
-        # ollama_agent_roll_cage\ollama_mod_cage
-        # ollama_agent_roll_cage\ollama_mod_cage\Public_Chatbot_Base_Wand
-        # ollama_agent_roll_cage\ollama_mod_cage\Ignored_Chatbot_Custom_Wand
-        # ollama_agent_roll_cage\ollama_mod_cage\developer_tools.json
-        # ollama_agent_roll_cage\ollama_mod_cage\developer_custom.json
         # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\conversation_library
         # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\image_set
         # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\video_set
@@ -351,25 +354,35 @@ class ollama_chatbot_base:
         # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library\recognize_speech
         # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library\generate_speech
         # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\public_speech\Public_Voice_Reference_Pack
+        
         # model_git_dir: D:\CodingGit_StorageHDD\model_git
         
-        # setup developer_tool.json
-        self.developer_tools = os.path.abspath(os.path.join(self.current_dir, "developer_tools.json"))
+        self.ignored_agents = "AgentFiles\Ignored_Agents"
+        self.llava_library = "AgentFiles\Ignored_pipeline\llava_library"
+        self.conversation_library = "AgentFiles\Ignored_pipeline\conversation_library"
+        self.tts_voice_ref_wav_pack_path = "AgentFiles\Ignored_pipeline\public_speech\Public_Voice_Reference_Pack"
+        self.model_git_dir = "D:\CodingGit_StorageHDD\model_git"
+        
+        # setup developer_tool.json #TODO remove developer tools file.
+        # self.developer_tools = os.path.abspath(os.path.join(self.current_dir, "developer_tools.json"))
  
-        # get read write instance
+        # get read write instance #TODO KEEP readwritesymbolcollector, remove developer_tools
+        # setup readwrite symbol collector as a new tool for general purpose file configs
+        # give 2 methods:, 1.) symbols table dict with optional no symbols basic data, 
+        # 2.) json agent structs for agentCore configs. 
         self.read_write_symbol_collector_instance = read_write_symbol_collector()
 
         # if the developer tools file exists, extract paths
-        if hasattr(self, 'developer_tools'):
-            self.developer_tools_dict = self.read_write_symbol_collector_instance.read_developer_tools_json()
+        # if hasattr(self, 'developer_tools'):
+        #     self.developer_tools_dict = self.read_write_symbol_collector_instance.read_developer_tools_json()
 
         # setup base paths from developer tools path library
-        self.ignored_agents = self.developer_tools_dict['ignored_agents_dir']
-        self.llava_library = self.developer_tools_dict['llava_library_dir']
-        self.model_git_dir = self.developer_tools_dict['model_git_dir']
-        self.conversation_library = self.developer_tools_dict['conversation_library_dir']
-        self.tts_voice_ref_wav_pack_path = self.developer_tools_dict['tts_voice_ref_wav_pack_path_dir']
-
+        # self.ignored_agents = self.developer_tools_dict['ignored_agents_dir']
+        # self.llava_library = self.developer_tools_dict['llava_library_dir']
+        # self.model_git_dir = self.developer_tools_dict['model_git_dir']
+        # self.conversation_library = self.developer_tools_dict['conversation_library_dir']
+        # self.tts_voice_ref_wav_pack_path = self.developer_tools_dict['tts_voice_ref_wav_pack_path_dir']
+        
         #TODO ADD screen shot {clock & manager}
         self.screenshot_path = os.path.join(self.llava_library, "screenshot.png")
         
