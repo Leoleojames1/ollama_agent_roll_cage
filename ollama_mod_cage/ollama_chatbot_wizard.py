@@ -631,7 +631,7 @@ class ollama_chatbot_base:
             returns: 
                 model_response - model response data
         """
-        if modelSelect is "none":
+        if modelSelect == "none":
             modelSelect = self.user_input_model_select
         
         # Clear chat history
@@ -670,10 +670,10 @@ class ollama_chatbot_base:
             returns: 
                 model_response - model response data
         """
-        if modelSelect is "none":
+        if modelSelect == "none":
             modelSelect = self.user_input_model_select
         
-        if appendHistory is "new":
+        if appendHistory == "new":
             # Clear chat history
             self.shot_history = []
             # Append user prompt
@@ -744,7 +744,7 @@ class ollama_chatbot_base:
             returns: 
                 model_response - model response data
         """
-        if modelSelect is "none":
+        if modelSelect == "none":
             modelSelect = self.user_input_model_select
         
         #TODO if contextArg is not "new", and is instead;
@@ -2104,7 +2104,7 @@ class ollama_chatbot_base:
 from pydantic import BaseModel
 from typing import List
 import ollama
-from ollama_chatbot_base import ollama_chatbot_base
+from ollama_chatbot_wizard import ollama_chatbot_base
 import logging
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
