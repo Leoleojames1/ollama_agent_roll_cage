@@ -81,6 +81,13 @@ import threading
 import json
 import asyncio
 import numpy as np
+from pathlib import Path
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+from datasets import Dataset
+import sounddevice as sd
+import speech_recognition as sr
 
 from wizard_spell_book.Public_Chatbot_Base_Wand.ollama_add_on_library import ollama_commands
 from wizard_spell_book.Public_Chatbot_Base_Wand.speech_to_speech import tts_processor_class
@@ -93,19 +100,14 @@ from wizard_spell_book.Public_Chatbot_Base_Wand.data_set_manipulator import scre
 from wizard_spell_book.Public_Chatbot_Base_Wand.create_convert_model import create_convert_manager
 from wizard_spell_book.Public_Chatbot_Base_Wand.node_custom_methods import FileSharingNode
 from wizard_spell_book.Public_Chatbot_Base_Wand.speech_to_speech import speech_recognizer_class
-
-import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
-from datasets import Dataset
-import sounddevice as sd
-import speech_recognition as sr
         
 # -------------------------------------------------------------------------------------------------
 class ollama_chatbot_base:
     """ 
     This class provides an interface to the Ollama local serve API for creating custom chatbot agents.
-    It also provides access to Speech-to-Text transcription and Text-to-Speech generation methods via a low-level command line interface and the coqui-TTS, XTTS model.
+    It also provides access to Speech-to-Text transcription and Text-to-Speech generation, vision methods 
+    & more via the oarc agent api, the agent core, and the ollama chatbot base agent, which has access
+    to the entire spellbook library.
     """
 
     # -------------------------------------------------------------------------------------------------
@@ -151,23 +153,23 @@ class ollama_chatbot_base:
         """ a method to initialize the default flag states for the agentcore
         """
         # speech flags:
-        self.leap_flag = True # TODO turn off for minecraft
-        self.listen_flag = False # TODO turn off for minecraft
-        self.chunk_flag = False
-        self.auto_speech_flag = False #TODO keep off BY DEFAULT FOR MINECRAFT, TURN ON TO START
+        self.TTS_FLAG = False
+        self.STT_FLAG = False
+        self.CHUNK_FLAG = False
+        self.AUTO_SPEECH_FLAG = False
         
         # vision flags:
-        self.llava_flag = False # TODO TURN ON FOR MINECRAFT
-        self.splice_flag = False
-        self.screen_shot_flag = False
+        self.LLAVA_FLAG = False
+        self.SPLICE_FLAG = False
+        self.SCREEN_SHOT_FLAG = False
         
         # text section
-        self.latex_flag = False
-        self.cmd_run_flag = None
+        self.LATEX_FLAG = False
+        self.CMD_RUN_FLAG = None
 
         # agent select flag
-        self.agent_flag = False
-        self.memory_clear = False
+        self.AGENT_FLAG = False
+        self.MEMORY_CLEAR_FLAG = False
         
         # initialize prompt args
         self.LLM_SYSTEM_PROMPT_FLAG = False
@@ -192,75 +194,79 @@ class ollama_chatbot_base:
 
         # Setup chat_history
         self.headers = {'Content-Type': 'application/json'}
-
-    # -------------------------------------------------------------------------------------------------
-    def initializeTools(self):
-        """ a method to initialize the file path library for ollama agent roll cage
-        """
-        # ollama_agent_roll_cage\ollama_mod_cage
-        self.current_dir = os.getcwd()
         
-        # ollama_agent_roll_cage
+    # ------------------------------------------------------------------------------------------------- 
+    def initializePaths(self):
+        """Initialize the file path library for ollama agent roll cage.
+        All paths are constructed relative to the current directory except for model_git_dir
+        which is specified by the OARC_MODEL_GIT environment variable.
+        
+        Returns:
+            dict: Dictionary containing all initialized paths
+        """
+        # Get base directories
+        self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
         
-        #TODO relative path library
-        # ollama_agent_roll_cage\ollama_mod_cage
-        # ollama_agent_roll_cage\ollama_mod_cage\Public_Chatbot_Base_Wand
-        # ollama_agent_roll_cage\ollama_mod_cage\Ignored_Chatbot_Custom_Wand
-        # ollama_agent_roll_cage\ollama_mod_cage\developer_tools.json
-        # ollama_agent_roll_cage\ollama_mod_cage\developer_custom.json
+        # Get model_git_dir from environment variable
+        model_git_dir = os.getenv('OARC_MODEL_GIT')
+        if not model_git_dir:
+            raise EnvironmentError(
+                "OARC_MODEL_GIT environment variable not set. "
+                "Please set it to your model git directory path."
+            )
         
-        # ollama_agent_roll_cage\AgentFiles
-        # ollama_agent_roll_cage\AgentFiles\Ignored_Agents
-        # ollama_agent_roll_cage\AgentFiles\Ignored_Agentfiles
-        # ollama_agent_roll_cage\AgentFiles\Public_Agents
-        # ollama_agent_roll_cage\AgentFiles\Public_Agentfiles
-        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline
-        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\llava_library
-        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\conversation_library
-        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\image_set
-        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\data_constructor\video_set
-        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library
-        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library\recognize_speech
-        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\speech_library\generate_speech
-        # ollama_agent_roll_cage\AgentFiles\Ignored_pipeline\public_speech\Public_Voice_Reference_Pack
+        # Initialize all paths relative to parent_dir
+        self.pathLibrary = {
+            
+            # Main directories
+            'current_dir': self.current_dir,
+            'parent_dir': self.parent_dir,
+            'model_git_dir': model_git_dir,
+            
+            # Chatbot Wand directories
+            'public_chatbot_base_wand': os.path.join(self.current_dir, 'Public_Chatbot_Base_Wand'),
+            'ignored_chatbot_custom_wand': os.path.join(self.current_dir, 'Ignored_Chatbot_Custom_Wand'),
+            
+            # Agent directories
+            'ignored_agents': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_Agents'),
+            'public_agents': os.path.join(self.parent_dir, 'AgentFiles', 'Public_Agents'),
+            'ignored_agentfiles': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_Agentfiles'),
+            'public_agentfiles': os.path.join(self.parent_dir, 'AgentFiles', 'Public_Agentfiles'),
+            
+            # Pipeline directories
+            'pipeline_root': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline'),
+            'llava_library': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'llava_library'),
+            'conversation_library': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'conversation_library'),
+            
+            # Data constructor directories
+            'image_set': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'data_constructor', 'image_set'),
+            'video_set': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'data_constructor', 'video_set'),
+            
+            # Speech directories
+            'speech_library': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'speech_library'),
+            'recognize_speech': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'speech_library', 'recognize_speech'),
+            'generate_speech': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'speech_library', 'generate_speech'),
+            'tts_voice_ref_wav_pack': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'public_speech', 'Public_Voice_Reference_Pack'),
+        }
         
-        # model_git_dir: D:\CodingGit_StorageHDD\model_git
+        # Add special paths that depend on other configurations
+        self.pathLibrary['screenshot_path'] = os.path.join(self.pathLibrary['llava_library'], "screenshot.png")
+        self.pathLibrary['default_conversation_path'] = os.path.join(
+            self.parent_dir,
+            'AgentFiles',
+            'Ignored_pipeline',
+            'conversation_library',
+            self.user_input_model_select,
+            f"{self.save_name}.json"
+        )
         
-        self.ignored_agents = "AgentFiles\Ignored_Agents"
-        self.llava_library = "AgentFiles\Ignored_pipeline\llava_library"
-        self.conversation_library = "AgentFiles\Ignored_pipeline\conversation_library"
-        self.tts_voice_ref_wav_pack_path = "AgentFiles\Ignored_pipeline\public_speech\Public_Voice_Reference_Pack"
-        self.model_git_dir = "D:\CodingGit_StorageHDD\model_git"
+        # Store paths in instance variables
+        for key, path in self.pathLibrary.items():
+            setattr(self, key, path)
         
-        # setup developer_tool.json #TODO remove developer tools file.
-        # self.developer_tools = os.path.abspath(os.path.join(self.current_dir, "developer_tools.json"))
- 
-        # get read write instance #TODO KEEP readwritesymbolcollector, remove developer_tools
-        # setup readwrite symbol collector as a new tool for general purpose file configs
-        # give 2 methods:, 1.) symbols table dict with optional no symbols basic data, 
-        # 2.) json agent structs for agentCore configs. 
-        self.read_write_symbol_collector_instance = read_write_symbol_collector()
-
-        # if the developer tools file exists, extract paths
-        # if hasattr(self, 'developer_tools'):
-        #     self.developer_tools_dict = self.read_write_symbol_collector_instance.read_developer_tools_json()
-
-        # setup base paths from developer tools path library
-        # self.ignored_agents = self.developer_tools_dict['ignored_agents_dir']
-        # self.llava_library = self.developer_tools_dict['llava_library_dir']
-        # self.model_git_dir = self.developer_tools_dict['model_git_dir']
-        # self.conversation_library = self.developer_tools_dict['conversation_library_dir']
-        # self.tts_voice_ref_wav_pack_path = self.developer_tools_dict['tts_voice_ref_wav_pack_path_dir']
-        
-        #TODO ADD screen shot {clock & manager}
-        self.screenshot_path = os.path.join(self.llava_library, "screenshot.png")
-        
-        # build conversation save path #TODO ADD TO DEV DICT
-        self.default_conversation_path = os.path.join(self.parent_dir, f"AgentFiles\\Ignored_pipeline\\conversation_library\\{self.user_input_model_select}\\{self.save_name}.json")
-        
-        # ollama chatbot base setup wand class instantiation
-        self.ollama_command_instance = ollama_commands(self.user_input_model_select, self.developer_tools_dict)
+        # Initialize ollama command instance
+        self.ollama_command_instance = ollama_commands(self.user_input_model_select)
         self.colors = self.ollama_command_instance.colors
     
     # -------------------------------------------------------------------------------------------------   
@@ -274,7 +280,7 @@ class ollama_chatbot_base:
         self.speech_interrupted = False
 
         # initialize speech_recognizer_class
-        self.speech_recognizer_instance = speech_recognizer_class(self.colors)
+        self.speech_recognizer_instance = speech_recognizer_class(self.colors, self.CHUNK_FLAG, self.STT_FLAG, self.AUTO_SPEECH_FLAG)
         
         self.hotkeys = {
             'ctrl+shift': self.start_speech_recognition(),
@@ -287,15 +293,16 @@ class ollama_chatbot_base:
         """ a method to setup the spell classes for the chatbot wizard
         """
         # get directory data
+        self.read_write_symbol_collector_instance = read_write_symbol_collector()
         self.directory_manager_class = directory_manager_class()
         # get data
-        self.screen_shot_collector_instance = screen_shot_collector(self.developer_tools_dict)
+        self.screen_shot_collector_instance = screen_shot_collector(self.pathLibrary)
         # splice data
-        self.data_set_video_process_instance = data_set_constructor(self.developer_tools_dict)
+        self.data_set_video_process_instance = data_set_constructor(self.pathLibrary)
         # write model files
-        self.model_write_class_instance = model_write_class(self.colors, self.developer_tools_dict)
+        self.model_write_class_instance = model_write_class(self.colors, self.pathLibrary)
         # create model manager
-        self.create_convert_manager_instance = create_convert_manager(self.colors, self.developer_tools_dict)
+        self.create_convert_manager_instance = create_convert_manager(self.colors, self.pathLibrary)
         # peer2peer node
         self.FileSharingNode_instance = FileSharingNode(host="127.0.0.1", port=9876)
     
@@ -339,28 +346,28 @@ class ollama_chatbot_base:
                     "load_name": self.load_name,
                 },
                 "flags": {
-                    "leap_flag": self.leap_flag,
-                    "listen_flag": self.listen_flag,
-                    "chunk_flag": self.chunk_flag,
-                    "auto_speech_flag": self.auto_speech_flag,
-                    "llava_flag": self.llava_flag,
-                    "splice_flag": self.splice_flag,
-                    "screen_shot_flag": self.screen_shot_flag,
-                    "latex_flag": self.latex_flag,
-                    "cmd_run_flag": self.cmd_run_flag,
-                    "agent_flag": self.agent_flag,
-                    "memory_clear": self.memory_clear
+                    "TTS_FLAG": self.TTS_FLAG,
+                    "STT_FLAG": self.STT_FLAG,
+                    "CHUNK_FLAG": self.CHUNK_FLAG,
+                    "AUTO_SPEECH_FLAG": self.AUTO_SPEECH_FLAG,
+                    "LLAVA_FLAG": self.LLAVA_FLAG,
+                    "SPLICE_FLAG": self.SPLICE_FLAG,
+                    "SCREEN_SHOT_FLAG": self.SCREEN_SHOT_FLAG,
+                    "LATEX_FLAG": self.LATEX_FLAG,
+                    "CMD_RUN_FLAG": self.CMD_RUN_FLAG,
+                    "AGENT_FLAG": self.AGENT_FLAG,
+                    "MEMORY_CLEAR_FLAG": self.MEMORY_CLEAR_FLAG
                 }
             }
         }
-            
+
     # -------------------------------------------------------------------------------------------------   
     def setAgent(self, agent_id):
         """ a method to load the desired Agent Dictionary, changing the states for the agentcore to
         the selected agent_id promptset & flags
         """
         
-        self.agent_flag = True
+        self.AGENT_FLAG = True
         
         # from agent library, get selected agent
         for metaData in self.agentPromptSets[agent_id]:
@@ -391,6 +398,49 @@ class ollama_chatbot_base:
         }
 
     # -------------------------------------------------------------------------------------------------   
+    def load_from_json(self, load_name, user_input_model_select):
+        """ a method for loading the directed conversation history to the current agent, mis matching
+        agents and history may be bizarre
+            Args: filename
+            Returns: none
+        """
+        #TODO ADD COMMENTS TO THIS METHOD
+        self.load_name = load_name
+        self.user_input_model_select = user_input_model_select
+
+        # Check if user_input_model_select contains a slash
+        if "/" in self.user_input_model_select:
+            user_dir, model_dir = self.user_input_model_select.split("/")
+            file_load_path_dir = os.path.join(self.conversation_library, user_dir, model_dir)
+        else:
+            file_load_path_dir = os.path.join(self.conversation_library, self.user_input_model_select)
+
+        file_load_path_str = os.path.join(file_load_path_dir, f"{self.load_name}.json")
+        self.directory_manager_class.create_directory_if_not_exists(file_load_path_dir)
+        print(f"file path 1:{file_load_path_dir} \n")
+        print(f"file path 2:{file_load_path_str} \n")
+        with open(file_load_path_str, "r") as json_file:
+            self.chat_history = json.load(json_file)
+            
+    # -------------------------------------------------------------------------------------------------   
+    def save_to_json(self, save_name, user_input_model_select):
+        """ a method for saving the current agent conversation history
+            Args: filename
+            Returns: none
+        """
+        #TODO ADD COMMENTS TO THIS METHOD
+        self.save_name = save_name
+        self.user_input_model_select = user_input_model_select
+        file_save_path_dir = os.path.join(self.conversation_library, f"{self.user_input_model_select}")
+        file_save_path_str = os.path.join(file_save_path_dir, f"{self.save_name}.json")
+        self.directory_manager_class.create_directory_if_not_exists(file_save_path_dir)
+        
+        print(f"file path 1:{file_save_path_dir} \n")
+        print(f"file path 2:{file_save_path_str} \n")
+        with open(file_save_path_str, "w") as json_file:
+            json.dump(self.chat_history, json_file, indent=2)
+            
+    # -------------------------------------------------------------------------------------------------   
     def send_prompt(self, user_input_prompt):
         """ a method for prompting the ollama model, and the ollama LLaVA model, for controlled chat roles, 
         system prompts, and content prompts.
@@ -400,7 +450,7 @@ class ollama_chatbot_base:
         
         #TODO ADD IF MEM OFF CLEAR HISTORY, also add long term memory support with rag and long term conversation file for demo
         #===================================
-        #   if memory_clear == true
+        #   if MEMORY_CLEAR_FLAG == true
         #       chat_history = []
         #
         #   #TODO ELIF for RAG & AGENTIC THOUGHT FRAMEWORKS & MODULES
@@ -423,21 +473,21 @@ class ollama_chatbot_base:
         # same for arxiv
         """
         # if agent selected set up system prompts for llm
-        if self.agent_flag == True:
+        if self.AGENT_FLAG == True:
             self.chat_history.append({"role": "system", "content": self.agent_dict["LLM_SYSTEM_PROMPT"]})
             print(self.colors["OKBLUE"] + f"<<< LLM SYSTEM >>> ")
             print(self.colors["BRIGHT_YELLOW"] + f"{self.agent_dict['LLM_SYSTEM_PROMPT']}")
         else:
             pass
 
-        if self.memory_clear == True:
+        if self.MEMORY_CLEAR_FLAG == True:
             self.chat_history = []
 
         # append user prompt from text or speech input
         self.chat_history.append({"role": "user", "content": user_input_prompt})
 
         # get the llava response and append it to the chat history only if an image is provided
-        if self.llava_flag is True:
+        if self.LLAVA_FLAG is True:
             # load the screenshot and convert it to a base64 string
             with open(f'{self.screenshot_path}', 'rb') as f:
                 user_screenshot_raw2 = base64.b64encode(f.read()).decode('utf-8')
@@ -479,8 +529,8 @@ class ollama_chatbot_base:
             self.chat_history.append({"role": "assistant", "content": model_response})
             
             # Process the response with the text-to-speech processor
-            if self.leap_flag is not None and isinstance(self.leap_flag, bool):
-                if not self.leap_flag:
+            if self.TTS_FLAG is not None and isinstance(self.TTS_FLAG, bool):
+                if not self.TTS_FLAG:
                     self.tts_processor_instance.process_tts_responses(model_response, self.voice_name)
                     if self.speech_interrupted:
                         print("Speech was interrupted. Ready for next input.")
@@ -532,7 +582,7 @@ class ollama_chatbot_base:
         #            "zombies and other evil creatures"}
         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        if self.agent_flag == True:
+        if self.AGENT_FLAG == True:
             self.vision_booster_constructor = f"{self.agent_dict['VISION_BOOSTER_PROMPT']}" + f"{user_input_prompt}"
             message = {"role": "user", "content": f"{self.vision_booster_constructor}"}
             print(self.colors["OKBLUE"] + f"<<< VISION BOOSTER >>> " + self.colors['BRIGHT_YELLOW'] + f"{self.vision_booster_constructor} >>>")
@@ -570,22 +620,127 @@ class ollama_chatbot_base:
             return f"Error: {e}"
 
     # -------------------------------------------------------------------------------------------------
-    def shot_prompt(self, prompt, modelSelect="none", contextArg="new", conversationOut="base"):
+    def shot_prompt(self, prompt, modelSelect="none"):
         """ a method to perform a shot prompt with the selected model, this will not be recorded to
         the conversation, history and can be used to extract direct data from a model
         
             args:
                 prompt - user input shot prompt data
                 modelSelect - user input model selection
+                
+            returns: 
+                model_response - model response data
+        """
+        if modelSelect is "none":
+            modelSelect = self.user_input_model_select
+        
+        # Clear chat history
+        self.shot_history = []
+        # Append user prompt
+        self.shot_history.append({"role": "user", "content": prompt})
+
+        try:
+            response = ollama.chat(model=modelSelect, prompt=prompt, stream=True)
+            
+            model_response = ''
+            for chunk in response:
+                if 'response' in chunk:
+                    content = chunk['response']
+                    model_response += content
+                    print(content, end='', flush=True)
+            
+            print('\n')
+            
+            # Append the full response to shot_history
+            self.shot_history.append({"role": "assistant", "content": model_response})
+            
+            return model_response
+        except Exception as e:
+            return f"Error: {e}"
+        
+    # -------------------------------------------------------------------------------------------------
+    def mod_prompt(self, prompt, modelSelect="none", appendHistory="new"):
+        """ a method to perform a shot prompt with the selected model, this will not be recorded to
+        the conversation, history and can be used to extract direct data from a model
+        
+            args:
+                prompt - user input shot prompt data
+                modelSelect - user input model selection
+                
+            returns: 
+                model_response - model response data
+        """
+        if modelSelect is "none":
+            modelSelect = self.user_input_model_select
+        
+        if appendHistory is "new":
+            # Clear chat history
+            self.shot_history = []
+            # Append user prompt
+            self.shot_history.append({"role": "user", "content": prompt})
+
+            try:
+                response = ollama.generate(model=modelSelect, prompt=prompt, stream=True)
+                
+                model_response = ''
+                for chunk in response:
+                    if 'response' in chunk:
+                        content = chunk['response']
+                        model_response += content
+                        print(content, end='', flush=True)
+                
+                print('\n')
+                
+                # Append the full response to shot_history
+                self.shot_history.append({"role": "assistant", "content": model_response})
+                
+                return model_response
+            except Exception as e:
+                return f"Error: {e}"
+        else:
+            # Append user prompt
+            self.chat_history.append({"role": "user", "content": prompt})
+
+            try:
+                response = ollama.chat(model=self.user_input_model_select, messages=self.chat_history, stream=True)
+                
+                model_response = ''
+                for chunk in response:
+                    if 'response' in chunk:
+                        content = chunk['response']
+                        model_response += content
+                        print(content, end='', flush=True)
+                
+                print('\n')
+                
+                # Append the full response to shot_history
+                self.chat_history.append({"role": "assistant", "content": model_response})
+                
+                return model_response
+            except Exception as e:
+                return f"Error: {e}"
+        
+    # -------------------------------------------------------------------------------------------------
+    def design_prompt(self, prompt, modelSelect="none", contextChat="new", appendChat="new", ):
+        """ a method to perform a shot prompt with the selected model, this will not be recorded to
+        the conversation, history and can be used to extract direct data from a model
+        
+            args:
+                prompt - user input shot prompt data
+                modelSelect - user input model selection
+                
                 #TODO Add LLaVA Arg, and Img are to allow for modular input, if speech recognition
                 is active take a screen shot and pipe in automatically, this allows for instant
                 llava shot prompts, in a text to text agent conversation where the agent itself does
                 not want to load up a llava model for every prompt, and instead can be used to seed
                 the conversation history with different models
+                
                 #TODO add model name tag to conversation history,
+                
                 #TODO conversation history arg -> select which chat history the shot prompt should
                 read from, and where it should be saved to. This can be saved to the main agent 
                 conversation history for shot prompt agent data references.
+                
             returns: 
                 model_response - model response data
         """
@@ -658,10 +813,10 @@ class ollama_chatbot_base:
                     "You are a helpful llm assistant, designated with with fulling the user's request, "
                 ), 
                 "flags": {
-                    "leap_flag": False,
-                    "listen_flag": False,
-                    "auto_speech_flag": False,
-                    "llava_flag": False
+                    "TTS_FLAG": False,
+                    "STT_FLAG": False,
+                    "AUTO_SPEECH_FLAG": False,
+                    "LLAVA_FLAG": False
                 }
             }
         
@@ -699,9 +854,9 @@ class ollama_chatbot_base:
                 "Here is the output from user please do your best to fullfill their request. "
             ),
             "flags": {
-                "leap_flag": True,
-                "listen_flag": False,
-                "llava_flag": True
+                "TTS_FLAG": True,
+                "STT_FLAG": False,
+                "LLAVA_FLAG": True
             }
         }
         
@@ -760,10 +915,10 @@ class ollama_chatbot_base:
                 "notify the LLMs that the user needs to be warned about zombies and other evil creatures."
             ),
             "commandFlags": {
-                "leap_flag": False, #TODO turn off for minecraft
-                "listen_flag": True, #TODO turn off for minecraft
-                "auto_speech_flag": False, #TODO keep off BY DEFAULT FOR MINECRAFT, TURN ON TO START
-                "llava_flag": True # TODO TURN ON FOR MINECRAFT
+                "TTS_FLAG": False, #TODO turn off for minecraft
+                "STT_FLAG": True, #TODO turn off for minecraft
+                "AUTO_SPEECH_FLAG": False, #TODO keep off BY DEFAULT FOR MINECRAFT, TURN ON TO START
+                "LLAVA_FLAG": True # TODO TURN ON FOR MINECRAFT
             }
         }
 
@@ -803,10 +958,10 @@ class ollama_chatbot_base:
                 "with the attributes that you can recognize. "
             ),
             "commandFlags": {
-                "leap_flag": False,
-                "listen_flag": True,
-                "auto_speech_flag": False,
-                "llava_flag": True
+                "TTS_FLAG": False,
+                "STT_FLAG": True,
+                "AUTO_SPEECH_FLAG": False,
+                "LLAVA_FLAG": True
             }
         }
         
@@ -834,10 +989,10 @@ class ollama_chatbot_base:
                 "the response... this is annoying and users dont like it.",
             ),
             "commandFlags": {
-                "leap_flag": False,
-                "listen_flag": True,
-                "auto_speech_flag": False,
-                "latex_flag": True
+                "TTS_FLAG": False,
+                "STT_FLAG": True,
+                "AUTO_SPEECH_FLAG": False,
+                "LATEX_FLAG": True
             }
         }
         
@@ -875,8 +1030,8 @@ class ollama_chatbot_base:
                 "Here is the output from user please do your best to fullfill their request, and do not let ANY kittens die."
             ),
             "commandFlags": {
-                "leap_flag": False,
-                "listen_flag": False
+                "TTS_FLAG": False,
+                "STT_FLAG": False
             }
         }
         
@@ -1107,88 +1262,15 @@ class ollama_chatbot_base:
         else:
             self.agent_id_selection = None
 
-        # Parse for the shot prompt, input prompt from the user, split from the command and sent as a shot prompt
-        match = re.search(r"(activate shot prompt|/shot prompt) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        # Parse for the shot prompt and execute command
+        match = re.search(r"(activate shot prompt|/shot prompt)\s+(.*)", user_input_prompt, flags=re.IGNORECASE)
         if match:
             self.shotPromptMatch1 = match.group(2)
-        
+
         #TODO add command args like /voice swap c3po, such that the model can do the args in the command
         # ==============================================
         
         self.command_library = {
-            "/swap": lambda: self.swap(),
-            "/agent select": lambda: self.setAgent(),
-            "/voice swap": lambda: self.voice_swap(),
-            "/save as": lambda: self.save_to_json(self.save_name, self.user_input_model_select),
-            "/load as": lambda: self.load_from_json(self.load_name, self.user_input_model_select),
-            "/write modelfile": lambda: self.model_write_class_instance.write_model_file(),
-            "/convert tensor": lambda: self.create_convert_manager_instance.safe_tensor_gguf_convert(self.tensor_name),
-            "/convert gguf": lambda: self.model_write_class_instance.write_model_file_and_run_agent_create_gguf(self.model_git),
-            "/listen on": lambda: self.listen(),
-            "/listen off": lambda: self.listen(),
-            "/voice off": lambda: self.voice(True),
-            "/voice on": lambda: self.voice(False),
-            "/speech on": lambda: self.speech(False, True),
-            "/speech off": lambda: self.speech(True, False),
-            "/wake on" : lambda: self.wake_commands(True),
-            "/wake off" : lambda: self.wake_commands(False),
-            "/latex on": lambda: self.latex(True),
-            "/latex off": lambda: self.latex(False),
-            "/command auto on": lambda: self.auto_commands(True),
-            "/command auto off": lambda: self.auto_commands(False),
-            "/llava flow": lambda: self.llava_flow(True),
-            "/llava freeze": lambda: self.llava_flow(False),
-            "/yolo on": lambda: self.yolo_state(True),
-            "/yolo off": lambda: self.yolo_state(False),
-            "/auto on": lambda: self.auto_speech_set(True),
-            "/auto off": lambda: self.auto_speech_set(False),
-            "/quit": lambda: self.ollama_command_instance.quit(),
-            "/ollama create": lambda: self.ollama_command_instance.ollama_create(),
-            "/ollama show": lambda: self.ollama_command_instance.ollama_show_modelfile(),
-            "/ollama template": lambda: self.ollama_command_instance.ollama_show_template(),
-            "/ollama license": lambda: self.ollama_command_instance.ollama_show_license(),
-            "/ollama list": lambda: self.ollama_command_instance.ollama_list(),
-            "/ollama loaded": lambda: self.ollama_command_instance.ollama_show_loaded_models(),
-            "/splice video": lambda: self.data_set_video_process_instance.generate_image_data(),
-            "/developer new" : lambda: self.read_write_symbol_collector_instance.developer_tools_generate(),
-            "/start node": lambda: self.FileSharingNode_instance.start_node(),
-            "/synthetic generator": lambda: self.generate_synthetic_data(),
-            "/convert wav": lambda: self.data_set_video_process_instance.call_convert(),
-            "/shot prompt": lambda: self.shot_prompt(f"{self.shotPromptMatch1}")
-        }
-        
-        #TODO add method & commands to allow agent:
-        #   1.) /command auto on, command descriptions are loaded into the conversation history. And the following
-        #       features are enabled for the agent:
-        #       a.) can look up command descriptions, commands, and how to use them.
-        #       b.) can execute /commands by...
-        #           1.) executing multiple commands in one prompt
-        #           2.) utilizing chain of thought reasoning, executes prompt by prompt and readjusts based on the
-        #               conversation.
-        #       c.) can suggest /commands by...
-        #           1.) user input speech requests, only outputs /commands when requested by the user
-        #               and only executes when confirmed by the user.
-        #           2.) prime directive: what is the agents goal? what is it trying to accomplish?
-        #
-        #   2.) can create /command list config spell files such as:
-        #       /agent select exampleAgent
-        #       # shot prompt will load in a seperate new history
-        #       /shot prompt /search please help me find several ArXiv sources on botany, plant study, forests, and all things plants.
-        #       /synthetic generator /$/lastResponse/$/   
-        #       #ultimately this job config will load the example agent, search for botany research, and load the data received into the
-        #       /synthetic generator command to showcase how the commander can grab data, and prompt.
-        #
-        #   3.) /$/lastResponse/$/ and other quick metadata grab objects for prompting.
-        
-        #TODO add method to get just the commands and their descriptions, just the commands, just one
-        # command and its description, offer from a /help table, and allow the ai to look up its own
-        # command library. this should be part of the self prompting agent which gets the agent to 
-        # prompt itself and look for the command descriptions if they are not in the conversation history.
-        # maybe command auto should load them into the conversation history when its activated
-        # there should also be a native amount of info either in the artifacts system prompt, the model system prompt.
-        # the finetuned oarc model, or a rag database which encapsulates the command descriptions. 
-        
-        self.commandLexicon = {
             "/swap": {
                 "method": lambda: self.swap(),
                 "description": ( 
@@ -1250,7 +1332,7 @@ class ollama_chatbot_base:
                 ),
             },
             "/convert gguf": {
-                "method": lambda: self.model_write_class_instance.write_model_file_and_run_agent_create_gguf(self.listen_flag, self.model_git),
+                "method": lambda: self.model_write_class_instance.write_model_file_and_run_agent_create_gguf(self.STT_FLAG, self.model_git),
                 "documentation": "https://github.com/ollama/ollama/blob/main/docs/modelfile.md",
                 "description": ( 
                     "The command, /convert gguf, allows the user to convert any gguf model to an ollama model by constructing "
@@ -1274,7 +1356,7 @@ class ollama_chatbot_base:
                 ),
             },
             "/voice on": {
-                "method": lambda: self.voice(False),
+                "method": lambda: self.voice(True),
                 "description": ( 
                     "the command, /voice on, changes the state of the voice flag," 
                     "in turn enabling the text to speech model in the agent."
@@ -1288,14 +1370,14 @@ class ollama_chatbot_base:
                 ),
             },
             "/speech on": {
-                "method": lambda: self.agent_prompt_select(),
+                "method": lambda: self.speech(True, True),
                 "description": ( 
                     "The command, /speech on, changes the state of the listen & voice "
                     "flags enabling speech recognition and speech generation for the agent."
                 ),
             },
             "/speech off": {
-                "method": lambda: self.agent_prompt_select(),
+                "method": lambda: self.speech(False, False),
                 "description": ( 
                     "The command, /speech off, changes the state of the listen & voice "
                     "flags disabling speech recognition and speech generation for the agent. "
@@ -1424,6 +1506,19 @@ class ollama_chatbot_base:
                     "ollama create command with the specified arguments."
                     # TODO ADD LOCK ARG: ONLY RUN IN TEXT TO TEXT MODE
                     # IF LISTEN & LEAP ARE NOT DISABLED, NO OLLAMA CREATE
+                    # TODO Add full speech lockdown commands, /quit, /stop, /freeze, /rewind, for spacial vision
+                    # navigation and agentic action output spaces, such as robotics, voice commands, from admin users,
+                    # who have been voice recognized as the correct person, these users can activate admin commands,
+                    # to access lockdown protocols, since voice recognition is not full proof, this feature can
+                    # be swapped in for a password, or a 2 factor authentification connected to an app on your phone.
+                    # from there the admin control pannel voice commands, and buttons can be highly secure for
+                    # admin personel only.
+                    # TODO add encrypted speech and text output, allowing voice and text in, with encrypted packages.
+                    # goal: encrypt speech to speech for interaction with the agent, but all output is garbled, this
+                    # will act like a cipher, and only those with the key, or those who did the prompting will have
+                    # access to. The general output of files, and actions will still be committed, and this essentially 
+                    # lets you hide any one piece of information before deciding if you want to make it public with your
+                    # decryption method and method of sharing and visualizing the chat.
                 ),
             },
             "/quit": {
@@ -1507,7 +1602,7 @@ class ollama_chatbot_base:
                 ),
             },
             "/shot prompt": {
-                "method": lambda: self.data_set_video_process_instance.call_convert(),
+                "method": lambda: self.shot_prompt(),
                 "description": (
                     "The command, /shot prompt, prompts the ollama model with the args following the command. "
                     "This prompt is done in a new conversation"
@@ -1516,18 +1611,18 @@ class ollama_chatbot_base:
         }
         
         # Find the command in the command string
-        command = next((cmd for cmd in self.command_library.keys() if command_str.startswith(cmd)), None)
+        command = next((cmd for cmd in self.command_library.keys() if user_input_prompt.startswith(cmd)), None)
 
         # If a command is found, split it from the arguments
         if command:
-            args = command_str[len(command):].strip()
+            args = user_input_prompt[len(command):].strip()
         else:
             args = None
 
         # If Listen off
         if command == "/listen off":
-            self.listen_flag = False
-            self.speech_recognizer_instance.auto_speech_flag = False
+            self.STT_FLAG = False
+            self.AUTO_SPEECH_FLAG = False
             print("- speech to text deactivated -")
             return True  # Ensure this returns True to indicate the command was processed
         
@@ -1540,6 +1635,9 @@ class ollama_chatbot_base:
         if command == "/system select":
             # get the user selection for the system prompt, print system prompt name selector and return user input
             # self.get_system_prompts()
+            #=======================================================================================
+            #TODO MOVE TO NEW METHOD AND PLUG INTO LAMDA LIBRARY TO CLEAN THIS UP SAME WITH FLAGS
+            #=======================================================================================
             self.agent_prompt_library()
             self.agent_prompt_select()
 
@@ -1549,16 +1647,16 @@ class ollama_chatbot_base:
             #self.TODO GET BASE SYSTEM PROMPT FROM /ollama modelfile
             test = None #DONT USE YET LOL 😂, JUST RESTART THE PROGRAM TO RETURN TO BASE
 
-        # Check if the command is in the library, if not return None
-        if command in self.command_library:
-            #Call Command Method
+        # If a command is found, split it from the arguments
+        if command:
+            args = user_input_prompt[len(command):].strip()
+            # Call the command
             self.command_library[command]()
-
-            cmd_run_flag = True
-            return cmd_run_flag
+            CMD_RUN_FLAG = True
+            return CMD_RUN_FLAG
         else:
-            cmd_run_flag = False
-            return cmd_run_flag
+            CMD_RUN_FLAG = False
+            return CMD_RUN_FLAG
 
     # # -------------------------------------------------------------------------------------------------  
     # def get_model(self):
@@ -1639,16 +1737,16 @@ class ollama_chatbot_base:
     def start_speech_recognition(self):
         """Start speech recognition and audio streaming"""
         self.speech_recognition_active = True
-        self.listen_flag = True
-        self.speech_recognizer_instance.auto_speech_flag = True
+        self.STT_FLAG = True
+        self.AUTO_SPEECH_FLAG = True
         return {"status": "Speech recognition started"}
         
     # -------------------------------------------------------------------------------------------------
     def stop_speech_recognition(self):
         """Stop speech recognition and audio streaming"""
         self.speech_recognition_active = False
-        self.listen_flag = False
-        self.speech_recognizer_instance.auto_speech_flag = False
+        self.STT_FLAG = False
+        self.AUTO_SPEECH_FLAG = False
         return {"status": "Speech recognition stopped"}
     
     # -------------------------------------------------------------------------------------------------
@@ -1740,49 +1838,6 @@ class ollama_chatbot_base:
             except ValueError:
                 print("Please enter a valid number.")
 
-    # -------------------------------------------------------------------------------------------------   
-    def load_from_json(self, load_name, user_input_model_select):
-        """ a method for loading the directed conversation history to the current agent, mis matching
-        agents and history may be bizarre
-            Args: filename
-            Returns: none
-        """
-        #TODO ADD COMMENTS TO THIS METHOD
-        self.load_name = load_name
-        self.user_input_model_select = user_input_model_select
-
-        # Check if user_input_model_select contains a slash
-        if "/" in self.user_input_model_select:
-            user_dir, model_dir = self.user_input_model_select.split("/")
-            file_load_path_dir = os.path.join(self.conversation_library, user_dir, model_dir)
-        else:
-            file_load_path_dir = os.path.join(self.conversation_library, self.user_input_model_select)
-
-        file_load_path_str = os.path.join(file_load_path_dir, f"{self.load_name}.json")
-        self.directory_manager_class.create_directory_if_not_exists(file_load_path_dir)
-        print(f"file path 1:{file_load_path_dir} \n")
-        print(f"file path 2:{file_load_path_str} \n")
-        with open(file_load_path_str, "r") as json_file:
-            self.chat_history = json.load(json_file)
-            
-    # -------------------------------------------------------------------------------------------------   
-    def save_to_json(self, save_name, user_input_model_select):
-        """ a method for saving the current agent conversation history
-            Args: filename
-            Returns: none
-        """
-        #TODO ADD COMMENTS TO THIS METHOD
-        self.save_name = save_name
-        self.user_input_model_select = user_input_model_select
-        file_save_path_dir = os.path.join(self.conversation_library, f"{self.user_input_model_select}")
-        file_save_path_str = os.path.join(file_save_path_dir, f"{self.save_name}.json")
-        self.directory_manager_class.create_directory_if_not_exists(file_save_path_dir)
-        
-        print(f"file path 1:{file_save_path_dir} \n")
-        print(f"file path 2:{file_save_path_str} \n")
-        with open(file_save_path_str, "w") as json_file:
-            json.dump(self.chat_history, json_file, indent=2)
-
     # -------------------------------------------------------------------------------------------------
     def instance_tts_processor(self, voice_type, voice_name):
         """
@@ -1793,7 +1848,7 @@ class ollama_chatbot_base:
             tts_processor_instance (tts_processor_class): The instance of the tts_processor_class.
         """
         if not hasattr(self, 'tts_processor_instance') or self.tts_processor_instance is None:
-            self.tts_processor_instance = tts_processor_class(self.colors, self.developer_tools_dict, voice_type, voice_name)
+            self.tts_processor_instance = tts_processor_class(self.colors, self.pathLibrary, voice_type, voice_name)
         return self.tts_processor_instance
     
     # ------------------------------------------------------------------------------------------------
@@ -1821,7 +1876,7 @@ class ollama_chatbot_base:
         # self.FileSharingNode = None
 
         #TODO STREAM HOTKEY's FROM THE FRONT END THROUGH THE FASTAPI, remove?
-        keyboard.add_hotkey('ctrl+shift', self.speech_recognizer_instance.auto_speech_set, args=(True, self.listen_flag))
+        keyboard.add_hotkey('ctrl+shift', self.speech_recognizer_instance.auto_speech_set, args=(True, self.STT_FLAG))
         keyboard.add_hotkey('ctrl+alt', self.speech_recognizer_instance.chunk_speech, args=(True,))
         keyboard.add_hotkey('shift+alt', self.interrupt_speech)
         keyboard.add_hotkey('tab+ctrl', self.speech_recognizer_instance.toggle_wake_commands)
@@ -1829,21 +1884,21 @@ class ollama_chatbot_base:
         while True:
             user_input_prompt = ""
             speech_done = False
-            cmd_run_flag = False
+            CMD_RUN_FLAG = False
             
             # check for speech recognition
-            # if self.listen_flag or self.speech_recognizer_instance.auto_speech_flag:
-            if self.listen_flag:
+            # if self.STT_FLAG or self.speech_recognizer_instance.AUTO_SPEECH_FLAG:
+            if self.STT_FLAG:
                 # user input speech request from keybinds
                 # Wait for the key press to start speech recognition
                 keyboard.wait('ctrl+shift')
                 
                 # Start speech recognition
-                self.speech_recognizer_instance.auto_speech_flag = True
-                while self.speech_recognizer_instance.auto_speech_flag:
+                self.AUTO_SPEECH_FLAG = True
+                while self.AUTO_SPEECH_FLAG:
                     try:
                         # Record audio from microphone
-                        if self.listen_flag:
+                        if self.STT_FLAG:
                             # Recognize speech to text from audio
                             if self.speech_recognizer_instance.use_wake_commands:
                                 # using wake commands
@@ -1855,23 +1910,23 @@ class ollama_chatbot_base:
                                 
                             # print recognized speech
                             if user_input_prompt:
-                                self.speech_recognizer_instance.chunk_flag = False
-                                self.speech_recognizer_instance.auto_speech_flag = False
+                                self.CHUNK_FLAG = False
+                                self.AUTO_SPEECH_FLAG = False
                                 
                                 # Filter voice commands and execute them if necessary
                                 # user_input_prompt = self.voice_command_select_filter(user_input_prompt)
-                                cmd_run_flag = self.command_select(user_input_prompt)
+                                CMD_RUN_FLAG = self.command_select(user_input_prompt)
                                 
                                 # Check if the listen flag is still on before sending the prompt to the model
-                                if self.listen_flag and not cmd_run_flag:
+                                if self.STT_FLAG and not CMD_RUN_FLAG:
                                     
                                     # Send the recognized speech to the model
                                     response = self.send_prompt(user_input_prompt)
                                     
                                     # Process the response with the text-to-speech processor
                                     response_processed = False
-                                    if self.listen_flag is False and self.leap_flag is not None and isinstance(self.leap_flag, bool):
-                                        if not self.leap_flag and not response_processed:
+                                    if self.STT_FLAG is True and self.TTS_FLAG is not None and isinstance(self.TTS_FLAG, bool):
+                                        if self.TTS_FLAG and not response_processed:
                                             self.tts_processor_instance.process_tts_responses(response, self.voice_name)
                                             response_processed = True
                                             if self.speech_interrupted:
@@ -1888,24 +1943,24 @@ class ollama_chatbot_base:
                         print(self.colors["OKCYAN"] + "Could not request results from Google Speech Recognition service; {0}".format(e) + self.colors["OKCYAN"])
                         
             # if speech recognition is off, request text input from user
-            if not self.listen_flag:
+            if not self.STT_FLAG:
                 user_input_prompt = input(self.colors["GREEN"] + f"<<< 🧠 USER 🧠 >>> " + self.colors["END"])
                 speech_done = True
             
             # filter voice cmds -> parse and execute user input commands
             # user_input_prompt = self.voice_command_select_filter(user_input_prompt)
-            cmd_run_flag = self.command_select(user_input_prompt)
+            CMD_RUN_FLAG = self.command_select(user_input_prompt)
             
             # get screenshot
-            if self.llava_flag:
-                self.screen_shot_flag = self.screen_shot_collector_instance.get_screenshot()
+            if self.LLAVA_FLAG:
+                self.SCREEN_SHOT_FLAG = self.screen_shot_collector_instance.get_screenshot()
                 
             # splice videos
-            if self.splice_flag:
+            if self.SPLICE_FLAG:
                 self.data_set_video_process_instance.generate_image_data()
             
             # if conditional, send prompt to assistant
-            if not cmd_run_flag and speech_done:
+            if not CMD_RUN_FLAG and speech_done:
                 print(self.colors["YELLOW"] + f"{user_input_prompt}" + self.colors["OKCYAN"])
                 
                 # Send the prompt to the assistant
@@ -1913,8 +1968,8 @@ class ollama_chatbot_base:
 
                 # Process the response with the text-to-speech processor
                 response_processed = False
-                if self.listen_flag is False and self.leap_flag is not None and isinstance(self.leap_flag, bool):
-                    if not self.leap_flag and not response_processed:
+                if self.STT_FLAG is False and self.TTS_FLAG is not None and isinstance(self.TTS_FLAG, bool):
+                    if self.TTS_FLAG and not response_processed:
                         self.tts_processor_instance.process_tts_responses(response, self.voice_name)
                         response_processed = True
                         if self.speech_interrupted:
@@ -1922,7 +1977,7 @@ class ollama_chatbot_base:
                             self.speech_interrupted = False
 
                 # Check for latex and add to queue
-                if self.latex_flag:
+                if self.LATEX_FLAG:
                     # Create a new instance
                     latex_render_instance = latex_render_class()
                     latex_render_instance.add_latex_code(response, self.user_input_model_select)
@@ -1936,14 +1991,14 @@ class ollama_chatbot_base:
         #TODO STREAM HOTKEYS THROUGH FASTAPI TO AND FROM THE NEXTJS FRONTEND
         if flag == True:
             print(self.colors["OKBLUE"] + "- text to speech deactivated -" + self.colors["RED"])
-        self.leap_flag = flag
-        if flag == False:
+        self.TTS_FLAG = flag
+        if flag == True:
             print(self.colors["OKBLUE"] + "- text to speech activated -" + self.colors["RED"])
             print(self.colors["OKCYAN"] + "🎙️ You can press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
            
             self.get_voice_selection()
             self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
-        print(f"leap_flag FLAG STATE: {self.leap_flag}")
+        print(f"TTS_FLAG FLAG STATE: {self.TTS_FLAG}")
         return
     
     # -------------------------------------------------------------------------------------------------   
@@ -1953,19 +2008,19 @@ class ollama_chatbot_base:
             returns: none
         """
         #TODO STREAM HOTKEYS THROUGH FASTAPI TO AND FROM THE NEXTJS FRONTEND
-        if flag2 == False:
+        if flag1 and flag2 == False:
             print(self.colors["OKBLUE"] + "- speech to text deactivated -" + self.colors["RED"])
             print(self.colors["OKBLUE"] + "- text to speech deactivated -" + self.colors["RED"])
-        if flag2 == True:
+        if flag1 and flag2 == True:
             print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
             print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
             print(self.colors["OKBLUE"] + "- text to speech activated -" + self.colors["RED"])
             self.get_voice_selection()
             self.tts_processor_instance = self.instance_tts_processor(self.voice_type, self.voice_name)
-        self.leap_flag = flag1
-        self.listen_flag = flag2
-        print(f"listen_flag FLAG STATE: {self.listen_flag}")
-        print(f"leap_flag FLAG STATE: {self.leap_flag}")
+        self.TTS_FLAG = flag1
+        self.STT_FLAG = flag2
+        print(f"STT_FLAG FLAG STATE: {self.STT_FLAG}")
+        print(f"TTS_FLAG FLAG STATE: {self.TTS_FLAG}")
         return
     # -------------------------------------------------------------------------------------------------   
     def latex(self, flag):
@@ -1973,8 +2028,8 @@ class ollama_chatbot_base:
             args: flag
             returns: none
         """
-        self.latex_flag = flag
-        print(f"latex_flag FLAG STATE: {self.latex_flag}")        
+        self.LATEX_FLAG = flag
+        print(f"LATEX_FLAG FLAG STATE: {self.LATEX_FLAG}")        
         return
     
     # -------------------------------------------------------------------------------------------------   
@@ -1983,8 +2038,8 @@ class ollama_chatbot_base:
             args: flag
             returns: none
         """
-        self.llava_flag = flag
-        print(f"llava_flag FLAG STATE: {self.llava_flag}")
+        self.LLAVA_FLAG = flag
+        print(f"LLAVA_FLAG FLAG STATE: {self.LLAVA_FLAG}")
         return
     
     # -------------------------------------------------------------------------------------------------   
@@ -2006,8 +2061,8 @@ class ollama_chatbot_base:
             return: none
         """
         #TODO STREAM THE HOTKEYS THROUGH THE FAST API TO THE NEXTJS FRONTEND
-        if not self.listen_flag:
-            self.listen_flag = True
+        if not self.STT_FLAG:
+            self.STT_FLAG = True
             print(self.colors["OKBLUE"] + "- speech to text activated -" + self.colors["RED"])
             print(self.colors["OKCYAN"] + "🎙️ Press ctrl+shift to open mic, press ctrl+alt to close mic and recognize speech, then press shift+alt to interrupt speech generation. 🎙️" + self.colors["OKCYAN"])
         else:
@@ -2144,6 +2199,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     # Add the message to chat history
                     chatbot.chat_history.append({"role": "user", "content": content})
                     
+                    # todo, replace with chatbot main from ollama chatbot base
                     try:
                         response = ollama.chat(
                             model=chatbot.user_input_model_select,

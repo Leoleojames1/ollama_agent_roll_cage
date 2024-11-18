@@ -7,7 +7,7 @@ import threading
 
 # -------------------------------------------------------------------------------------------------
 class speech_recognizer_class:
-    def __init__(self, colors):
+    def __init__(self, colors, chunk_flag, listen_flag, auto_speech_flag):
         self.colors = colors
         self.auto_speech_flag = False
         self.chunk_flag = False

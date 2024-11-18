@@ -14,16 +14,16 @@ import soundfile as sf
 # -------------------------------------------------------------------------------------------------
 class data_set_constructor:
     # -------------------------------------------------------------------------------------------------
-    def __init__(self, developer_tools_dict):
+    def __init__(self, pathLibrary):
         """a method for initializing the class
         """
-        self.developer_tools_dict = developer_tools_dict
-        self.current_dir = self.developer_tools_dict['current_dir']
-        self.parent_dir = self.developer_tools_dict['parent_dir']
-        self.ignored_pipeline_dir = self.developer_tools_dict['ignored_pipeline_dir']
-        self.image_dir = self.developer_tools_dict['image_dir']
-        self.video_dir = self.developer_tools_dict['video_dir']
-        self.agent_files_dir = self.developer_tools_dict['agent_files_dir']
+        self.pathLibrary = pathLibrary
+        self.current_dir = self.pathLibrary['current_dir']
+        self.parent_dir = self.pathLibrary['parent_dir']
+        self.ignored_pipeline_dir = self.pathLibrary['ignored_pipeline_dir']
+        self.image_dir = self.pathLibrary['image_dir']
+        self.video_dir = self.pathLibrary['video_dir']
+        self.agent_files_dir = self.pathLibrary['agent_files_dir']
         
     # -------------------------------------------------------------------------------------------------
     def splice_video(self, video_path):

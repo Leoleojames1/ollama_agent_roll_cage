@@ -12,14 +12,14 @@ import os
 
 # -------------------------------------------------------------------------------------------------
 class model_write_class:
-    def __init__(self, colors, developer_tools_dict):
+    def __init__(self, colors, pathLibrary):
         """a method for initializing the class
         """
         self.colors = colors
-        self.developer_tools_dict = developer_tools_dict
-        self.current_dir = developer_tools_dict['current_dir']
-        self.parent_dir = developer_tools_dict['parent_dir']
-        self.ignored_agents_dir = developer_tools_dict['ignored_agents_dir']
+        self.pathLibrary = pathLibrary
+        self.current_dir = pathLibrary['current_dir']
+        self.parent_dir = pathLibrary['parent_dir']
+        self.ignored_agents_dir = pathLibrary['ignored_agents_dir']
 
     # -------------------------------------------------------------------------------------------------    
     def write_model_file(self):

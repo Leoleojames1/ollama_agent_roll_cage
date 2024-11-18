@@ -7,14 +7,14 @@ import time
 # -------------------------------------------------------------------------------------------------
 class screen_shot_collector:
     # -------------------------------------------------------------------------------------------------
-    def __init__(self, developer_tools_dict):
+    def __init__(self, pathLibrary):
         """a method for initializing the class
         """
-        self.developer_tools_dict = developer_tools_dict
-        self.current_dir = self.developer_tools_dict['current_dir']
-        self.parent_dir = self.developer_tools_dict['parent_dir']
-        self.pipeline = self.developer_tools_dict['ignored_pipeline_dir']
-        self.llava_library = self.developer_tools_dict['llava_library_dir']
+        self.pathLibrary = pathLibrary
+        self.current_dir = self.pathLibrary['current_dir']
+        self.parent_dir = self.pathLibrary['parent_dir']
+        self.pipeline = self.pathLibrary['ignored_pipeline_dir']
+        self.llava_library = self.pathLibrary['llava_library_dir']
 
     # -------------------------------------------------------------------------------------------------
     def get_screenshot(self):
