@@ -320,7 +320,7 @@ as you can see the tkinter Gui is capable of parsing and rendering latex formula
 
 ***[borch/llama3po](https://ollama.com/borch/llama3po)***
 
-## Ollama Model's and Modififed System Prompting
+## Ollama Model's and Modified System Prompting
 
 <img
 src="docs/assets/posters/roll_cage_wizard.png"
