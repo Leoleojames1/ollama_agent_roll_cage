@@ -76,10 +76,6 @@ Also Please Follow these tutorials for understanding and installing Ollama:
 
 ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
 
-Optional Terminal Multiplexor requires setup (not recommended):
-
-***[Tmux: Terminal Multiplexor](https://github.com/tmux/tmux)***
-
 After installing ollama in the users directory automatically it will be in:
 ```
   C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama
