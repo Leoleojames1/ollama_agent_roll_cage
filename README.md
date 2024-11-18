@@ -64,6 +64,8 @@ Now download and install **ollama** with **llama3 8b Instruct** from the followi
 
 ***[Ollama Program Download](https://ollama.com/download)***
 
+[Ollama Documentation](https://github.com/ollama/ollama/tree/main/docs)
+
 Also Please Follow these tutorials for understanding and installing Ollama:
 
 ***[Matt Williams: Getting Started on Ollama Guide](https://www.youtube.com/watch?v=90ozfdsQOKo&t=28s)***
