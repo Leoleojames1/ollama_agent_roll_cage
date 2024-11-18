@@ -12,13 +12,13 @@
 ## About
   **ollama_agent_roll_cage** (OARC) is a local python agent fusing **ollama** llm's with **Coqui-TTS** speech models, **Keras** classifiers, **Llava** vision, **Whisper** recognition, and more to create a unified chatbot agent for local, custom automation. This program manages, and automates the creation of **chatbots** through **conversation history**, **model management**, **function calling**, and ultimately defining a **base reality** for your agent to build its world view via an **interaction space** for windows **software**, local files, and callable screenshots giving the user more control over the likely output of the agent through **multimodal** agentic **chain of thought**, and a mixture of exterior software tools. 
 
-  ollama_agent_roll_cage includes the /create command, allowing the user to define a model, and system prompt for a custom modelfile, via text and speech commands. This is not the same as the /unsloth fine-tune command tune which requires the unsloth package import, and the correct model training data, which will be added in OARC update 0.3, system prompt modifications are very useful for specific use cases, more advanced options stack modified system prompts with fine tuned models in an agent framework like OARC does 😄. Ultimately we want to investigate our Agent at every level, and take care wherever possible. More functions are coming soon, and as such new models to match, hope you have a good install, join the Ollama community & the OARC community on discord below for more help and join in on OARC community mod pack development,
+  ollama_agent_roll_cage includes the /create command, allowing the user to define a model, and system prompt for a custom modelfile. This is not the same as the /unsloth fine-tune command tune which requires the unsloth package import, and the correct model training data, which will be added in OARC update 0.3, system prompt modifications are very useful for specific use cases, more advanced options stack modified system prompts with fine tuned models in an agent framework, with a rag pipeline, like OARC does 😄. Ultimately we want to investigate our Agent at every level, and take care wherever possible. More functions are coming soon, and as such new models to match, hope you have a good install, join the Ollama community & the OARC community on discord below for more help and join the OARC community to learn, build, contribute to OARC, Agent Chef, Mod Pack Development and more.
 
 <img
 src="docs/assets/posters/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
 
-Its also important to note the non-commerical liscense agreement for meta's llama3, coqui-tts's XTTS model, as well as any other non-commerical use models. These models have liscense protection for experimental, and personal use, for non-commerical gain.
+Its also important to note the non-commerical license agreement for meta's llama3, coqui-tts's XTTS model, as well as any other non-commerical use models. These models have license protection for experimental, and personal use, for non-commerical gain. Each model has its own license with considerations to take, so do your research, and read your licenses.
 
 ***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)***
 
@@ -36,7 +36,7 @@ Its also important to note the non-commerical liscense agreement for meta's llam
 ***[Ollama Agent Roll Cage V0.24.0 OLD Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
 
 ## Installing Ollama Agent Roll Cage
-The full video guide for installing and setting up ollama agent roll cage can be found here. This is for version V0.24.0, an updated install guide will be released soon.
+The full video guide for installing and setting up ollama_agent_roll_cage can be found here. This is for version V0.28.0, an updated install guide will be released soon for V0.29.0.
 
 ***[Ollama Agent Roll Cage V0.28.0 - Speech to Speech with Vision, & Agent Library](https://www.youtube.com/watch?v=W7TusPTnNXA)***
 
@@ -518,10 +518,4 @@ and open it, right click on the ollama llama app icon, and click quit ollama.
     By: Leo Borcherding
         on github @ 
             leoleojames1/ollama_agent_roll_cage
-
-If you have found this software helpful, and would like to support the developement of open source tools by yours truly, you can contribute by donating BTC or ETH to one of my wallet addresses, thx and have a great day:
-
-**BTC Address:** bc1q98q4yn0ea9cvuthgam7lt250ct3vln65zytfae
-
-**ETH Address:** 0x0Ce35988F785524697AE11D28cdd4A1b97123f11
 
