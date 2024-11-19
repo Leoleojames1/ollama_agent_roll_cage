@@ -1,7 +1,5 @@
 """ ollama_chatbot_wizard.py
 
-    ===============================================================================================
-
         ollama_agent_roll_cage, is an opensource toolkit api for speech to text, text to speech 
     commands, multi-modal agent building with local LLM api's, including tools such as ollama, 
     transformers, keras, as well as closed source api endpoint integration such as openAI, 
@@ -66,10 +64,9 @@
     By: Leo Borcherding, 4/20/2024
         on github @ 
             leoleojames1/ollama_agent_roll_cage
-            
-    ===============================================================================================
 """
 
+#CHATBOT BASE IMPORTS
 import os
 import re
 import time
@@ -101,6 +98,14 @@ from wizard_spell_book.Public_Chatbot_Base_Wand.create_convert_model import crea
 from wizard_spell_book.Public_Chatbot_Base_Wand.node_custom_methods import FileSharingNode
 from wizard_spell_book.Public_Chatbot_Base_Wand.speech_to_speech import speech_recognizer_class
         
+#API IMPORTS
+from fastapi import FastAPI, WebSocket, HTTPException, BackgroundTasks, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import Dict, Any, Optional, List, Union
+import logging
+from contextlib import asynccontextmanager
+
 # -------------------------------------------------------------------------------------------------
 class ollama_chatbot_base:
     """ 
@@ -118,24 +123,76 @@ class ollama_chatbot_base:
         returns: none
         
         """
+        # init model
+        self.user_input_model_select = None
+        # init colors        
+        self.colors = self.get_colors()
+        
+        # Initialize paths
+        self.initializePaths()
+    
         # initialize agent metadata
         self.initializeAgent()
         self.initializeAgentFlags()
         
         # initialize chat
         self.initializeChat()
-        self.initializeTools()
+        # self.initializeTools()
         self.initializeSpeech()
         self.initializeSpells()
         
         # create agent library
         self.createAgentDict()
         
+    # -------------------------------------------------------------------------------------------------  
+    def get_colors(self):
+        """Get color dictionary for terminal and frontend color mapping"""
+        return {
+            "YELLOW": {'terminal': '\033[93m', 'hex': '#FFC107'},
+            "GREEN": {'terminal': '\033[92m', 'hex': '#4CAF50'},
+            "RED": {'terminal': '\033[91m', 'hex': '#F44336'},
+            "END": {'terminal': '\033[0m', 'hex': ''},
+            "HEADER": {'terminal': '\033[95m', 'hex': '#9C27B0'},
+            "OKBLUE": {'terminal': '\033[94m', 'hex': '#2196F3'},
+            "OKCYAN": {'terminal': '\033[96m', 'hex': '#00BCD4'},
+            "OKGREEN": {'terminal': '\033[92m', 'hex': '#4CAF50'},
+            "DARK_GREY": {'terminal': '\033[90m', 'hex': '#616161'},
+            "WARNING": {'terminal': '\033[93m', 'hex': '#FF9800'},
+            "FAIL": {'terminal': '\033[91m', 'hex': '#F44336'},
+            "ENDC": {'terminal': '\033[0m', 'hex': ''},
+            "BOLD": {'terminal': '\033[1m', 'hex': ''},
+            "UNDERLINE": {'terminal': '\033[4m', 'hex': ''},
+            "WHITE": {'terminal': '\x1B[37m', 'hex': '#FFFFFF'},
+            "LIGHT_GREY": {'terminal': '\033[37m', 'hex': '#9E9E9E'},
+            "LIGHT_RED": {'terminal': '\033[91m', 'hex': '#EF5350'},
+            "LIGHT_GREEN": {'terminal': '\033[92m', 'hex': '#81C784'},
+            "LIGHT_YELLOW": {'terminal': '\033[93m', 'hex': '#FFD54F'},
+            "LIGHT_BLUE": {'terminal': '\033[94m', 'hex': '#64B5F6'},
+            "LIGHT_MAGENTA": {'terminal': '\033[95m', 'hex': '#E1BEE7'},
+            "LIGHT_CYAN": {'terminal': '\033[96m', 'hex': '#80DEEA'},
+            "LIGHT_WHITE": {'terminal': '\033[97m', 'hex': '#FFFFFF'},
+            "DARK_BLACK": {'terminal': '\033[30m', 'hex': '#000000'},
+            "DARK_RED": {'terminal': '\033[31m', 'hex': '#C62828'},
+            "DARK_GREEN": {'terminal': '\033[32m', 'hex': '#2E7D32'},
+            "DARK_YELLOW": {'terminal': '\033[33m', 'hex': '#F9A825'},
+            "DARK_BLUE": {'terminal': '\033[34m', 'hex': '#1565C0'},
+            "DARK_MAGENTA": {'terminal': '\033[35m', 'hex': '#7B1FA2'},
+            "DARK_CYAN": {'terminal': '\033[36m', 'hex': '#00838F'},
+            "DARK_WHITE": {'terminal': '\033[37m', 'hex': '#FFFFFF'},
+            "BRIGHT_BLACK": {'terminal': '\033[90m', 'hex': '#424242'},
+            "BRIGHT_RED": {'terminal': '\033[91m', 'hex': '#EF5350'},
+            "BRIGHT_GREEN": {'terminal': '\033[92m', 'hex': '#81C784'},
+            "BRIGHT_YELLOW": {'terminal': '\033[93m', 'hex': '#FFD54F'},
+            "BRIGHT_BLUE": {'terminal': '\033[94m', 'hex': '#64B5F6'},
+            "BRIGHT_MAGENTA": {'terminal': '\033[95m', 'hex': '#E1BEE7'},
+            "BRIGHT_CYAN": {'terminal': '\033[96m', 'hex': '#80DEEA'},
+            "BRIGHT_WHITE": {'terminal': '\033[97m', 'hex': '#FFFFFF'},
+        }
+        
     # -------------------------------------------------------------------------------------------------   
     def initializeAgent(self):
         # chatbot core
         self.agent_id = "defaultAgent"
-        self.user_input_model_select = None
         self.user_input_prompt = ""
 
         # Default Agent Voice Reference
@@ -145,8 +202,6 @@ class ollama_chatbot_base:
         # Default conversation name
         self.save_name = "defaultConversation"
         self.load_name = "defaultConversation"
-
-        self.initializeAgentFlag()
         
     # -------------------------------------------------------------------------------------------------   
     def initializeAgentFlags(self):
@@ -1982,6 +2037,52 @@ class ollama_chatbot_base:
                     latex_render_instance = latex_render_class()
                     latex_render_instance.add_latex_code(response, self.user_input_model_select)
 
+    # ------------------------------------------------------------------------------------------------- 
+    async def get_available_models(self):
+        """Get the available models with ollama list"""
+        return await self.ollama_command_instance.ollama_list()
+    
+    # ------------------------------------------------------------------------------------------------- 
+    async def get_command_library(self):
+        """Get the command library"""
+        return list(self.command_library.keys())
+    
+    # ------------------------------------------------------------------------------------------------- 
+    def get_state(self) -> Dict[str, Any]:
+        """Get current state of the chatbot"""
+        return {
+            "agent_id": self.agent_id,
+            "flags": {
+                "TTS_FLAG": self.TTS_FLAG,
+                "STT_FLAG": self.STT_FLAG,
+                "LLAVA_FLAG": self.LLAVA_FLAG,
+                "LATEX_FLAG": self.LATEX_FLAG,
+                "AUTO_SPEECH_FLAG": self.AUTO_SPEECH_FLAG
+            },
+            "voice": {
+                "type": self.voice_type,
+                "name": self.voice_name
+            },
+            "model": self.user_input_model_select
+        }
+
+    # ------------------------------------------------------------------------------------------------- 
+    def update_state(self, new_state: Dict[str, Any]):
+        """Update chatbot state"""
+        if "flags" in new_state:
+            for flag, value in new_state["flags"].items():
+                if hasattr(self, flag):
+                    setattr(self, flag, value)
+                    
+        if "voice" in new_state:
+            self.set_voice(
+                new_state["voice"].get("type"),
+                new_state["voice"].get("name")
+            )
+            
+        if "model" in new_state:
+            self.set_model(new_state["model"])
+            
     # -------------------------------------------------------------------------------------------------   
     def voice(self, flag):
         """ a method for changing the leap flag 
@@ -2100,394 +2201,257 @@ class ollama_chatbot_base:
         self.yolo_flag = flag
         print(f"use_wake_commands FLAG STATE: {self.yolo_flag}")
         return
-    
-from pydantic import BaseModel
-from typing import List
-import ollama
-from ollama_chatbot_wizard import ollama_chatbot_base
-import logging
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-import numpy as np
-import json
-import asyncio
-import base64
 
-# Set up logging
+from fastapi import FastAPI, WebSocket, HTTPException, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+import logging
+import asyncio
+import ollama
+import numpy as np
+import base64
+import sounddevice as sd
+import speech_recognition as sr
+from typing import Dict, Any
+
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+class AudioProcessor:
+    def __init__(self):
+        self.sample_rate = 16000
+        self.chunk_size = 1024
+        self.audio_buffer = np.array([])
+        
+    async def process_audio_data(self, raw_data: bytes) -> np.ndarray:
+        """Convert raw audio bytes to numpy array"""
+        return np.frombuffer(raw_data, dtype=np.float32)
 
-# Add CORS middleware with correct parameters
+    def create_audio_data(self, audio_buffer: np.ndarray) -> sr.AudioData:
+        """Create AudioData object from numpy array"""
+        return sr.AudioData(audio_buffer.tobytes(), self.sample_rate, 2)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize on startup
+    global manager
+    manager = ConnectionManager()
+    yield
+    # Cleanup on shutdown
+    for agent_id in list(manager.active_connections.keys()):
+        await manager.disconnect(agent_id)
+
+app = FastAPI(lifespan=lifespan)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000"],  # Add your frontend URL
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Add a custom middleware to handle WebSocket CORS if needed
-@app.middleware("http")
-async def add_cors_headers(request, call_next):
-    response = await call_next(request)
-    if request.headers.get("upgrade", "").lower() == "websocket":
-        response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
-    return response
-
-class ChatRequest(BaseModel):
-    message: str
-
-class ChatResponse(BaseModel):
-    response: str
-    type: str
-
-class ModelRequest(BaseModel):
-    model: str
-
 class ConnectionManager:
     def __init__(self):
-        self.active_connections: List[WebSocket] = []
+        self.active_connections: Dict[str, WebSocket] = {}
+        self.chatbot_states: Dict[str, Dict] = {}
+        self.audio_processor = AudioProcessor()
 
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket, agent_id: str):
         await websocket.accept()
-        self.active_connections.append(websocket)
-        logger.info(f"New WebSocket connection: {websocket.client}")
+        self.active_connections[agent_id] = websocket
+        
+        chatbot = ollama_chatbot_base()
+        await self.initialize_chatbot(chatbot)
+        
+        self.chatbot_states[agent_id] = {
+            "chatbot": chatbot,
+            "audio_buffer": np.array([]),
+            "is_processing": False
+        }
+        
+        logger.info(f"Client connected with agent_id: {agent_id}")
 
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-        logger.info(f"WebSocket disconnected: {websocket.client}")
+    async def initialize_chatbot(self, chatbot):
+        """Initialize chatbot asynchronously"""
+        await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeChat)
+        await asyncio.get_event_loop().run_in_executor(None, chatbot.initializePaths)
+        await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeSpells)
+        await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeSpeech)
 
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
+    async def disconnect(self, agent_id: str):
+        if agent_id in self.active_connections:
+            await self.active_connections[agent_id].close()
+            del self.active_connections[agent_id]
+        if agent_id in self.chatbot_states:
+            del self.chatbot_states[agent_id]
+        logger.info(f"Client disconnected: {agent_id}")
 
+    async def broadcast_audio(self, agent_id: str, audio_data: np.ndarray):
+        """Broadcast audio data to all connected clients except sender"""
+        for id_, connection in self.active_connections.items():
+            if id_ != agent_id:
+                await connection.send_bytes(audio_data.tobytes())
+
+    async def process_message(self, websocket: WebSocket, agent_id: str, data: Dict):
+        """Process incoming WebSocket messages"""
+        state = self.chatbot_states[agent_id]
+        chatbot = state["chatbot"]
+        
+        try:
+            if data["type"] == "text":
+                response = await process_text_message(chatbot, data["content"])
+                # Include color information in the response
+                await websocket.send_json({
+                    "type": "response",
+                    "content": response,
+                    "color": chatbot.colors["GREEN"]["hex"]  # Use hex color for frontend
+                })
+                
+                if chatbot.TTS_FLAG:
+                    audio = await process_tts(chatbot, response)
+                    if audio is not None:
+                        await self.broadcast_audio(agent_id, audio)
+                
+            elif data["type"] == "audio":
+                if chatbot.STT_FLAG and not state["is_processing"]:
+                    audio_data = await self.audio_processor.process_audio_data(
+                        base64.b64decode(data["content"])
+                    )
+                    state["is_processing"] = True
+                    try:
+                        await self.process_audio(websocket, agent_id, audio_data)
+                    finally:
+                        state["is_processing"] = False
+                        
+            elif data["type"] == "command":
+                result = await process_command(chatbot, data["content"])
+                await websocket.send_json({
+                    "type": "command_result",
+                    "content": result
+                })
+                
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+            await websocket.send_json({
+                "type": "error",
+                "content": str(e)
+            })
+
+    async def process_audio(self, websocket: WebSocket, agent_id: str, audio_data: np.ndarray):
+        """Process audio data and handle transcription/response"""
+        state = self.chatbot_states[agent_id]
+        chatbot = state["chatbot"]
+        
+        # Append to buffer
+        state["audio_buffer"] = np.concatenate([state["audio_buffer"], audio_data])
+        
+        # Process if buffer is full
+        if len(state["audio_buffer"]) >= self.audio_processor.sample_rate:
+            audio = self.audio_processor.create_audio_data(state["audio_buffer"])
+            text = await process_audio_message(chatbot, audio)
+            
+            if text:
+                await websocket.send_json({
+                    "type": "transcription",
+                    "content": text
+                })
+                
+                if not text.startswith('/'):
+                    response = await process_text_message(chatbot, text)
+                    await websocket.send_json({
+                        "type": "response",
+                        "content": response
+                    })
+                    
+                    if chatbot.TTS_FLAG:
+                        audio = await process_tts(chatbot, response)
+                        if audio is not None:
+                            await self.broadcast_audio(agent_id, audio)
+                else:
+                    result = await process_command(chatbot, text)
+                    await websocket.send_json({
+                        "type": "command_result",
+                        "content": result
+                    })
+                    
+            # Reset buffer
+            state["audio_buffer"] = np.array([])
+
+# Initialize manager
 manager = ConnectionManager()
 
-chatbot = ollama_chatbot_base()
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
+@app.websocket("/ws/{agent_id}")
+async def websocket_endpoint(websocket: WebSocket, agent_id: str):
+    await manager.connect(websocket, agent_id)
     try:
-        await websocket.send_json({
-            "type": "connection_status",
-            "status": "connected"
-        })
-
         while True:
-            try:
-                data = await websocket.receive_text()
-                logger.info(f"Received WebSocket message: {data}")
-                
-                json_data = json.loads(data)
-                message_type = json_data.get('type')
-                content = json_data.get('message')
-
-                if not message_type or not content:
-                    raise ValueError("Invalid message format")
-
-                if message_type == 'chat':
-                    if not chatbot.user_input_model_select:
-                        await websocket.send_json({
-                            "type": "error",
-                            "message": "No model selected. Please select a model first."
-                        })
-                        continue
-
-                    # Add the message to chat history
-                    chatbot.chat_history.append({"role": "user", "content": content})
-                    
-                    # todo, replace with chatbot main from ollama chatbot base
-                    try:
-                        response = ollama.chat(
-                            model=chatbot.user_input_model_select,
-                            messages=chatbot.chat_history,
-                            stream=True
-                        )
-                        
-                        full_response = ''
-                        for chunk in response:
-                            if 'message' in chunk and 'content' in chunk['message']:
-                                content_chunk = chunk['message']['content']
-                                full_response += content_chunk
-                                
-                                await websocket.send_json({
-                                    "type": "chat_response",
-                                    "response": content_chunk
-                                })
-                                await asyncio.sleep(0.01)
-                        
-                        chatbot.chat_history.append({"role": "assistant", "content": full_response})
-                        
-                        # Send end of response marker
-                        await websocket.send_json({
-                            "type": "chat_response_end",
-                            "response": full_response
-                        })
-                        
-                    except Exception as e:
-                        logger.error(f"Error in chat response: {str(e)}")
-                        await websocket.send_json({
-                            "type": "error",
-                            "message": f"Chat error: {str(e)}"
-                        })
-                        
-                elif message_type == 'command':
-                    try:
-                        result = chatbot.command_select(content)
-                        await websocket.send_json({
-                            "type": "command_result",
-                            "response": str(result)
-                        })
-                    except Exception as e:
-                        logger.error(f"Error executing command: {str(e)}")
-                        await websocket.send_json({
-                            "type": "error",
-                            "message": f"Command error: {str(e)}"
-                        })
-                        
-            except json.JSONDecodeError:
-                await websocket.send_json({
-                    "type": "error",
-                    "message": "Invalid JSON format"
-                })
-            except Exception as e:
-                logger.error(f"Error processing message: {str(e)}")
-                await websocket.send_json({
-                    "type": "error",
-                    "message": str(e)
-                })
-
+            data = await websocket.receive_json()
+            await manager.process_message(websocket, agent_id, data)
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        logger.info("WebSocket disconnected")
+        await manager.disconnect(agent_id)
     except Exception as e:
-        logger.error(f"Unexpected error in WebSocket connection: {str(e)}")
-        manager.disconnect(websocket)
-        
+        logger.error(f"WebSocket error: {e}")
+        await manager.disconnect(agent_id)
 
-@app.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest):
+@app.websocket("/audio-stream/{agent_id}")
+async def audio_websocket_endpoint(websocket: WebSocket, agent_id: str):
+    await manager.connect(websocket, agent_id)
     try:
-        if request.message.startswith('/'):
-            result = chatbot.command_select(request.message)
-            return ChatResponse(response=result, type="command_result")
-        else:
-            response = await chatbot.send_prompt(request.message)
-            return ChatResponse(response=response, type="chat_response")
-    except Exception as e:
-        logger.error(f"Error in chat endpoint: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        while True:
+            data = await websocket.receive_bytes()
+            audio_data = await manager.audio_processor.process_audio_data(data)
+            await manager.process_audio(websocket, agent_id, audio_data)
+    except WebSocketDisconnect:
+        await manager.disconnect(agent_id)
 
-@app.post("/set_model")
-async def set_model(request: ModelRequest):
-    try:
-        chatbot.set_model(request.model)
-        return {"message": f"Model set to {request.model}"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+async def process_text_message(chatbot, content: str):
+    """Process text messages through the chatbot"""
+    return await asyncio.get_event_loop().run_in_executor(
+        None, chatbot.send_prompt, content
+    )
 
-@app.get("/current_model")
-async def get_current_model():
-    return {"model": chatbot.user_input_model_select}
+async def process_audio_message(chatbot, audio_data: sr.AudioData):
+    """Process audio data through speech recognition"""
+    return await asyncio.get_event_loop().run_in_executor(
+        None, chatbot.speech_recognizer_instance.recognize_speech, audio_data
+    )
+
+async def process_command(chatbot, command: str):
+    """Process chatbot commands"""
+    return await asyncio.get_event_loop().run_in_executor(
+        None, chatbot.command_select, command
+    )
+
+async def process_tts(chatbot, text: str):
+    """Process text-to-speech"""
+    return await asyncio.get_event_loop().run_in_executor(
+        None,
+        chatbot.tts_processor_instance.process_tts_responses,
+        text,
+        chatbot.voice_name
+    )
 
 @app.get("/available_models")
-async def get_available_models():
+async def get_models():
+    """Get available Ollama models"""
     try:
-        models = await chatbot.ollama_command_instance.ollama_list()
+        chatbot = ollama_chatbot_base()
+        models = await chatbot.get_available_models()
         return {"models": models}
     except Exception as e:
-        logger.error(f"Error getting available models: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/command_library")
-async def get_command_library():
-    if hasattr(chatbot, 'command_library'):
+async def get_commands():
+    """Get available commands"""
+    try:
+        chatbot = ollama_chatbot_base()
         return {"commands": list(chatbot.command_library.keys())}
-    else:
-        return {"commands": []}
-
-
-@app.get("/health")
-async def health_check():
-    return {"status": "ok"}
-
-@app.post("/hotkeys/{action}")
-async def manage_hotkeys(action: str):
-    if action == "setup":
-        chatbot.setup_hotkeys()
-        return {"message": "Hotkeys set up"}
-    elif action == "remove":
-        chatbot.remove_hotkeys()
-        return {"message": "Hotkeys removed"}
-    else:
-        raise HTTPException(status_code=400, detail="Invalid action")
-
-@app.get("/speech_recognition_status")
-async def get_speech_recognition_status():
-    return {"active": chatbot.speech_recognition_active}
-
-@app.get("/ollama/loaded_models")
-async def get_loaded_models():
-    return await chatbot.ollama_command_instance.ollama_show_loaded_models()
-
-@app.get("/ollama/template")
-async def get_template():
-    return await chatbot.ollama_command_instance.ollama_show_template()
-
-@app.get("/ollama/license")
-async def get_license():
-    return await chatbot.ollama_command_instance.ollama_show_license()
-
-@app.get("/ollama/modelfile")
-async def get_modelfile():
-    return await chatbot.ollama_command_instance.ollama_show_modelfile()
-
-@app.get("/ollama/list")
-async def get_ollama_list():
-    return await chatbot.ollama_command_instance.ollama_list()
-
-@app.post("/ollama/create")
-async def create_ollama_model():
-    return await chatbot.ollama_command_instance.ollama_create()
-
-class AudioConnectionManager:
-    def __init__(self):
-        self.active_connections: List[WebSocket] = []
-        self.audio_processors: Dict[WebSocket, speech_recognizer_class] = {}
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-        self.audio_processors[websocket] = speech_recognizer_class(colors)
-        logger.info(f"New audio WebSocket connection: {websocket.client}")
-
-    def disconnect(self, websocket: WebSocket):
-        if websocket in self.active_connections:
-            self.active_connections.remove(websocket)
-        if websocket in self.audio_processors:
-            processor = self.audio_processors[websocket]
-            processor.stop_recording()
-            del self.audio_processors[websocket]
-        logger.info(f"Audio WebSocket disconnected: {websocket.client}")
-
-audio_manager = AudioConnectionManager()
-
-@app.websocket("/audio-stream")
-async def audio_stream_endpoint(websocket: WebSocket):
-    await audio_manager.connect(websocket)
-    processor = audio_manager.audio_processors[websocket]
-    
-    try:
-        while True:
-            try:
-                message = await websocket.receive_json()
-                message_type = message.get("type")
-                
-                if message_type == "start_recording":
-                    processor.start_recording()
-                    await websocket.send_json({
-                        "type": "status",
-                        "status": "recording_started"
-                    })
-                
-                elif message_type == "stop_recording":
-                    processor.stop_recording()
-                    await websocket.send_json({
-                        "type": "status",
-                        "status": "recording_stopped"
-                    })
-                
-                elif message_type == "audio_data":
-                    if not processor.is_recording:
-                        continue
-                        
-                    # Decode base64 audio data
-                    audio_data = base64.b64decode(message["data"])
-                    
-                    # Process the audio
-                    result = await processor.process_audio_stream(audio_data)
-                    
-                    if "error" in result:
-                        await websocket.send_json({
-                            "type": "error",
-                            "message": result["error"]
-                        })
-                        continue
-                        
-                    # Send transcription if available
-                    if result["transcription"]:
-                        await websocket.send_json({
-                            "type": "transcription",
-                            "text": result["transcription"],
-                            "wake_word_detected": result["wake_word_detected"]
-                        })
-                        
-                    # Send visualization data
-                    await websocket.send_json({
-                        "type": "audio_data",
-                        "data": result["audio_data"]
-                    })
-                
-                elif message_type == "toggle_whisper":
-                    processor.toggle_whisper(message.get("enabled", True))
-                    
-                elif message_type == "toggle_wake_word":
-                    processor.toggle_wake_commands()
-                    
-                elif message_type == "set_wake_word":
-                    processor.set_wake_word(message.get("wake_word", "Yo Jaime"))
-                    
-            except json.JSONDecodeError:
-                logger.error("Invalid JSON received")
-                continue
-                
-    except WebSocketDisconnect:
-        audio_manager.disconnect(websocket)
-    except Exception as e:
-        logger.error(f"Unexpected error in audio stream: {e}")
-        audio_manager.disconnect(websocket)
-
-# Regular HTTP endpoints for audio settings
-@app.post("/audio/settings")
-async def update_audio_settings(
-    settings: dict = {
-        "use_whisper": True,
-        "use_wake_word": False,
-        "wake_word": "Yo Jaime"
-    }
-):
-    try:
-        for connection in audio_manager.active_connections:
-            processor = audio_manager.audio_processors[connection]
-            processor.toggle_whisper(settings["use_whisper"])
-            processor.use_wake_commands = settings["use_wake_word"]
-            if settings.get("wake_word"):
-                processor.set_wake_word(settings["wake_word"])
-        return {"message": "Audio settings updated"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/audio/status")
-async def get_audio_status():
-    try:
-        # Return status of first processor as example
-        if audio_manager.active_connections:
-            processor = audio_manager.audio_processors[audio_manager.active_connections[0]]
-            return {
-                "use_whisper": processor.use_whisper,
-                "use_wake_word": processor.use_wake_commands,
-                "wake_word": processor.wake_word,
-                "active_connections": len(audio_manager.active_connections)
-            }
-        return {
-            "active_connections": 0
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=2020)
