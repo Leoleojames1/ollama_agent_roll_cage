@@ -54,7 +54,7 @@ Now download and install **ollama** with **llama3 8b Instruct** from the followi
 
 Also Please Follow these tutorials for understanding and installing Ollama:
 
-***[Matt Williams: Getting Started on Ollama Guide](https://www.youtube.com/watch?v=90ozfdsQOKo&t=28s)*** ***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)*** ***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)*** ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
+***[Matt Williams: Getting Started on Ollama Guide](https://www.youtube.com/watch?v=90ozfdsQOKo&t=28s)*** | ***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)*** | ***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)*** | ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
 
 After installing ollama in the users directory automatically it will be in:
 ```
@@ -143,9 +143,7 @@ please download and install cuda for nvidia graphics cards:
 
 please also download cudnn and combine cuda & cudnn like in the video below:
 
-***[CUDNN INSTALLER](https://developer.nvidia.com/cudnn)***
-
-***[CUDA & CUDNN FUSE INSTALL GUIDE](https://www.youtube.com/watch?v=OEFKlRSd8Ic)***
+***[CUDNN INSTALLER](https://developer.nvidia.com/cudnn)*** | ***[CUDA & CUDNN FUSE INSTALL GUIDE](https://www.youtube.com/watch?v=OEFKlRSd8Ic)***
 
 ## Download Coqui Fine-tuned Voice Models:
 During the Install.bat/sh file you should have had XTTS-v2 Cloned into:  ollama_agent_roll_cage\AgentFiles\Ignored_TTS
@@ -154,21 +152,14 @@ https://huggingface.co/coqui/XTTS-v2
 
 Now you can clone the finetune voices into the same folder:
 
-***[Borcherding/XTTS-v2_C3PO voice model](https://huggingface.co/Borcherding/XTTS-v2_C3PO)***
-
-***[Borcherding/XTTS-v2_CarliG voice model](https://huggingface.co/Borcherding/XTTS-v2_CarliG)***
-
-***[KoljaB/XTTS_S_Dogg voice model](https://huggingface.co/KoljaB/XTTS_S_Dogg)***
-
-***[kodoqmc/XTTS-v2_PeterDrury voice model](https://huggingface.co/kodoqmc/XTTS-v2_PeterDrury)***
+***[Borcherding/XTTS-v2_C3PO voice model](https://huggingface.co/Borcherding/XTTS-v2_C3PO)*** | ***[Borcherding/XTTS-v2_CarliG voice model](https://huggingface.co/Borcherding/XTTS-v2_CarliG)*** | ***[KoljaB/XTTS_S_Dogg voice model](https://huggingface.co/KoljaB/XTTS_S_Dogg)*** | ***[kodoqmc/XTTS-v2_PeterDrury voice model](https://huggingface.co/kodoqmc/XTTS-v2_PeterDrury)***
 
 ## Installing Visual Studio and Visual Studio Code:
 Now download visual studio code this is where you can write new functions for ollama_agent_roll_cage:
 
-https://code.visualstudio.com/Download
+[Visual Studio](https://code.visualstudio.com/Download)
 
-You can now access your custom agent (After you make one with the guide below) by running the **ollama_serve_llama3_base_py.cmd** automation to start the **server** and converse with the **ollama_agent_roll_cage** **chatbot** add ons.
-
+You can now access your local ollama_agent_roll_cage api, by running oarc_api_START.cmd on windows or oarc_api_START.sh
 # Getting Started After Installation:
 
 <img
