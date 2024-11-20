@@ -20,7 +20,7 @@ src="docs/assets/posters/rollcage.jpg"
 
 Its also important to note the non-commerical license agreement for meta's llama3, coqui-tts's XTTS model, as well as any other non-commerical use models. These models have license protection for experimental, and personal use, for non-commerical gain. Each model has its own license with considerations to take, so do your research, and read your licenses.
 
-***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)*** ***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
+***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)*** | ***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
 
 ## Ollama Agent Roll Cage Demo Videos
 ***[Ollama Agent Roll Cage V0.28.0 - Speech to Speech with Vision, & Agent Library](https://www.youtube.com/watch?v=W7TusPTnNXA)*** ***[OARC Demo Videos Compilation](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/docs/demo_videos.md)*** ***[OARC 0.27.0 DEMO 5 - HF S_Dogg model](https://streamable.com/hldmzh?src=player-page-share)*** ***[OARC V0.26.0 - Llava Vision Demo](https://www.youtube.com/watch?v=szd1wIOc034)*** ***[Ollama Agent Roll Cage V0.24.0 OLD Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
