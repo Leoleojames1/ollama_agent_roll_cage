@@ -10,7 +10,9 @@
 
 ***[🦙 Ollama Discord Server 🦙](https://discord.gg/ollama)***   ***[🤖 OARC V0.28 VIDEO GUIDE 🧙](https://www.youtube.com/watch?v=W7TusPTnNXA)*** ***[🦾Borch's AI Development Guide🦿](https://share.note.sx/c3topc9y#iaFb281+b0x66J+2lWIhWp4PV+wwoKsd5GqoXYg1i4I)***
 ## About
-  **ollama_agent_roll_cage** (OARC) is a local python agent fusing **ollama** llm's with **Coqui-TTS** speech models, **Keras** classifiers, **LlaVA** vision, **Whisper** speech recognition, ***YoloV8*** object detection, and more to create a unified chatbot agent api for local, custom automation. This program manages, and automates the creation of **chatbots** through **conversation history**, **model management**, **function calling**, ***Document Database*** with ***embedding model*** retrieval, and ultimately by structuring a **base reality** for your agent to build its world view via an **interaction space** for windows **software**, local files via ChromaDB, and callable screenshots giving the user more control over the likely output of the agent through **multimodal** agentic **chain of thought**, & ***retrieval augmented generation*** and a mixture of exterior software tools. You have complete control with OARC, with the full capabilities to implement security and protection systems for your project. Ultimately we want to investigate our Agent at every level, and define logical/ontological frameworks if possible. More tools are coming soon, and as such new models to match! I hope you have a good install, & I hope to see you in the Ollama Discord & the OARC Discord. For more help, to learn, to build, to contribute to OARC, Agent Chef, and seeing you learn from my process, integrate OARC with your systems, and ultimately thrive in the wonderful world of AI and Programming we have before us.
+  **ollama_agent_roll_cage** (OARC) is a local python agent fusing **ollama** llm's with **Coqui-TTS** speech models, **Keras** classifiers, **LlaVA** vision, **Whisper** speech recognition, ***YoloV8*** object detection, and more to create a unified chatbot agent api for local, custom automation. This program manages, and automates the creation of **chatbots** through **conversation history**, **model management**, **function calling**, ***Document Database*** with ***embedding model*** retrieval, and ultimately by structuring a **base reality** for your agent to build its world view via an **interaction space** for windows **software**, local files via ChromaDB, and callable screenshots giving the user more control over the likely output of the agent through **multimodal** agentic **chain of thought**, & ***retrieval augmented generation*** and a mixture of exterior software tools. 
+  
+  OARC, provides tools & spaces to implement security and protection systems for your agentic tool project. Limiting the output of the model to what your training data reflect. In order to implement your own fine tuned models, you must understand the complexities of AI training Data, and how our biases are reflected in it. Ultimately we want to investigate our Agent at every level, and define logical/ontological frameworks if possible. More tools are coming soon, and as such new models to match! I hope you have a good install, & I hope to see you in the Ollama Discord & the OARC Discord. Reach out for more help, to learn, to build, to contribute to OARC, Agent Chef, integrate OARC with your systems, and ultimately thrive in the wonderful world of AI and Programming we have before us.
 
 <img
 src="docs/assets/posters/rollcage.jpg"
@@ -18,20 +20,10 @@ src="docs/assets/posters/rollcage.jpg"
 
 Its also important to note the non-commerical license agreement for meta's llama3, coqui-tts's XTTS model, as well as any other non-commerical use models. These models have license protection for experimental, and personal use, for non-commerical gain. Each model has its own license with considerations to take, so do your research, and read your licenses.
 
-***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)***
-
-***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
+***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)*** ***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
 
 ## Ollama Agent Roll Cage Demo Videos
-***[Ollama Agent Roll Cage V0.28.0 - Speech to Speech with Vision, & Agent Library](https://www.youtube.com/watch?v=W7TusPTnNXA)***
-
-***[OARC Demo Videos Compilation](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/docs/demo_videos.md)***
-
-***[OARC 0.27.0 DEMO 5 - HF S_Dogg model](https://streamable.com/hldmzh?src=player-page-share)***
-
-***[OARC V0.26.0 - Llava Vision Demo](https://www.youtube.com/watch?v=szd1wIOc034)***
-
-***[Ollama Agent Roll Cage V0.24.0 OLD Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
+***[Ollama Agent Roll Cage V0.28.0 - Speech to Speech with Vision, & Agent Library](https://www.youtube.com/watch?v=W7TusPTnNXA)*** ***[OARC Demo Videos Compilation](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/docs/demo_videos.md)*** ***[OARC 0.27.0 DEMO 5 - HF S_Dogg model](https://streamable.com/hldmzh?src=player-page-share)*** ***[OARC V0.26.0 - Llava Vision Demo](https://www.youtube.com/watch?v=szd1wIOc034)*** ***[Ollama Agent Roll Cage V0.24.0 OLD Install & User Guide](https://www.youtube.com/watch?v=xfQSfTJcPpA)***
 
 ## Installing Ollama Agent Roll Cage
 The full video guide for installing and setting up ollama_agent_roll_cage can be found here. This is for version V0.28.0, an updated install guide will be released soon for V0.29.0.
@@ -39,20 +31,17 @@ The full video guide for installing and setting up ollama_agent_roll_cage can be
 ***[Ollama Agent Roll Cage V0.28.0 - Speech to Speech with Vision, & Agent Library](https://www.youtube.com/watch?v=W7TusPTnNXA)***
 
 ## Installing Miniconda & Setting Up Python Virtual Environment
-Miniconda for modular python virtual environments:
+1. Install Miniconda for modular python virtual environments: ***[Miniconda Intaller](https://docs.anaconda.com/free/miniconda/miniconda-install/)***
 
-***[Miniconda Intaller](https://docs.anaconda.com/free/miniconda/miniconda-install/)***
-
-Make sure to utilize a conda virtual environment for all of your python dependecy management.
-Once you have conda installed open the command line and name your new vEnv whatever you want with python version 3.11 as 3.12 has dependency issues:
+2. Make sure to utilize a conda virtual environment for all of your python dependecy management. Once you have conda installed open the command line and name your new conda env preferably py311_ollama, but if you want to change it go ahead, with python version 3.11 as 3.12 has dependency issues:
 ```
 conda create -n py311_ollama python=3.11
 ```
-then activate it
+3. Now activate the conda environment
 ```
 conda activate py311_ollama
 ```
-right away install the nvdia py indexer,
+4. Right away install the nvdia py indexer.
 ```
 pip install nvidia-pyindex
 ```
@@ -60,19 +49,11 @@ pip install nvidia-pyindex
 ## Installing Ollama
 Now download and install **ollama** with **llama3 8b Instruct** from the following link, you will be asked to provide an email for either hugging face or meta to download the llama3 model, this is fine, as you are agreeing to the software license agreement which is a beneficial document for open source developers and is meant to protect meta from large corporations such as amazon and google. Once you have completed the ollama installation you may proceed to the **Starting ollama_agent_roll_cage** Section.
 
-***[Ollama Program Download](https://ollama.com/download)***
-
-[Ollama Documentation](https://github.com/ollama/ollama/tree/main/docs)
+***[Ollama Program Download](https://ollama.com/download)*** ***[Ollama Documentation](https://github.com/ollama/ollama/tree/main/docs)***
 
 Also Please Follow these tutorials for understanding and installing Ollama:
 
-***[Matt Williams: Getting Started on Ollama Guide](https://www.youtube.com/watch?v=90ozfdsQOKo&t=28s)***
-
-***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)***
-
-***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)***
-
-***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
+***[Matt Williams: Getting Started on Ollama Guide](https://www.youtube.com/watch?v=90ozfdsQOKo&t=28s)*** ***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)*** ***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)*** ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
 
 After installing ollama in the users directory automatically it will be in:
 ```
