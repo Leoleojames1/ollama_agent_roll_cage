@@ -50,7 +50,7 @@ pip install nvidia-pyindex
 ## Installing Ollama
 Now download and install **ollama** with **llama3 8b Instruct** from the following link, you will be asked to provide an email for either hugging face or meta to download the llama3 model, this is fine, as you are agreeing to the software license agreement which is a beneficial document for open source developers and is meant to protect meta from large corporations such as amazon and google. Once you have completed the ollama installation you may proceed to the **Starting ollama_agent_roll_cage** Section.
 
-***[Ollama Program Download](https://ollama.com/download)*** ***[Ollama Documentation](https://github.com/ollama/ollama/tree/main/docs)***
+***[Ollama Program Download](https://ollama.com/download)*** | ***[Ollama Documentation](https://github.com/ollama/ollama/tree/main/docs)***
 
 Also Please Follow these tutorials for understanding and installing Ollama:
 
