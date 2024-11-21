@@ -103,11 +103,11 @@ git clone https://github.com/Leoleojames1/ollama_agent_roll_cage.git
 After pulling down ollama_agent_roll_cage from github using gitbash (download gitbash), navigate in the folders to ollama_agent_roll_cage/ollama_mod_cage directory,
 here you will find the following files:
 ```
-ollama_chatbot_class.py - a python class for managing the ollama api communication, TTS/STT Methods, and Conversation Memory.
-ollama_serve_curl.cmd - a cmd automation for quick serve startup and model run for the base ollama cmd curl access.
-ollama_serve_py.cmd - main program run point, cmd automation for quick serve startup and model run with ollama_chatbot_class.py integration for STT, TTS, conversation history, and more.
+ollama_chatbot_class.py - a python class and api for managing the ollama api communication, coqui & whisper TTS/STT Methods, chatbot conversation memory & more.
+oarc_api_START.cmd - main program run point, for oarc api on Windows
+oarc_api_START.sh - main program run point, for oarc api on Linux
 ```
-ollama_serve_llama3_base_py.cmd is the main runpoint for starting the program and opening the server or the virtual enviroment.
+You can now access your local ollama_agent_roll_cage api, by running oarc_api_START.cmd on windows or oarc_api_START.sh
 
 Once you have a conda env setup & have installed miniconda3, navigate to ollama_agent_roll_cage/ollama_mod_cage, activate py311_ollama in cmd at this location, and run either of the following in cmd:
 ```
@@ -155,11 +155,9 @@ Now you can clone the finetune voices into the same folder:
 ***[Borcherding/XTTS-v2_C3PO voice model](https://huggingface.co/Borcherding/XTTS-v2_C3PO)*** | ***[Borcherding/XTTS-v2_CarliG voice model](https://huggingface.co/Borcherding/XTTS-v2_CarliG)*** | ***[KoljaB/XTTS_S_Dogg voice model](https://huggingface.co/KoljaB/XTTS_S_Dogg)*** | ***[kodoqmc/XTTS-v2_PeterDrury voice model](https://huggingface.co/kodoqmc/XTTS-v2_PeterDrury)***
 
 ## Installing Visual Studio and Visual Studio Code:
-Now download visual studio code this is where you can write new functions for ollama_agent_roll_cage:
+Now download visual studio code this is where you can write new functions for ollama_agent_roll_cage, as well as modelfiles and more:
+***[Visual Studio](https://code.visualstudio.com/Download)***
 
-[Visual Studio](https://code.visualstudio.com/Download)
-
-You can now access your local ollama_agent_roll_cage api, by running oarc_api_START.cmd on windows or oarc_api_START.sh
 # Getting Started After Installation:
 
 <img
