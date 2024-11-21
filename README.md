@@ -120,30 +120,15 @@ windows_install.bat
 or
 bash linux_install.sh
 ```
-
 Once you have run the installer, if you have not installed CUDA or CUDNN it will install those.  It will also setup the necessary python requirements and c++ build tools. If you have issues running
 OARC after installation it may be an issue with the install process, you may be missing files or may not have set up your ollama env variables correctly. If Cuda & Cudnn fail to install follow the tutorial below.
-
-## Updating Developertools File
-
-Copy the developer_tools_template.json file and place it in the ollama_mod_cage folder. Then Replace all paths with the install location for your OARC:
-
-***[developer_tools_template.json](https://github.com/Leoleojames1/ollama_agent_roll_cage/blob/master/ollama_mod_cage/developer_tools_template.json)***
-
-```
-edit paths to match your system and save as developer_tools.json, $(modelgit) path can be anywhere this is for your hugging face models.
-```
 
 ## Installing Cuda for NVIDIA GPU
 *Im using an NVIDIA GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
 
-please download and install cuda for nvidia graphics cards:
+Download and install cuda for NVidia graphics cards for better results, or else oarc will run on the cpu by default, please also download cudnn and combine cuda & cudnn packages following the method in the video below:
 
-***[CUDA INSTALLER](https://developer.nvidia.com/cuda-downloads)***
-
-please also download cudnn and combine cuda & cudnn like in the video below:
-
-***[CUDNN INSTALLER](https://developer.nvidia.com/cudnn)*** | ***[CUDA & CUDNN FUSE INSTALL GUIDE](https://www.youtube.com/watch?v=OEFKlRSd8Ic)***
+***[CUDA INSTALLER](https://developer.nvidia.com/cuda-downloads)*** | ***[CUDNN INSTALLER](https://developer.nvidia.com/cudnn)*** | ***[CUDA & CUDNN FUSE INSTALL GUIDE](https://www.youtube.com/watch?v=OEFKlRSd8Ic)***
 
 ## Download Coqui Fine-tuned Voice Models:
 During the Install.bat/sh file you should have had XTTS-v2 Cloned into:  ollama_agent_roll_cage\AgentFiles\Ignored_TTS
