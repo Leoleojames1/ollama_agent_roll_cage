@@ -88,8 +88,6 @@ Markdown==3.6
 matplotlib==3.9.0
 mccabe==0.6.1
 mecab-python3==1.0.6
-mkl==2021.4.0
-mkl-service==2.4.0
 mojimoji==0.0.13
 more-itertools==10.2.0
 MouseInfo==0.1.3
