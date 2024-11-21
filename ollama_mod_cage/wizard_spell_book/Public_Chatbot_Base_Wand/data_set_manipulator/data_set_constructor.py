@@ -21,8 +21,8 @@ class data_set_constructor:
         self.current_dir = self.pathLibrary['current_dir']
         self.parent_dir = self.pathLibrary['parent_dir']
         self.ignored_pipeline_dir = self.pathLibrary['ignored_pipeline_dir']
-        self.image_dir = self.pathLibrary['image_dir']
-        self.video_dir = self.pathLibrary['video_dir']
+        self.image_set_dir = self.pathLibrary['image_set_dir']
+        self.video_set_dir = self.pathLibrary['video_set_dir']
         self.agent_files_dir = self.pathLibrary['agent_files_dir']
         
     # -------------------------------------------------------------------------------------------------

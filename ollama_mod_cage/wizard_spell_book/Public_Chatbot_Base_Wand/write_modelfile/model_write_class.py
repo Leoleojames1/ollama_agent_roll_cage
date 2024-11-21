@@ -4,6 +4,9 @@
     This process allows for on the spot model creation with defined parameters for any given model or agent
     build/workflow. 
 
+  File "D:\CodingGit_StorageHDD\Ollama_Custom_Mods\ollama_agent_roll_cage\ollama_mod_cage\wizard_spell_book\Public_Chatbot_Base_Wand\write_modelfile\model_write_class.py", line 22, in __init__
+    self.ignored_agents_dir = pathLibrary['ignored_agents_dir']
+
 created on: 5/23/2024
 by @LeoBorcherding
 """

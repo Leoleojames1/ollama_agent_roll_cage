@@ -4,16 +4,17 @@
 import os
 import ollama
 import sys
+import logging
 
 class ollama_commands:
-    def __init__(self, user_input_model_select, developer_tools_dict):
+    def __init__(self, user_input_model_select, pathLibrary):
         """a method for initializing the class
         """
         self.user_input_model_select = user_input_model_select
-        self.developer_tools_dict = developer_tools_dict
+        self.pathLibrary = pathLibrary
         
-        self.current_dir = developer_tools_dict['current_dir']
-        self.parent_dir = developer_tools_dict['parent_dir']
+        self.current_dir = pathLibrary['current_dir']
+        self.parent_dir = pathLibrary['parent_dir']
     
         self.colors = self.get_colors()
 
@@ -85,8 +86,19 @@ class ollama_commands:
         return ollama.show(f'{self.user_input_model_select}')
 
     async def ollama_list(self):
-        ollama_list = ollama.list()
-        return [model_info.get('name') for model_info in ollama_list.get('models', [])]
+        """Get list of available models"""
+        try:
+            result = ollama.list()
+            if not isinstance(result, dict) or 'models' not in result:
+                logging.warning("Unexpected response format from ollama.list()")
+                return []
+            
+            models = [model.get('name', '') for model in result['models']]
+            return [m for m in models if m]  # Filter out empty names
+            
+        except Exception as e:
+            logging.error(f"Error listing models: {str(e)}")
+            return []
 
     async def ollama_create(self):
         # Implement this method to create a new Ollama model

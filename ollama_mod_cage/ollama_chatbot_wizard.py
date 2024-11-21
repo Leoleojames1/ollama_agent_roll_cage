@@ -123,25 +123,28 @@ class ollama_chatbot_base:
         returns: none
         
         """
-        # init model
+        # Initialize core attributes first
+        self.current_date = time.strftime("%Y-%m-%d")
         self.user_input_model_select = None
-        # init colors        
         self.colors = self.get_colors()
         
-        # Initialize paths
-        self.initializePaths()
-    
-        # initialize agent metadata
+        # Initialize path structure
+        self.initializeBasePaths()
+        
+        # Initialize agent metadata
         self.initializeAgent()
+        self.initializeCommandLibrary()
         self.initializeAgentFlags()
         
-        # initialize chat
+        # Initialize conversation details
+        self.initializeConversation()
+        
+        # Initialize remaining components
         self.initializeChat()
-        # self.initializeTools()
         self.initializeSpeech()
         self.initializeSpells()
         
-        # create agent library
+        # Create agent library
         self.createAgentDict()
         
     # -------------------------------------------------------------------------------------------------  
@@ -235,6 +238,14 @@ class ollama_chatbot_base:
         return
     
     # -------------------------------------------------------------------------------------------------   
+    def initializeConversation(self):
+        """Initialize conversation details with defaults"""
+        self.save_name = f"conversation_{self.current_date}"
+        self.load_name = self.save_name
+        # Update conversation paths after initializing defaults
+        self.updateConversationPaths()
+        
+    # -------------------------------------------------------------------------------------------------   
     def initializeChat(self):
         """ a method to initilize the chatbot agent conversation
         """
@@ -250,15 +261,9 @@ class ollama_chatbot_base:
         # Setup chat_history
         self.headers = {'Content-Type': 'application/json'}
         
-    # ------------------------------------------------------------------------------------------------- 
-    def initializePaths(self):
-        """Initialize the file path library for ollama agent roll cage.
-        All paths are constructed relative to the current directory except for model_git_dir
-        which is specified by the OARC_MODEL_GIT environment variable.
-        
-        Returns:
-            dict: Dictionary containing all initialized paths
-        """
+    # -------------------------------------------------------------------------------------------------   
+    def initializeBasePaths(self):
+        """Initialize the base file path structure"""
         # Get base directories
         self.current_dir = os.getcwd()
         self.parent_dir = os.path.abspath(os.path.join(self.current_dir, os.pardir))
@@ -271,59 +276,57 @@ class ollama_chatbot_base:
                 "Please set it to your model git directory path."
             )
         
-        # Initialize all paths relative to parent_dir
+        # Initialize base path structure
         self.pathLibrary = {
-            
             # Main directories
             'current_dir': self.current_dir,
             'parent_dir': self.parent_dir,
             'model_git_dir': model_git_dir,
             
             # Chatbot Wand directories
-            'public_chatbot_base_wand': os.path.join(self.current_dir, 'Public_Chatbot_Base_Wand'),
-            'ignored_chatbot_custom_wand': os.path.join(self.current_dir, 'Ignored_Chatbot_Custom_Wand'),
+            'public_chatbot_base_wand_dir': os.path.join(self.current_dir, 'Public_Chatbot_Base_Wand'),
+            'ignored_chatbot_custom_wand_dir': os.path.join(self.current_dir, 'Ignored_Chatbot_Custom_Wand'),
             
             # Agent directories
-            'ignored_agents': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_Agents'),
-            'public_agents': os.path.join(self.parent_dir, 'AgentFiles', 'Public_Agents'),
+            'ignored_agents_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_Agents'),
+            'agent_files_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Public_Agents'),
             'ignored_agentfiles': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_Agentfiles'),
             'public_agentfiles': os.path.join(self.parent_dir, 'AgentFiles', 'Public_Agentfiles'),
             
             # Pipeline directories
-            'pipeline_root': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline'),
-            'llava_library': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'llava_library'),
-            'conversation_library': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'conversation_library'),
+            'ignored_pipeline_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline'),
+            'llava_library_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'llava_library'),
+            'conversation_library_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'conversation_library'),
             
             # Data constructor directories
-            'image_set': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'data_constructor', 'image_set'),
-            'video_set': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'data_constructor', 'video_set'),
+            'image_set_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'data_constructor', 'image_set'),
+            'video_set_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'data_constructor', 'video_set'),
             
             # Speech directories
-            'speech_library': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'speech_library'),
-            'recognize_speech': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'speech_library', 'recognize_speech'),
-            'generate_speech': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'speech_library', 'generate_speech'),
-            'tts_voice_ref_wav_pack': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'public_speech', 'Public_Voice_Reference_Pack'),
+            'speech_library_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'speech_library'),
+            'recognize_speech_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'speech_library', 'recognize_speech'),
+            'generate_speech_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'speech_library', 'generate_speech'),
+            'tts_voice_ref_wav_pack_dir': os.path.join(self.parent_dir, 'AgentFiles', 'Ignored_pipeline', 'public_speech', 'Public_Voice_Reference_Pack'),
         }
         
-        # Add special paths that depend on other configurations
-        self.pathLibrary['screenshot_path'] = os.path.join(self.pathLibrary['llava_library'], "screenshot.png")
-        self.pathLibrary['default_conversation_path'] = os.path.join(
-            self.parent_dir,
-            'AgentFiles',
-            'Ignored_pipeline',
-            'conversation_library',
-            self.user_input_model_select,
-            f"{self.save_name}.json"
-        )
+    # -------------------------------------------------------------------------------------------------   
+    def updateConversationPaths(self):
+        """Update conversation-specific paths"""
+        # Default model directory if none selected
+        model_dir = self.user_input_model_select if self.user_input_model_select else "default"
         
-        # Store paths in instance variables
-        for key, path in self.pathLibrary.items():
-            setattr(self, key, path)
+        # Create model-specific conversation directory
+        model_conversation_dir = os.path.join(self.pathLibrary['conversation_library_dir'], model_dir)
         
-        # Initialize ollama command instance
-        self.ollama_command_instance = ollama_commands(self.user_input_model_select)
-        self.colors = self.ollama_command_instance.colors
-    
+        # Update conversation paths
+        self.pathLibrary.update({
+            'conversation_dir': model_conversation_dir,
+            'default_conversation_path': os.path.join(model_conversation_dir, f"{self.save_name}.json")
+        })
+        
+        # Ensure conversation directory exists
+        os.makedirs(model_conversation_dir, exist_ok=True)
+        
     # -------------------------------------------------------------------------------------------------   
     def initializeSpeech(self): 
         """
@@ -454,46 +457,51 @@ class ollama_chatbot_base:
 
     # -------------------------------------------------------------------------------------------------   
     def load_from_json(self, load_name, user_input_model_select):
-        """ a method for loading the directed conversation history to the current agent, mis matching
+        """a method for loading the directed conversation history to the current agent, mis matching
         agents and history may be bizarre
-            Args: filename
-            Returns: none
+        
+            args: load_name, user_input_model_select
+            returns:
+        
         """
-        #TODO ADD COMMENTS TO THIS METHOD
-        self.load_name = load_name
+        # Update load name and model
+        self.load_name = load_name if load_name else f"conversation_{self.current_date}"
         self.user_input_model_select = user_input_model_select
-
-        # Check if user_input_model_select contains a slash
-        if "/" in self.user_input_model_select:
-            user_dir, model_dir = self.user_input_model_select.split("/")
-            file_load_path_dir = os.path.join(self.conversation_library, user_dir, model_dir)
-        else:
-            file_load_path_dir = os.path.join(self.conversation_library, self.user_input_model_select)
-
-        file_load_path_str = os.path.join(file_load_path_dir, f"{self.load_name}.json")
-        self.directory_manager_class.create_directory_if_not_exists(file_load_path_dir)
-        print(f"file path 1:{file_load_path_dir} \n")
-        print(f"file path 2:{file_load_path_str} \n")
-        with open(file_load_path_str, "r") as json_file:
-            self.chat_history = json.load(json_file)
+        
+        # Update paths with new load name
+        temp_save_name = self.save_name
+        self.save_name = self.load_name
+        self.updateConversationPaths()
+        
+        # Load conversation
+        try:
+            with open(self.pathLibrary['default_conversation_path'], 'r') as json_file:
+                self.chat_history = json.load(json_file)
+            print(f"Conversation loaded from: {self.pathLibrary['default_conversation_path']}")
+        except Exception as e:
+            print(f"Error loading conversation: {e}")
+        finally:
+            # Restore original save name
+            self.save_name = temp_save_name
+            self.updateConversationPaths()
             
     # -------------------------------------------------------------------------------------------------   
     def save_to_json(self, save_name, user_input_model_select):
-        """ a method for saving the current agent conversation history
-            Args: filename
-            Returns: none
-        """
-        #TODO ADD COMMENTS TO THIS METHOD
-        self.save_name = save_name
+        """Save conversation history to JSON"""
+        # Update save name and model
+        self.save_name = save_name if save_name else f"conversation_{self.current_date}"
         self.user_input_model_select = user_input_model_select
-        file_save_path_dir = os.path.join(self.conversation_library, f"{self.user_input_model_select}")
-        file_save_path_str = os.path.join(file_save_path_dir, f"{self.save_name}.json")
-        self.directory_manager_class.create_directory_if_not_exists(file_save_path_dir)
         
-        print(f"file path 1:{file_save_path_dir} \n")
-        print(f"file path 2:{file_save_path_str} \n")
-        with open(file_save_path_str, "w") as json_file:
-            json.dump(self.chat_history, json_file, indent=2)
+        # Update paths with new save name
+        self.updateConversationPaths()
+        
+        # Save conversation
+        try:
+            with open(self.pathLibrary['default_conversation_path'], 'w') as json_file:
+                json.dump(self.chat_history, json_file, indent=2)
+            print(f"Conversation saved to: {self.pathLibrary['default_conversation_path']}")
+        except Exception as e:
+            print(f"Error saving conversation: {e}")
             
     # -------------------------------------------------------------------------------------------------   
     def send_prompt(self, user_input_prompt):
@@ -1205,126 +1213,11 @@ class ollama_chatbot_base:
         return output
     
     # -------------------------------------------------------------------------------------------------
-    def command_select(self, user_input_prompt):
-        """ 
-            Parse user_input_prompt as command_str to see if their is a command to select & execute for the current chatbot instance
-
-            Args: command_str
-            Returns: command_library[command_str]
-            #TODO IMPLEMENT /system base prompt from .modelfile
-            #
-            #TODO add new functional command groups
-            
-            self.command_groups = {
-                "voice": {
-                    "/voice on": lambda: self.voice(False),
-                    "/voice off": lambda: self.voice(True)
-                },
-                "model": {
-                    "/swap": lambda: self.swap(),
-                    "/save": lambda: self.save()
-                }
-            }
-            
-            TODO add currentGroup dict, includes prompt, command_str, and match groups
-            TODO feed this into the agentCore, when requesting the AgentCore, you should
-            specify when to save the agentCore. should the agent core be saved in the 
-            current
-            
-            self.currentGroup = {
-                "user_input_prompt": user_input_prompt
-                "command_str": command_str
-                "match groups": matchList[]
-            }
-            
+    def initializeCommandLibrary(self):
+        """ a method to initialize the command library
+            args: none
+            returns: none
         """
-        
-        # command_str = self.voice_command_select_filter(user_input_prompt)
-        
-        # Parse for general commands (non token specific args)
-        #TODO ADD NEW FUNCTIONS and make llama -> ollama lava -> llava, etc
-        
-        # Voice command filter
-        user_input_prompt = re.sub(r"activate swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama create", "/ollama create", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama show", "/ollama show", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama template", "/ollama template", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama license", "/ollama license", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama list", "/ollama list", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama loaded", "/ollama loaded", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate listen on", "/listen on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate listen off", "/listen off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate speech on", "/speech on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate speech off", "/speech off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate voice off", "/voice off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate voice on", "/voice on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate vision assistant on", "/vision assistant on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate vision assistant off", "/vision assistant off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate yolo vision on", "/yolo vision on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate yolo vision off", "/yolo vision off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate shot prompt", "/shot prompt", user_input_prompt, flags=re.IGNORECASE)
-
-        # TODO replace /llava flow/freeze with lava flow/freeze
-        
-        # ================ Parse Token Specific Arg Commands ====================
-
-        # Parse for the name after 'forward slash voice swap'
-        match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.voice_name = match.group(2)
-            self.voice_name = self.tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
-
-        # Parse for the name after 'forward slash movie'
-        match = re.search(r"(activate movie|/movie) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.movie_name = match.group(2)
-            self.movie_name = self.file_name_conversation_history_filter(self.movie_name)
-        else:
-            self.movie_name = None
-
-        # Parse for the name after 'activate save'
-        match = re.search(r"(activate save as|/save as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.save_name = match.group(2)
-            self.save_name = self.file_name_conversation_history_filter(self.save_name)
-            print(f"save_name string: {self.save_name}")
-        else:
-            self.save_name = None
-
-        # Parse for the name after 'activate load'
-        match = re.search(r"(activate load as|/load as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.load_name = match.group(2)
-            self.load_name = self.file_name_conversation_history_filter(self.load_name)
-            print(f"load_name string: {self.load_name}")
-        else:
-            self.load_name = None
-
-        # Parse for the name after 'forward slash voice swap'
-        match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.tensor_name = match.group(2)
-            
-        # Parse for the name after 'activate agent select *agent_id*'
-        match = re.search(r"(activate agent select|/agent select) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.agent_id_selection = match.group(2)
-            self.agent_id_selection = self.file_name_conversation_history_filter(self.agent_id_selection)
-            print(f"agent_id_selection string: {self.agent_id_selection}")
-        else:
-            self.agent_id_selection = None
-
-        # Parse for the shot prompt and execute command
-        match = re.search(r"(activate shot prompt|/shot prompt)\s+(.*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.shotPromptMatch1 = match.group(2)
-
-        #TODO add command args like /voice swap c3po, such that the model can do the args in the command
-        # ==============================================
-        
         self.command_library = {
             "/swap": {
                 "method": lambda: self.swap(),
@@ -1664,6 +1557,127 @@ class ollama_chatbot_base:
                 ),
             },
         }
+    
+    # -------------------------------------------------------------------------------------------------
+    def command_select(self, user_input_prompt):
+        """ 
+            Parse user_input_prompt as command_str to see if their is a command to select & execute for the current chatbot instance
+
+            Args: command_str
+            Returns: command_library[command_str]
+            #TODO IMPLEMENT /system base prompt from .modelfile
+            #
+            #TODO add new functional command groups
+            
+            self.command_groups = {
+                "voice": {
+                    "/voice on": lambda: self.voice(False),
+                    "/voice off": lambda: self.voice(True)
+                },
+                "model": {
+                    "/swap": lambda: self.swap(),
+                    "/save": lambda: self.save()
+                }
+            }
+            
+            TODO add currentGroup dict, includes prompt, command_str, and match groups
+            TODO feed this into the agentCore, when requesting the AgentCore, you should
+            specify when to save the agentCore. should the agent core be saved in the 
+            current
+            
+            self.currentGroup = {
+                "user_input_prompt": user_input_prompt
+                "command_str": command_str
+                "match groups": matchList[]
+            }
+            
+        """
+        
+        # command_str = self.voice_command_select_filter(user_input_prompt)
+        
+        # Parse for general commands (non token specific args)
+        #TODO ADD NEW FUNCTIONS and make llama -> ollama lava -> llava, etc
+        
+        # Voice command filter
+        user_input_prompt = re.sub(r"activate swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama create", "/ollama create", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama show", "/ollama show", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama template", "/ollama template", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama license", "/ollama license", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama list", "/ollama list", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate llama loaded", "/ollama loaded", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate listen on", "/listen on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate listen off", "/listen off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate speech on", "/speech on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate speech off", "/speech off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate voice off", "/voice off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate voice on", "/voice on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate vision assistant on", "/vision assistant on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate vision assistant off", "/vision assistant off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate yolo vision on", "/yolo vision on", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate yolo vision off", "/yolo vision off", user_input_prompt, flags=re.IGNORECASE)
+        user_input_prompt = re.sub(r"activate shot prompt", "/shot prompt", user_input_prompt, flags=re.IGNORECASE)
+
+        # TODO replace /llava flow/freeze with lava flow/freeze
+        
+        # ================ Parse Token Specific Arg Commands ====================
+
+        # Parse for the name after 'forward slash voice swap'
+        match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.voice_name = match.group(2)
+            self.voice_name = self.tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
+
+        # Parse for the name after 'forward slash movie'
+        match = re.search(r"(activate movie|/movie) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.movie_name = match.group(2)
+            self.movie_name = self.file_name_conversation_history_filter(self.movie_name)
+        else:
+            self.movie_name = None
+
+        # Parse for the name after 'activate save'
+        match = re.search(r"(activate save as|/save as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.save_name = match.group(2)
+            self.save_name = self.file_name_conversation_history_filter(self.save_name)
+            print(f"save_name string: {self.save_name}")
+        else:
+            self.save_name = None
+
+        # Parse for the name after 'activate load'
+        match = re.search(r"(activate load as|/load as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.load_name = match.group(2)
+            self.load_name = self.file_name_conversation_history_filter(self.load_name)
+            print(f"load_name string: {self.load_name}")
+        else:
+            self.load_name = None
+
+        # Parse for the name after 'forward slash voice swap'
+        match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.tensor_name = match.group(2)
+            
+        # Parse for the name after 'activate agent select *agent_id*'
+        match = re.search(r"(activate agent select|/agent select) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.agent_id_selection = match.group(2)
+            self.agent_id_selection = self.file_name_conversation_history_filter(self.agent_id_selection)
+            print(f"agent_id_selection string: {self.agent_id_selection}")
+        else:
+            self.agent_id_selection = None
+
+        # Parse for the shot prompt and execute command
+        match = re.search(r"(activate shot prompt|/shot prompt)\s+(.*)", user_input_prompt, flags=re.IGNORECASE)
+        if match:
+            self.shotPromptMatch1 = match.group(2)
+
+        #TODO add command args like /voice swap c3po, such that the model can do the args in the command
+        # ==============================================
         
         # Find the command in the command string
         command = next((cmd for cmd in self.command_library.keys() if user_input_prompt.startswith(cmd)), None)
@@ -2232,125 +2246,268 @@ class AudioProcessor:
         """Create AudioData object from numpy array"""
         return sr.AudioData(audio_buffer.tobytes(), self.sample_rate, 2)
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Initialize on startup
-    global manager
-    manager = ConnectionManager()
-    yield
-    # Cleanup on shutdown
-    for agent_id in list(manager.active_connections.keys()):
-        await manager.disconnect(agent_id)
-
-app = FastAPI(lifespan=lifespan)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Add your frontend URL
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, WebSocket] = {}
-        self.chatbot_states: Dict[str, Dict] = {}
+        self.chatbot_states: Dict[str, Dict[str, Any]] = {}
         self.audio_processor = AudioProcessor()
 
-    async def connect(self, websocket: WebSocket, agent_id: str):
-        await websocket.accept()
-        self.active_connections[agent_id] = websocket
-        
-        chatbot = ollama_chatbot_base()
-        await self.initialize_chatbot(chatbot)
-        
-        self.chatbot_states[agent_id] = {
-            "chatbot": chatbot,
-            "audio_buffer": np.array([]),
-            "is_processing": False
-        }
-        
-        logger.info(f"Client connected with agent_id: {agent_id}")
-
-    async def initialize_chatbot(self, chatbot):
-        """Initialize chatbot asynchronously"""
-        await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeChat)
-        await asyncio.get_event_loop().run_in_executor(None, chatbot.initializePaths)
-        await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeSpells)
-        await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeSpeech)
-
-    async def disconnect(self, agent_id: str):
-        if agent_id in self.active_connections:
-            await self.active_connections[agent_id].close()
-            del self.active_connections[agent_id]
-        if agent_id in self.chatbot_states:
-            del self.chatbot_states[agent_id]
-        logger.info(f"Client disconnected: {agent_id}")
-
-    async def broadcast_audio(self, agent_id: str, audio_data: np.ndarray):
-        """Broadcast audio data to all connected clients except sender"""
-        for id_, connection in self.active_connections.items():
-            if id_ != agent_id:
-                await connection.send_bytes(audio_data.tobytes())
-
     async def process_message(self, websocket: WebSocket, agent_id: str, data: Dict):
-        """Process incoming WebSocket messages"""
+        """Process incoming WebSocket messages with improved streaming"""
+        if agent_id not in self.chatbot_states:
+            raise HTTPException(status_code=404, detail="Agent not found")
+            
         state = self.chatbot_states[agent_id]
         chatbot = state["chatbot"]
         
         try:
-            if data["type"] == "text":
-                response = await process_text_message(chatbot, data["content"])
-                # Include color information in the response
+            if data["type"] == "chat":
+                user_input = data["content"]
+                
+                # Send immediate confirmation of user message
                 await websocket.send_json({
-                    "type": "response",
-                    "content": response,
-                    "color": chatbot.colors["GREEN"]["hex"]  # Use hex color for frontend
+                    "type": "chat_message",
+                    "content": user_input,
+                    "role": "user"
                 })
                 
-                if chatbot.TTS_FLAG:
-                    audio = await process_tts(chatbot, response)
-                    if audio is not None:
-                        await self.broadcast_audio(agent_id, audio)
+                # Command Processing
+                CMD_RUN_FLAG = await asyncio.get_event_loop().run_in_executor(
+                    None, chatbot.command_select, user_input
+                )
                 
-            elif data["type"] == "audio":
-                if chatbot.STT_FLAG and not state["is_processing"]:
-                    audio_data = await self.audio_processor.process_audio_data(
-                        base64.b64decode(data["content"])
+                if CMD_RUN_FLAG:
+                    await websocket.send_json({
+                        "type": "command_result",
+                        "content": "Command executed",
+                        "role": "system"
+                    })
+                    return
+
+                # Vision Processing (if enabled)
+                if chatbot.LLAVA_FLAG:
+                    screenshot_flag = await asyncio.get_event_loop().run_in_executor(
+                        None, chatbot.screen_shot_collector_instance.get_screenshot
                     )
-                    state["is_processing"] = True
-                    try:
-                        await self.process_audio(websocket, agent_id, audio_data)
-                    finally:
-                        state["is_processing"] = False
+                    if screenshot_flag:
+                        llava_response = await asyncio.get_event_loop().run_in_executor(
+                            None, 
+                            lambda: chatbot.llava_prompt(user_input, chatbot.user_screenshot_raw, user_input, chatbot.vision_model)
+                        )
+                        await websocket.send_json({
+                            "type": "vision_data",
+                            "content": llava_response,
+                            "role": "assistant"
+                        })
+
+                # Main LLM Response with improved streaming
+                try:
+                    # Start response indicator
+                    await websocket.send_json({
+                        "type": "response_start",
+                        "role": "assistant"
+                    })
+
+                    def get_response():
+                        return ollama.chat(
+                            model=chatbot.user_input_model_select,
+                            messages=chatbot.chat_history + [{"role": "user", "content": user_input}],
+                            stream=True
+                        )
+
+                    response_generator = await asyncio.get_event_loop().run_in_executor(None, get_response)
+                    
+                    full_response = ""
+                    async def process_stream():
+                        nonlocal full_response
+                        for chunk in response_generator:
+                            if 'message' in chunk and 'content' in chunk['message']:
+                                content = chunk['message']['content']
+                                full_response += content
+                                
+                                # Stream each chunk immediately
+                                await websocket.send_json({
+                                    "type": "chat_response",
+                                    "content": content,
+                                    "role": "assistant",
+                                    "is_stream": True
+                                })
+                                # Small delay to control streaming rate
+                                await asyncio.sleep(0.01)
+                    
+                    # Process the stream
+                    await process_stream()
+                    
+                    # Send end of response marker
+                    await websocket.send_json({
+                        "type": "chat_response",
+                        "content": full_response,
+                        "role": "assistant",
+                        "is_stream": False
+                    })
+                    
+                    # Update chat history
+                    chatbot.chat_history.append({"role": "user", "content": user_input})
+                    chatbot.chat_history.append({"role": "assistant", "content": full_response})
+                    
+                    # Process TTS if enabled
+                    if chatbot.TTS_FLAG:
+                        audio_data = await asyncio.get_event_loop().run_in_executor(
+                            None,
+                            chatbot.tts_processor_instance.process_tts_responses,
+                            full_response,
+                            chatbot.voice_name
+                        )
+                        if audio_data is not None:
+                            await websocket.send_json({
+                                "type": "audio_data",
+                                "data": base64.b64encode(audio_data.tobytes()).decode(),
+                                "role": "assistant"
+                            })
+                    
+                    # Process LaTeX if enabled
+                    if chatbot.LATEX_FLAG and hasattr(chatbot, 'latex_render_instance'):
+                        latex_data = await asyncio.get_event_loop().run_in_executor(
+                            None,
+                            chatbot.latex_render_instance.add_latex_code,
+                            full_response, 
+                            chatbot.user_input_model_select
+                        )
+                        if latex_data:
+                            await websocket.send_json({
+                                "type": "latex",
+                                "content": latex_data,
+                                "role": "system"
+                            })
+                            
+                except Exception as e:
+                    logger.error(f"Error in LLM processing: {str(e)}")
+                    await websocket.send_json({
+                        "type": "error",
+                        "content": f"Error getting LLM response: {str(e)}",
+                        "role": "system"
+                    })
+                    
+            elif data["type"] == "speech":
+                if chatbot.STT_FLAG:
+                    audio_data = np.frombuffer(base64.b64decode(data["content"]), dtype=np.float32)
+                    text = await asyncio.get_event_loop().run_in_executor(
+                        None,
+                        chatbot.speech_recognizer_instance.recognize_speech,
+                        audio_data
+                    )
+                    if text:
+                        await websocket.send_json({
+                            "type": "transcription",
+                            "content": text,
+                            "role": "user"
+                        })
+                        await self.process_message(websocket, agent_id, {
+                            "type": "chat",
+                            "content": text
+                        })
                         
-            elif data["type"] == "command":
-                result = await process_command(chatbot, data["content"])
-                await websocket.send_json({
-                    "type": "command_result",
-                    "content": result
-                })
-                
         except Exception as e:
             logger.error(f"Error processing message: {e}")
             await websocket.send_json({
                 "type": "error",
-                "content": str(e)
+                "content": str(e),
+                "role": "system"
             })
+
+    async def process_text_message(self, chatbot, content: str):
+        """Process text messages through the chatbot"""
+        try:
+            logger.info(f"Sending prompt to model: {content}")
+            response = await asyncio.get_event_loop().run_in_executor(
+                None, chatbot.send_prompt, content
+            )
+            return response
+        except Exception as e:
+            logger.error(f"Error in process_text_message: {str(e)}")
+            raise
+
+    async def connect(self, websocket: WebSocket, agent_id: str):
+        """Connect a new client and initialize its state"""
+        try:
+            await websocket.accept()
+            self.active_connections[agent_id] = websocket
+            
+            chatbot = ollama_chatbot_base()
+            await self.initialize_chatbot(chatbot)
+            
+            self.chatbot_states[agent_id] = {
+                "chatbot": chatbot,
+                "audio_buffer": np.array([]),
+                "is_processing": False
+            }
+            
+            logger.info(f"Client connected with agent_id: {agent_id}")
+            
+        except Exception as e:
+            logger.error(f"Error connecting client: {e}")
+            await self.disconnect(agent_id)
+            raise
+
+    async def disconnect(self, agent_id: str):
+        """Safely disconnect a client and clean up its state"""
+        try:
+            if agent_id in self.active_connections:
+                websocket = self.active_connections[agent_id]
+                try:
+                    await websocket.close()
+                except Exception as e:
+                    logger.error(f"Error closing websocket: {e}")
+                del self.active_connections[agent_id]
+                
+            if agent_id in self.chatbot_states:
+                chatbot = self.chatbot_states[agent_id]["chatbot"]
+                if hasattr(chatbot, 'cleanup'):
+                    await asyncio.get_event_loop().run_in_executor(None, chatbot.cleanup)
+                del self.chatbot_states[agent_id]
+                
+            logger.info(f"Client disconnected: {agent_id}")
+            
+        except Exception as e:
+            logger.error(f"Error during disconnect: {e}")
+
+    async def initialize_chatbot(self, chatbot):
+        """Initialize chatbot asynchronously"""
+        try:
+            # Basic initialization
+            await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeBasePaths)
+            await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeAgent)
+            await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeChat)
+            
+            # Set default flags
+            chatbot.AGENT_FLAG = False
+            chatbot.MEMORY_CLEAR_FLAG = False
+            chatbot.user_input_model_select = "llama3.2:3b"  # Set default model
+            
+            # Initialize components
+            await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeSpells)
+            await asyncio.get_event_loop().run_in_executor(None, chatbot.createAgentDict)
+            
+            logger.info("Chatbot initialized successfully")
+            logger.info(f"Using model: {chatbot.user_input_model_select}")
+            logger.info(f"Agent flags: {chatbot.AGENT_FLAG}")
+            
+            return chatbot
+            
+        except Exception as e:
+            logger.error(f"Error initializing chatbot: {e}")
+            raise
 
     async def process_audio(self, websocket: WebSocket, agent_id: str, audio_data: np.ndarray):
         """Process audio data and handle transcription/response"""
         state = self.chatbot_states[agent_id]
         chatbot = state["chatbot"]
         
-        # Append to buffer
         state["audio_buffer"] = np.concatenate([state["audio_buffer"], audio_data])
         
-        # Process if buffer is full
         if len(state["audio_buffer"]) >= self.audio_processor.sample_rate:
             audio = self.audio_processor.create_audio_data(state["audio_buffer"])
-            text = await process_audio_message(chatbot, audio)
+            text = await self.process_audio_message(chatbot, audio)
             
             if text:
                 await websocket.send_json({
@@ -2359,98 +2516,208 @@ class ConnectionManager:
                 })
                 
                 if not text.startswith('/'):
-                    response = await process_text_message(chatbot, text)
+                    response = await self.process_text_message(chatbot, text)
                     await websocket.send_json({
                         "type": "response",
                         "content": response
                     })
                     
                     if chatbot.TTS_FLAG:
-                        audio = await process_tts(chatbot, response)
+                        audio = await self.process_tts(chatbot, response)
                         if audio is not None:
                             await self.broadcast_audio(agent_id, audio)
                 else:
-                    result = await process_command(chatbot, text)
+                    result = await self.process_command(chatbot, text)
                     await websocket.send_json({
                         "type": "command_result",
                         "content": result
                     })
                     
-            # Reset buffer
             state["audio_buffer"] = np.array([])
 
-# Initialize manager
-manager = ConnectionManager()
+    async def process_audio_message(self, chatbot, audio: sr.AudioData):
+        """Process audio data through speech recognition"""
+        return await asyncio.get_event_loop().run_in_executor(
+            None, chatbot.speech_recognizer_instance.recognize_speech, audio
+        )
+
+    async def process_command(self, chatbot, command: str):
+        """Process chatbot commands"""
+        return await asyncio.get_event_loop().run_in_executor(
+            None, chatbot.command_select, command
+        )
+
+    async def process_tts(self, chatbot, text: str):
+        """Process text-to-speech"""
+        return await asyncio.get_event_loop().run_in_executor(
+            None, chatbot.tts_processor_instance.process_tts_responses,
+            text, chatbot.voice_name
+        )
+
+    async def broadcast_audio(self, agent_id: str, audio_data: np.ndarray):
+        """Broadcast audio data to connected clients"""
+        for id_, connection in self.active_connections.items():
+            if id_ != agent_id:
+                await connection.send_bytes(audio_data.tobytes())
+
+    async def set_model(self, agent_id: str, model_name: str):
+        """Set model for a specific agent"""
+        if agent_id in self.chatbot_states:
+            try:
+                state = self.chatbot_states[agent_id]
+                chatbot = state["chatbot"]
+                chatbot.set_model(model_name)
+                return {"status": "success", "model": model_name}
+            except Exception as e:
+                logger.error(f"Error setting model for agent {agent_id}: {str(e)}")
+                raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=404, detail=f"Agent {agent_id} not found")
+
+    async def toggle_whisper(self, agent_id: str, enable: bool, model_size: str = "base"):
+        """Toggle Whisper speech recognition"""
+        if agent_id in self.chatbot_states:
+            chatbot = self.chatbot_states[agent_id]["chatbot"]
+            if enable:
+                success = chatbot.speech_recognizer_instance.enable_whisper(model_size)
+                return {"status": "enabled" if success else "failed"}
+            else:
+                chatbot.speech_recognizer_instance.disable_whisper()
+                return {"status": "disabled"}
+        return {"status": "error", "message": "Agent not found"}
+
+# Initialize FastAPI app
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global manager
+    manager = ConnectionManager()
+    yield
+    for agent_id in list(manager.active_connections.keys()):
+        await manager.disconnect(agent_id)
+
+app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.websocket("/ws/{agent_id}")
 async def websocket_endpoint(websocket: WebSocket, agent_id: str):
-    await manager.connect(websocket, agent_id)
+    """Main websocket endpoint for text communication"""
     try:
+        await manager.connect(websocket, agent_id)
         while True:
-            data = await websocket.receive_json()
-            await manager.process_message(websocket, agent_id, data)
-    except WebSocketDisconnect:
-        await manager.disconnect(agent_id)
+            try:
+                data = await websocket.receive_json()
+                logger.info(f"Received message from {agent_id}: {data}")
+                
+                # Validate message format
+                if "type" not in data or "content" not in data:
+                    raise ValueError("Invalid message format - missing type or content")
+                    
+                await manager.process_message(websocket, agent_id, data)
+                
+            except WebSocketDisconnect:
+                logger.info(f"WebSocket disconnected for agent {agent_id}")
+                break
+            except json.JSONDecodeError:
+                logger.error("Invalid JSON received")
+                await websocket.send_json({
+                    "type": "error", 
+                    "content": "Invalid message format"
+                })
+            except Exception as e:
+                logger.error(f"Error processing message: {e}")
+                await websocket.send_json({
+                    "type": "error",
+                    "content": str(e)
+                })
     except Exception as e:
         logger.error(f"WebSocket error: {e}")
+    finally:
         await manager.disconnect(agent_id)
+
 
 @app.websocket("/audio-stream/{agent_id}")
 async def audio_websocket_endpoint(websocket: WebSocket, agent_id: str):
+    """Audio streaming websocket endpoint"""
     await manager.connect(websocket, agent_id)
     try:
         while True:
             data = await websocket.receive_bytes()
             audio_data = await manager.audio_processor.process_audio_data(data)
-            await manager.process_audio(websocket, agent_id, audio_data)
+            
+            state = manager.chatbot_states[agent_id]
+            recognizer = state["chatbot"].speech_recognizer_instance
+            
+            if not recognizer.is_listening:
+                if await recognizer.wait_for_wake_word():
+                    await websocket.send_json({
+                        "type": "status",
+                        "content": "Wake word detected"
+                    })
+                continue
+            
+            text = await manager.process_audio_message(recognizer, audio_data)
+            if text:
+                await websocket.send_json({
+                    "type": "transcription",
+                    "content": text
+                })
     except WebSocketDisconnect:
         await manager.disconnect(agent_id)
 
-async def process_text_message(chatbot, content: str):
-    """Process text messages through the chatbot"""
-    return await asyncio.get_event_loop().run_in_executor(
-        None, chatbot.send_prompt, content
-    )
-
-async def process_audio_message(chatbot, audio_data: sr.AudioData):
-    """Process audio data through speech recognition"""
-    return await asyncio.get_event_loop().run_in_executor(
-        None, chatbot.speech_recognizer_instance.recognize_speech, audio_data
-    )
-
-async def process_command(chatbot, command: str):
-    """Process chatbot commands"""
-    return await asyncio.get_event_loop().run_in_executor(
-        None, chatbot.command_select, command
-    )
-
-async def process_tts(chatbot, text: str):
-    """Process text-to-speech"""
-    return await asyncio.get_event_loop().run_in_executor(
-        None,
-        chatbot.tts_processor_instance.process_tts_responses,
-        text,
-        chatbot.voice_name
-    )
+@app.post("/set_model")
+async def set_model(model_data: dict):
+    """Set active model endpoint"""
+    try:
+        model_name = model_data.get('model')
+        if not model_name:
+            raise HTTPException(status_code=400, detail="Model name is required")
+        
+        for state in manager.chatbot_states.values():
+            chatbot = state["chatbot"]
+            chatbot.set_model(model_name)
+        
+        logger.info(f"Model set to: {model_name}")
+        return {"status": "success", "model": model_name}
+    except Exception as e:
+        logger.error(f"Error setting model: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/available_models")
 async def get_models():
-    """Get available Ollama models"""
+    """Get available models endpoint"""
     try:
-        chatbot = ollama_chatbot_base()
-        models = await chatbot.get_available_models()
+        commands = ollama_commands(None, {
+            'current_dir': os.getcwd(),
+            'parent_dir': os.path.dirname(os.getcwd())
+        })
+        models = await commands.ollama_list()
         return {"models": models}
     except Exception as e:
+        logger.error(f"Error getting models: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/command_library")
 async def get_commands():
-    """Get available commands"""
+    """Get available commands endpoint"""
     try:
         chatbot = ollama_chatbot_base()
-        return {"commands": list(chatbot.command_library.keys())}
+        await manager.initialize_chatbot(chatbot)
+        commands = list(chatbot.command_library.keys())
+        return {"commands": commands}
     except Exception as e:
+        logger.error(f"Error getting commands: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/toggle_whisper/{agent_id}")
+async def toggle_whisper(agent_id: str, enable: bool, model_size: str = "base"):
+    """Toggle Whisper endpoint"""
+    return await manager.toggle_whisper(agent_id, enable, model_size)
 
 if __name__ == "__main__":
     import uvicorn

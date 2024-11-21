@@ -13,13 +13,13 @@ import json
 class create_convert_manager:
 
     # -------------------------------------------------------------------------------------------------
-    def __init__(self, colors, developer_tools_dict):
+    def __init__(self, colors, pathLibrary):
         """a method for initializing the class
         """
-        self.developer_tools_dict = developer_tools_dict
-        self.current_dir = self.developer_tools_dict['current_dir']
-        self.parent_dir = self.developer_tools_dict['parent_dir']
-        self.pipeline = self.developer_tools_dict['ignored_pipeline_dir']
+        self.pathLibrary = pathLibrary
+        self.current_dir = self.pathLibrary['current_dir']
+        self.parent_dir = self.pathLibrary['parent_dir']
+        self.ignored_pipeline_dir = self.pathLibrary['ignored_pipeline_dir']
         self.colors = colors
 
     # -------------------------------------------------------------------------------------------------
