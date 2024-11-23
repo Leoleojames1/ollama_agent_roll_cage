@@ -112,14 +112,10 @@ class tts_processor_class:
         self.colors = colors
         self.is_multi_speaker = None
         self.speech_interrupted = False
-        self.is_generating = False
-        self.current_chunk_index = 0
         
-        # Audio buffer for streaming
-        self.audio_buffer = np.array([], dtype=np.float32)
-        self.chunk_size = 1024
+        # Audio processing settings
         self.sample_rate = 22050
-        self.stream_buffer = queue.Queue()
+        self.audio_buffer = np.array([], dtype=np.float32)
         
         # Configure device
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -131,10 +127,6 @@ class tts_processor_class:
         
         # Initialize TTS model
         self.initialize_tts_model()
-        
-        # Create audio stream
-        self.audio_output_stream = None
-        self.stream_active = False
         
     # -------------------------------------------------------------------------------------------------
     def setup_paths(self, developer_tools_dict):
@@ -193,44 +185,54 @@ class tts_processor_class:
     #     return
     
     # -------------------------------------------------------------------------------------------------
-    def process_tts_responses(self, response, voice_name):  
-        """ A method for managing the response preprocessing methods.
-            args: response, voice_name
-            returns: none
-        """
-        # Clear VRAM cache
-        torch.cuda.empty_cache()
-        
-        # Call Sentence Splitter
-        tts_response_sentences = self.split_into_sentences(response)
-        
-        # Clear the directories
-        self.clear_directory(self.recognize_speech_dir)
-        self.clear_directory(self.generate_speech_dir)
-        
-        # Clear audio buffer
-        self.audio_data = np.array([])
-        
-        # Generate and store audio
-        # TODO this for loop should be done with the generate audio loop
-        self.generate_play_audio_loop(tts_response_sentences)
-        
-        #TODO remove and replace with generate play aduio loop above but upgrade to stream through chatbot api, 
-        # it can still use the storage file
-        for sentence in tts_response_sentences:
-            if self.is_multi_speaker:
-                audio = self.tts.tts(text=sentence, speaker_wav=self.voice_name_reference_speech_path, language="en", speed=3)
-            else:
-                audio = self.tts.tts(text=sentence, language="en", speed=3)
+    def process_tts_responses(self, response, voice_name):
+        """Process text response into audio data suitable for streaming"""
+        try:
+            # Clear VRAM cache
+            torch.cuda.empty_cache()
             
-            # Convert to numpy array and append to buffer
-            audio_np = np.array(audio, dtype=np.float32)
-            self.audio_data = np.append(self.audio_data, audio_np)
+            # Split into sentences
+            sentences = self.split_into_sentences(response)
             
-            # Play audio if needed
-            if not self.speech_interrupted:
-                sd.play(audio_np, 22050)
-                sd.wait()
+            # Clear existing audio buffer
+            self.audio_buffer = np.array([], dtype=np.float32)
+            
+            # Process each sentence
+            for sentence in sentences:
+                if self.speech_interrupted:
+                    break
+                    
+                # Generate audio
+                if self.is_multi_speaker:
+                    audio = self.tts.tts(
+                        text=sentence,
+                        speaker_wav=self.voice_reference_path,
+                        language="en",
+                        speed=3
+                    )
+                else:
+                    audio = self.tts.tts(
+                        text=sentence,
+                        language="en",
+                        speed=3
+                    )
+                
+                # Convert to float32 numpy array
+                audio_np = np.array(audio, dtype=np.float32)
+                
+                # Normalize audio
+                if np.abs(audio_np).max() > 0:
+                    audio_np = audio_np / np.abs(audio_np).max()
+                
+                # Append to buffer
+                self.audio_buffer = np.append(self.audio_buffer, audio_np)
+            
+            # Return the complete audio buffer
+            return self.audio_buffer
+            
+        except Exception as e:
+            print(f"Error generating audio: {e}")
+            return None
                 
     # -------------------------------------------------------------------------------------------------
     def play_audio_from_file(self, filename):
@@ -271,8 +273,13 @@ class tts_processor_class:
     
     # -------------------------------------------------------------------------------------------------
     def get_audio_data(self):
-        """Get the current audio buffer for visualization"""
-        return self.audio_buffer[-1024:] if len(self.audio_buffer) > 0 else np.array([])
+        """Get the current audio buffer in a format suitable for streaming"""
+        if len(self.audio_buffer) > 0:
+            return {
+                "sample_rate": self.sample_rate,
+                "data": self.audio_buffer
+            }
+        return None
     
     # -------------------------------------------------------------------------------------------------
     def generate_play_audio_loop(self, tts_response_sentences):
@@ -366,10 +373,16 @@ class tts_processor_class:
             
     # -------------------------------------------------------------------------------------------------
     def interrupt_generation(self):
-        """A method to interrupt the ongoing speech generation."""
-        self.audio_queue.queue.clear()  # Clear the audio queue to stop any further audio processing
-        sd.stop()  # Stop any currently playing audio
-        print("Speech generation interrupted.")
+        """Interrupt ongoing speech generation"""
+        self.speech_interrupted = True
+        self.audio_buffer = np.array([], dtype=np.float32)
+        
+    # -------------------------------------------------------------------------------------------------  
+    def cleanup(self):
+        """Clean up resources"""
+        self.speech_interrupted = True
+        self.audio_buffer = np.array([], dtype=np.float32)
+        torch.cuda.empty_cache()
         
     # -------------------------------------------------------------------------------------------------
     def clear_remaining_audio_files(self, start_ticker, total_sentences):

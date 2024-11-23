@@ -40,6 +40,8 @@
         A local lypc sync, Avatar Image & Audio to Video model. Allowing the chatbot agent to
         generate in real time, the Avatar lypc sync for the current chatbot agent in OARC.
         
+    TODO PASSIVIST AI SAFETY INJECTION PROTOCOL
+        
     ===============================================================================================
     
         This software was designed by Leo Borcherding with the intent of creating an easy to use
@@ -117,7 +119,7 @@ class ollama_chatbot_base:
 
     # -------------------------------------------------------------------------------------------------
     def __init__(self):
-        """ initializes the ollama_chatbot_base class
+        """ initializes the base chatbot class
 
         args: none
         returns: none
@@ -348,21 +350,34 @@ class ollama_chatbot_base:
         
     # -------------------------------------------------------------------------------------------------  
     def initializeSpells(self):
-        """ a method to setup the spell classes for the chatbot wizard
-        """
-        # get directory data
+        """Initialize all spell classes for the chatbot wizard"""
+        # Get directory data
         self.read_write_symbol_collector_instance = read_write_symbol_collector()
         self.directory_manager_class = directory_manager_class()
-        # get data
+        
+        # Get data
         self.screen_shot_collector_instance = screen_shot_collector(self.pathLibrary)
-        # splice data
+        
+        # Splice data
         self.data_set_video_process_instance = data_set_constructor(self.pathLibrary)
-        # write model files
+        
+        # Write model files
         self.model_write_class_instance = model_write_class(self.colors, self.pathLibrary)
-        # create model manager
+        
+        # Create model manager
         self.create_convert_manager_instance = create_convert_manager(self.colors, self.pathLibrary)
-        # peer2peer node
+        
+        # Initialize ollama commands
+        self.ollama_command_instance = ollama_commands(self.user_input_model_select, self.pathLibrary)
+        
+        # Peer2peer node
         self.FileSharingNode_instance = FileSharingNode(host="127.0.0.1", port=9876)
+        
+        # TTS processor (initialize as None, will be created when needed)
+        self.tts_processor_instance = None
+        
+        # Latex renderer (initialize as None, will be created when needed)
+        self.latex_render_instance = None
     
     # --------------------------------------------------------------------------------------------------
     def coreAgent(self):
@@ -1478,6 +1493,7 @@ class ollama_chatbot_base:
             },
             "/ollama show": {
                 "method": lambda: self.ollama_command_instance.ollama_show_modelfile(),
+                "is_async": True,
                 "description": (
                     "The command, /ollama show, allows the user to quit the ollama chatbot instance Shuting down "
                     "all chatbot agent processes."
@@ -1485,6 +1501,7 @@ class ollama_chatbot_base:
             },
             "/ollama template": {
                 "method": lambda: self.ollama_command_instance.ollama_show_template(),
+                "is_async": True,
                 "description": (
                     "The command, /ollama template, displays the model template from the modelfile "
                     "for the currently loaded ollama llm in the chatbot agent. The template structure defines the llm "
@@ -1494,6 +1511,7 @@ class ollama_chatbot_base:
             },
             "/ollama license": {
                 "method": lambda: self.ollama_command_instance.ollama_show_license(),
+                "is_async": True,
                 "description": (
                     "The command, /ollama license, displays the license from the LLM modelfile of the current "
                     "model in the agent. This license comes from the distributor of the model and defines its usage "
@@ -1502,6 +1520,7 @@ class ollama_chatbot_base:
             },
             "/ollama list": {
                 "method": lambda: self.ollama_command_instance.ollama_list(),
+                "is_async": True,
                 "description": (
                     "The command, /ollama list, displays the list of ollama models on the users machine, specificially "
                     "providing the response from the ollama list command through the ollama api. "
@@ -1509,6 +1528,7 @@ class ollama_chatbot_base:
             },
             "/ollama loaded": {
                 "method": lambda: self.ollama_command_instance.ollama_show_loaded_models(),
+                "is_async": True,
                 "description": (
                     "The command, /ollama loaded, displayes all currently loaded ollama models. "
                     "This information is retrieved with the ollama.ps() method."
@@ -1530,6 +1550,7 @@ class ollama_chatbot_base:
             },
             "/start node": {
                 "method": lambda: self.FileSharingNode_instance.start_node(),
+                "is_async": True,
                 "description": (
                     "The command, /start node, activates the peer-2-peer encrypted network node. This module "
                     "provides the necessary toolset for encrypted agent networking for various tasks. "
@@ -1592,140 +1613,145 @@ class ollama_chatbot_base:
             }
             
         """
-        
-        # command_str = self.voice_command_select_filter(user_input_prompt)
-        
-        # Parse for general commands (non token specific args)
-        #TODO ADD NEW FUNCTIONS and make llama -> ollama lava -> llava, etc
-        
-        # Voice command filter
-        user_input_prompt = re.sub(r"activate swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama create", "/ollama create", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama show", "/ollama show", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama template", "/ollama template", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama license", "/ollama license", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama list", "/ollama list", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate llama loaded", "/ollama loaded", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate listen on", "/listen on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate listen off", "/listen off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate speech on", "/speech on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate speech off", "/speech off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate voice off", "/voice off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate voice on", "/voice on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate vision assistant on", "/vision assistant on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate vision assistant off", "/vision assistant off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate yolo vision on", "/yolo vision on", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate yolo vision off", "/yolo vision off", user_input_prompt, flags=re.IGNORECASE)
-        user_input_prompt = re.sub(r"activate shot prompt", "/shot prompt", user_input_prompt, flags=re.IGNORECASE)
-
-        # TODO replace /llava flow/freeze with lava flow/freeze
-        
-        # ================ Parse Token Specific Arg Commands ====================
-
-        # Parse for the name after 'forward slash voice swap'
-        match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.voice_name = match.group(2)
-            self.voice_name = self.tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
-
-        # Parse for the name after 'forward slash movie'
-        match = re.search(r"(activate movie|/movie) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.movie_name = match.group(2)
-            self.movie_name = self.file_name_conversation_history_filter(self.movie_name)
-        else:
-            self.movie_name = None
-
-        # Parse for the name after 'activate save'
-        match = re.search(r"(activate save as|/save as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.save_name = match.group(2)
-            self.save_name = self.file_name_conversation_history_filter(self.save_name)
-            print(f"save_name string: {self.save_name}")
-        else:
-            self.save_name = None
-
-        # Parse for the name after 'activate load'
-        match = re.search(r"(activate load as|/load as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.load_name = match.group(2)
-            self.load_name = self.file_name_conversation_history_filter(self.load_name)
-            print(f"load_name string: {self.load_name}")
-        else:
-            self.load_name = None
-
-        # Parse for the name after 'forward slash voice swap'
-        match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.tensor_name = match.group(2)
+        try:
+            logger.info(f"Processing command: {user_input_prompt}")
+            # command_str = self.voice_command_select_filter(user_input_prompt)
             
-        # Parse for the name after 'activate agent select *agent_id*'
-        match = re.search(r"(activate agent select|/agent select) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.agent_id_selection = match.group(2)
-            self.agent_id_selection = self.file_name_conversation_history_filter(self.agent_id_selection)
-            print(f"agent_id_selection string: {self.agent_id_selection}")
-        else:
-            self.agent_id_selection = None
+            # Parse for general commands (non token specific args)
+            #TODO ADD NEW FUNCTIONS and make llama -> ollama lava -> llava, etc
+            
+            # Voice command filter
+            user_input_prompt = re.sub(r"activate swap", "/swap", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate quit", "/quit", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate llama create", "/ollama create", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate llama show", "/ollama show", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate llama template", "/ollama template", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate llama license", "/ollama license", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate llama list", "/ollama list", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate llama loaded", "/ollama loaded", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate listen on", "/listen on", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate listen off", "/listen off", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate speech on", "/speech on", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate speech off", "/speech off", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate voice off", "/voice off", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate voice on", "/voice on", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate latex on", "/latex on", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate latex off", "/latex off", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate vision assistant on", "/vision assistant on", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate vision assistant off", "/vision assistant off", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate yolo vision on", "/yolo vision on", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate yolo vision off", "/yolo vision off", user_input_prompt, flags=re.IGNORECASE)
+            user_input_prompt = re.sub(r"activate shot prompt", "/shot prompt", user_input_prompt, flags=re.IGNORECASE)
 
-        # Parse for the shot prompt and execute command
-        match = re.search(r"(activate shot prompt|/shot prompt)\s+(.*)", user_input_prompt, flags=re.IGNORECASE)
-        if match:
-            self.shotPromptMatch1 = match.group(2)
+            # TODO replace /llava flow/freeze with lava flow/freeze
+            
+            # ================ Parse Token Specific Arg Commands ====================
 
-        #TODO add command args like /voice swap c3po, such that the model can do the args in the command
-        # ==============================================
-        
-        # Find the command in the command string
-        command = next((cmd for cmd in self.command_library.keys() if user_input_prompt.startswith(cmd)), None)
+            # Parse for the name after 'forward slash voice swap'
+            match = re.search(r"(activate voice swap|/voice swap) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+            if match:
+                self.voice_name = match.group(2)
+                self.voice_name = self.tts_processor_instance.file_name_conversation_history_filter(self.voice_name)
 
-        # If a command is found, split it from the arguments
-        if command:
-            args = user_input_prompt[len(command):].strip()
-        else:
-            args = None
+            # Parse for the name after 'forward slash movie'
+            match = re.search(r"(activate movie|/movie) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+            if match:
+                self.movie_name = match.group(2)
+                self.movie_name = self.file_name_conversation_history_filter(self.movie_name)
+            else:
+                self.movie_name = None
 
-        # If Listen off
-        if command == "/listen off":
-            self.STT_FLAG = False
-            self.AUTO_SPEECH_FLAG = False
-            print("- speech to text deactivated -")
-            return True  # Ensure this returns True to indicate the command was processed
-        
-        # If /llava flow, 
-        if command == "/llava flow":
-            # user select the vision model, #TODO SHOW OLLAMA LIST AND SUGGEST POSSIBLE VISION MODELS, ULTIMATLEY YOU NEED THE OLLAMA MODEL NAME
-            self.get_vision_model()
+            # Parse for the name after 'activate save'
+            match = re.search(r"(activate save as|/save as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+            if match:
+                self.save_name = match.group(2)
+                self.save_name = self.file_name_conversation_history_filter(self.save_name)
+                print(f"save_name string: {self.save_name}")
+            else:
+                self.save_name = None
 
-        # If /system select, 
-        if command == "/system select":
-            # get the user selection for the system prompt, print system prompt name selector and return user input
-            # self.get_system_prompts()
-            #=======================================================================================
-            #TODO MOVE TO NEW METHOD AND PLUG INTO LAMDA LIBRARY TO CLEAN THIS UP SAME WITH FLAGS
-            #=======================================================================================
-            self.agent_prompt_library()
-            self.agent_prompt_select()
+            # Parse for the name after 'activate load'
+            match = re.search(r"(activate load as|/load as) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+            if match:
+                self.load_name = match.group(2)
+                self.load_name = self.file_name_conversation_history_filter(self.load_name)
+                print(f"load_name string: {self.load_name}")
+            else:
+                self.load_name = None
 
-        # If /system select, 
-        if command == "/system base":
-            # get the system prompt library
-            #self.TODO GET BASE SYSTEM PROMPT FROM /ollama modelfile
-            test = None #DONT USE YET LOL 😂, JUST RESTART THE PROGRAM TO RETURN TO BASE
+            # Parse for the name after 'forward slash voice swap'
+            match = re.search(r"(activate convert tensor|/convert tensor) ([^\s]*)", user_input_prompt, flags=re.IGNORECASE)
+            if match:
+                self.tensor_name = match.group(2)
+                
+            # Parse for the name after 'activate agent select *agent_id*'
+            match = re.search(r"(activate agent select|/agent select) ([^/.]*)", user_input_prompt, flags=re.IGNORECASE)
+            if match:
+                self.agent_id_selection = match.group(2)
+                self.agent_id_selection = self.file_name_conversation_history_filter(self.agent_id_selection)
+                print(f"agent_id_selection string: {self.agent_id_selection}")
+            else:
+                self.agent_id_selection = None
 
-        # If a command is found, split it from the arguments
-        if command:
-            args = user_input_prompt[len(command):].strip()
-            # Call the command
-            self.command_library[command]()
-            CMD_RUN_FLAG = True
-            return CMD_RUN_FLAG
-        else:
-            CMD_RUN_FLAG = False
-            return CMD_RUN_FLAG
+            # Parse for the shot prompt and execute command
+            match = re.search(r"(activate shot prompt|/shot prompt)\s+(.*)", user_input_prompt, flags=re.IGNORECASE)
+            if match:
+                self.shotPromptMatch1 = match.group(2)
+
+            #TODO add command args like /voice swap c3po, such that the model can do the args in the command
+            # ==============================================
+            
+            # Find the command in the command string
+            command = next((cmd for cmd in self.command_library.keys() if user_input_prompt.startswith(cmd)), None)
+
+            # If a command is found, split it from the arguments
+            if command:
+                args = user_input_prompt[len(command):].strip()
+            else:
+                args = None
+
+            # If Listen off
+            if command == "/listen off":
+                self.STT_FLAG = False
+                self.AUTO_SPEECH_FLAG = False
+                print("- speech to text deactivated -")
+                return True  # Ensure this returns True to indicate the command was processed
+            
+            # If /llava flow, 
+            if command == "/llava flow":
+                # user select the vision model, #TODO SHOW OLLAMA LIST AND SUGGEST POSSIBLE VISION MODELS, ULTIMATLEY YOU NEED THE OLLAMA MODEL NAME
+                self.get_vision_model()
+
+            # If /system select, 
+            if command == "/system select":
+                # get the user selection for the system prompt, print system prompt name selector and return user input
+                # self.get_system_prompts()
+                #=======================================================================================
+                #TODO MOVE TO NEW METHOD AND PLUG INTO LAMDA LIBRARY TO CLEAN THIS UP SAME WITH FLAGS
+                #=======================================================================================
+                self.agent_prompt_library()
+                self.agent_prompt_select()
+
+            # If /system select, 
+            if command == "/system base":
+                # get the system prompt library
+                #self.TODO GET BASE SYSTEM PROMPT FROM /ollama modelfile
+                test = None #DONT USE YET LOL 😂, JUST RESTART THE PROGRAM TO RETURN TO BASE
+
+            # If a command is found, return its details
+            if command:
+                command_details = self.command_library[command]
+                return {
+                    "command": command,
+                    "method": command_details["method"],
+                    "is_async": command_details.get("is_async", False),
+                    "args": user_input_prompt[len(command):].strip()
+                }
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error in command_select: {e}")
+            return None
 
     # # -------------------------------------------------------------------------------------------------  
     # def get_model(self):
@@ -1753,15 +1779,6 @@ class ollama_chatbot_base:
         for commands in self.command_library:
             print(self.colors['BRIGHT_YELLOW'] + f"{commands}") 
             
-    # -------------------------------------------------------------------------------------------------
-    def cmd_list(self):
-        """ a method for printing the command lexicon via /command lexicon, this will return the list
-        of commands as well as their descriptions, documentation links, and other metadata. 
-        """
-        print(self.colors['OKBLUE'] + "<<< COMMAND LIST >>>")
-        for commands in self.command_library:
-            print(self.colors['BRIGHT_YELLOW'] + f"{commands}") 
-            
     # ------------------------------------------------------------------------------------------------- 
     def set_model(self, model_name):
         self.user_input_model_select = model_name
@@ -1774,11 +1791,129 @@ class ollama_chatbot_base:
         return
 
     # ------------------------------------------------------------------------------------------------- 
-    def set_voice(self, voice_type, voice_name):
-        self.voice_type = voice_type
-        self.voice_name = voice_name
-        self.tts_processor_instance = self.instance_tts_processor(voice_type, voice_name)
-        print(f"Voice set to {voice_name} (Type: {voice_type})")
+    def set_voice(self, voice_type: str, voice_name: str):
+        """Set voice type and name with validation"""
+        try:
+            if not voice_type or not voice_name:
+                raise ValueError("Voice type and name must be provided")
+                
+            self.voice_type = voice_type
+            self.voice_name = voice_name
+            
+            # Initialize TTS processor if needed
+            if not hasattr(self, 'tts_processor_instance') or self.tts_processor_instance is None:
+                self.tts_processor_instance = self.instance_tts_processor(voice_type, voice_name)
+            else:
+                self.tts_processor_instance.update_voice(voice_type, voice_name)
+                
+            self.TTS_FLAG = True  # Enable TTS when voice is set
+            return True
+        except Exception as e:
+            logger.error(f"Error setting voice: {e}")
+            return False
+        
+    # -------------------------------------------------------------------------------------------------
+    def cleanup(self):
+        """Clean up resources when shutting down"""
+        try:
+            if hasattr(self, 'tts_processor_instance'):
+                self.tts_processor_instance.cleanup()
+            if hasattr(self, 'speech_recognizer_instance'):
+                self.speech_recognizer_instance.cleanup()
+            # Clear chat history
+            self.chat_history = []
+            self.llava_history = []
+        except Exception as e:
+            logger.error(f"Error during cleanup: {e}")
+
+    # -------------------------------------------------------------------------------------------------
+    def get_chat_state(self):
+        """Get current chat state"""
+        return {
+            "chat_history": self.chat_history,
+            "llava_history": self.llava_history,
+            "current_model": self.user_input_model_select,
+            "voice_state": {
+                "type": self.voice_type,
+                "name": self.voice_name,
+                "tts_enabled": self.TTS_FLAG,
+                "stt_enabled": self.STT_FLAG
+            },
+            "vision_state": {
+                "llava_enabled": self.LLAVA_FLAG,
+                "vision_model": getattr(self, 'vision_model', None)
+            }
+        }
+
+    # -------------------------------------------------------------------------------------------------
+    def set_chat_state(self, state: dict):
+        """Update chat state with new values"""
+        try:
+            if "chat_history" in state:
+                self.chat_history = state["chat_history"]
+            if "llava_history" in state:
+                self.llava_history = state["llava_history"]
+            if "current_model" in state:
+                self.user_input_model_select = state["current_model"]
+            if "voice_state" in state:
+                voice_state = state["voice_state"]
+                if "type" in voice_state and "name" in voice_state:
+                    self.set_voice(voice_state["type"], voice_state["name"])
+                if "tts_enabled" in voice_state:
+                    self.TTS_FLAG = voice_state["tts_enabled"]
+                if "stt_enabled" in voice_state:
+                    self.STT_FLAG = voice_state["stt_enabled"]
+            if "vision_state" in state:
+                vision_state = state["vision_state"]
+                if "llava_enabled" in vision_state:
+                    self.LLAVA_FLAG = vision_state["llava_enabled"]
+                if "vision_model" in vision_state:
+                    self.vision_model = vision_state["vision_model"]
+        except Exception as e:
+            logger.error(f"Error setting chat state: {e}")
+            raise
+
+    # -------------------------------------------------------------------------------------------------
+    def get_voice_data(self):
+        """Get audio data for current voice"""
+        if hasattr(self, 'tts_processor_instance'):
+            return self.tts_processor_instance.get_audio_data()
+        return None
+
+    # -------------------------------------------------------------------------------------------------
+    def interrupt_current_audio(self):
+        """Interrupt current audio playback or processing"""
+        if hasattr(self, 'tts_processor_instance'):
+            self.tts_processor_instance.interrupt_generation()
+        if hasattr(self, 'speech_recognizer_instance'):
+            self.speech_recognizer_instance.stop_recognition()
+
+    # -------------------------------------------------------------------------------------------------
+    async def process_command_async(self, command_str: str):
+        """Process commands asynchronously"""
+        CMD_RUN_FLAG = self.command_select(command_str)
+        if CMD_RUN_FLAG:
+            return {
+                "status": "success",
+                "command": command_str,
+                "executed": True
+            }
+        return {
+            "status": "not_executed",
+            "command": command_str,
+            "executed": False
+        }
+    
+    # ------------------------------------------------------------------------------------------------- 
+    def validate_voice(self, voice_type: str, voice_name: str) -> bool:
+        """Validate if voice type and name are available"""
+        fine_tuned_voices, reference_voices = self.get_available_voices()
+        
+        if voice_type == "fine_tuned":
+            return voice_name in fine_tuned_voices
+        elif voice_type == "reference":
+            return voice_name in reference_voices
+        return False
 
     # ------------------------------------------------------------------------------------------------- 
     async def get_available_voices(self):
@@ -2253,7 +2388,7 @@ class ConnectionManager:
         self.audio_processor = AudioProcessor()
 
     async def process_message(self, websocket: WebSocket, agent_id: str, data: Dict):
-        """Process incoming WebSocket messages with improved streaming"""
+        """Process incoming WebSocket messages with proper async command handling"""
         if agent_id not in self.chatbot_states:
             raise HTTPException(status_code=404, detail="Agent not found")
             
@@ -2261,7 +2396,69 @@ class ConnectionManager:
         chatbot = state["chatbot"]
         
         try:
-            if data["type"] == "chat":
+            # Handle commands
+            if data["type"] == "command" or (data["type"] == "chat" and data["content"].startswith('/')):
+                content = data["content"]
+                command_details = chatbot.command_select(content)
+                
+                if command_details:
+                    try:
+                        command = command_details["command"]
+                        method = command_details["method"]
+                        args = command_details.get("args", "")
+                        is_async = command_details.get("is_async", False)
+                        
+                        # Execute command
+                        result = None
+                        try:
+                            if is_async:
+                                result = await method() if not args else await method(args)
+                            else:
+                                result = await asyncio.get_event_loop().run_in_executor(
+                                    None,
+                                    method if not args else lambda: method(args)
+                                )
+                                
+                            # Format the result
+                            formatted_result = self.format_command_result(command, result)
+                            
+                            # Send command result
+                            await websocket.send_json({
+                                "type": "command_result",
+                                "content": formatted_result,
+                                "command": command,
+                                "style": "command",
+                                "role": "system"
+                            })
+                            return
+                            
+                        except Exception as e:
+                            logger.error(f"Error executing command {command}: {e}")
+                            await websocket.send_json({
+                                "type": "error",
+                                "content": f"Error executing command: {str(e)}",
+                                "role": "system"
+                            })
+                            return
+                            
+                    except Exception as e:
+                        logger.error(f"Error processing command: {e}")
+                        await websocket.send_json({
+                            "type": "error", 
+                            "content": f"Error executing command: {str(e)}",
+                            "role": "system"
+                        })
+                        return
+                else:
+                    await websocket.send_json({
+                        "type": "error",
+                        "content": "Invalid command",
+                        "role": "system"
+                    })
+                    return
+
+            # Handle regular chat messages
+            elif data["type"] == "chat":
                 user_input = data["content"]
                 
                 # Send immediate confirmation of user message
@@ -2271,74 +2468,54 @@ class ConnectionManager:
                     "role": "user"
                 })
                 
-                # Command Processing
-                CMD_RUN_FLAG = await asyncio.get_event_loop().run_in_executor(
-                    None, chatbot.command_select, user_input
-                )
-                
-                if CMD_RUN_FLAG:
-                    await websocket.send_json({
-                        "type": "command_result",
-                        "content": "Command executed",
-                        "role": "system"
-                    })
-                    return
-
                 # Vision Processing (if enabled)
                 if chatbot.LLAVA_FLAG:
-                    screenshot_flag = await asyncio.get_event_loop().run_in_executor(
-                        None, chatbot.screen_shot_collector_instance.get_screenshot
-                    )
+                    screenshot_flag = chatbot.screen_shot_collector_instance.get_screenshot()
                     if screenshot_flag:
                         llava_response = await asyncio.get_event_loop().run_in_executor(
-                            None, 
-                            lambda: chatbot.llava_prompt(user_input, chatbot.user_screenshot_raw, user_input, chatbot.vision_model)
+                            None,
+                            chatbot.llava_prompt,
+                            user_input,
+                            chatbot.user_screenshot_raw,
+                            user_input,
+                            chatbot.vision_model
                         )
-                        await websocket.send_json({
-                            "type": "vision_data",
-                            "content": llava_response,
-                            "role": "assistant"
-                        })
+                        if llava_response:
+                            await websocket.send_json({
+                                "type": "vision_data",
+                                "content": llava_response,
+                                "role": "assistant"
+                            })
 
-                # Main LLM Response with improved streaming
+                # Main LLM Response
                 try:
-                    # Start response indicator
                     await websocket.send_json({
                         "type": "response_start",
                         "role": "assistant"
                     })
 
-                    def get_response():
-                        return ollama.chat(
-                            model=chatbot.user_input_model_select,
-                            messages=chatbot.chat_history + [{"role": "user", "content": user_input}],
-                            stream=True
-                        )
-
-                    response_generator = await asyncio.get_event_loop().run_in_executor(None, get_response)
+                    # Get response synchronously
+                    response = ollama.chat(
+                        model=chatbot.user_input_model_select,
+                        messages=chatbot.chat_history + [{"role": "user", "content": user_input}],
+                        stream=True
+                    )
                     
                     full_response = ""
-                    async def process_stream():
-                        nonlocal full_response
-                        for chunk in response_generator:
-                            if 'message' in chunk and 'content' in chunk['message']:
-                                content = chunk['message']['content']
-                                full_response += content
-                                
-                                # Stream each chunk immediately
-                                await websocket.send_json({
-                                    "type": "chat_response",
-                                    "content": content,
-                                    "role": "assistant",
-                                    "is_stream": True
-                                })
-                                # Small delay to control streaming rate
-                                await asyncio.sleep(0.01)
+                    # Use regular for loop since ollama.chat returns a regular generator
+                    for chunk in response:
+                        if 'message' in chunk and 'content' in chunk['message']:
+                            content = chunk['message']['content']
+                            full_response += content
+                            
+                            await websocket.send_json({
+                                "type": "chat_response",
+                                "content": content,
+                                "role": "assistant",
+                                "is_stream": True
+                            })
                     
-                    # Process the stream
-                    await process_stream()
-                    
-                    # Send end of response marker
+                    # Send final complete response
                     await websocket.send_json({
                         "type": "chat_response",
                         "content": full_response,
@@ -2351,7 +2528,7 @@ class ConnectionManager:
                     chatbot.chat_history.append({"role": "assistant", "content": full_response})
                     
                     # Process TTS if enabled
-                    if chatbot.TTS_FLAG:
+                    if chatbot.TTS_FLAG and hasattr(chatbot, 'tts_processor_instance'):
                         audio_data = await asyncio.get_event_loop().run_in_executor(
                             None,
                             chatbot.tts_processor_instance.process_tts_responses,
@@ -2370,7 +2547,7 @@ class ConnectionManager:
                         latex_data = await asyncio.get_event_loop().run_in_executor(
                             None,
                             chatbot.latex_render_instance.add_latex_code,
-                            full_response, 
+                            full_response,
                             chatbot.user_input_model_select
                         )
                         if latex_data:
@@ -2387,24 +2564,34 @@ class ConnectionManager:
                         "content": f"Error getting LLM response: {str(e)}",
                         "role": "system"
                     })
-                    
+
+            # Handle speech messages
             elif data["type"] == "speech":
                 if chatbot.STT_FLAG:
-                    audio_data = np.frombuffer(base64.b64decode(data["content"]), dtype=np.float32)
-                    text = await asyncio.get_event_loop().run_in_executor(
-                        None,
-                        chatbot.speech_recognizer_instance.recognize_speech,
-                        audio_data
-                    )
-                    if text:
+                    try:
+                        audio_data = np.frombuffer(base64.b64decode(data["content"]), dtype=np.float32)
+                        text = await asyncio.get_event_loop().run_in_executor(
+                            None,
+                            chatbot.speech_recognizer_instance.recognize_speech,
+                            audio_data
+                        )
+                        if text:
+                            await websocket.send_json({
+                                "type": "transcription",
+                                "content": text,
+                                "role": "user"
+                            })
+                            # Process transcribed text as chat message
+                            await self.process_message(websocket, agent_id, {
+                                "type": "chat",
+                                "content": text
+                            })
+                    except Exception as e:
+                        logger.error(f"Error processing speech: {e}")
                         await websocket.send_json({
-                            "type": "transcription",
-                            "content": text,
-                            "role": "user"
-                        })
-                        await self.process_message(websocket, agent_id, {
-                            "type": "chat",
-                            "content": text
+                            "type": "error",
+                            "content": f"Error processing speech: {str(e)}",
+                            "role": "system"
                         })
                         
         except Exception as e:
@@ -2449,6 +2636,76 @@ class ConnectionManager:
             await self.disconnect(agent_id)
             raise
 
+    async def execute_command(self, websocket: WebSocket, agent_id: str, command_details: dict):
+        """Execute commands with proper async/sync handling"""
+        try:
+            command = command_details["command"]
+            method = command_details["method"]
+            args = command_details.get("args", "")
+            is_async = command_details.get("is_async", False)
+            
+            logger.info(f"Executing command {command} with args: {args}")
+            
+            try:
+                # Execute command based on sync/async type
+                result = None
+                if is_async:
+                    result = await method() if not args else await method(args)
+                else:
+                    result = await asyncio.get_event_loop().run_in_executor(
+                        None,
+                        method if not args else lambda: method(args)
+                    )
+
+                # Format command response
+                formatted_result = None
+                if command == "/ollama list" and isinstance(result, list):
+                    formatted_result = {
+                        "models": result,
+                        "formatted": "\n".join([f"- {model}" for model in result])
+                    }
+                else:
+                    formatted_result = {
+                        "raw": result,
+                        "formatted": str(result) if result is not None else "Command executed successfully"
+                    }
+
+                # Send command result
+                await websocket.send_json({
+                    "type": "command_result",
+                    "content": formatted_result,
+                    "command": command,
+                    "style": "command",
+                    "role": "system"
+                })
+                return True
+                
+            except Exception as e:
+                logger.error(f"Error executing command {command}: {e}")
+                await websocket.send_json({
+                    "type": "error",
+                    "content": f"Error executing command: {str(e)}",
+                    "command": command,
+                    "role": "system"
+                })
+                return False
+                
+        except Exception as e:
+            logger.error(f"Error in execute_command: {e}")
+            raise
+
+    def format_command_result(self, command: str, result: Any) -> Dict:
+        """Format command results for display"""
+        if command == "/ollama list" and isinstance(result, list):
+            return {
+                "models": result,
+                "formatted": "\n".join([f"- {model}" for model in result])
+            }
+        return {
+            "raw": result,
+            "formatted": str(result) if result is not None else "Command executed successfully"
+        }
+        
     async def disconnect(self, agent_id: str):
         """Safely disconnect a client and clean up its state"""
         try:
@@ -2472,25 +2729,30 @@ class ConnectionManager:
             logger.error(f"Error during disconnect: {e}")
 
     async def initialize_chatbot(self, chatbot):
-        """Initialize chatbot asynchronously"""
+        """Initialize chatbot synchronously"""
         try:
             # Basic initialization
-            await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeBasePaths)
-            await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeAgent)
-            await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeChat)
+            chatbot.initializeBasePaths()
+            chatbot.initializeAgent()
+            chatbot.initializeChat()
+            chatbot.initializeCommandLibrary()
             
-            # Set default flags
+            # Set default flags and model
             chatbot.AGENT_FLAG = False
             chatbot.MEMORY_CLEAR_FLAG = False
-            chatbot.user_input_model_select = "llama3.2:3b"  # Set default model
+            chatbot.user_input_model_select = "llama3.2:3b"
+            chatbot.TTS_FLAG = False
+            
+            # Initialize TTS processor if needed
+            if not hasattr(chatbot, 'tts_processor_instance'):
+                chatbot.tts_processor_instance = None
             
             # Initialize components
-            await asyncio.get_event_loop().run_in_executor(None, chatbot.initializeSpells)
-            await asyncio.get_event_loop().run_in_executor(None, chatbot.createAgentDict)
+            chatbot.initializeSpells()
+            chatbot.createAgentDict()
             
             logger.info("Chatbot initialized successfully")
             logger.info(f"Using model: {chatbot.user_input_model_select}")
-            logger.info(f"Agent flags: {chatbot.AGENT_FLAG}")
             
             return chatbot
             
@@ -2498,6 +2760,19 @@ class ConnectionManager:
             logger.error(f"Error initializing chatbot: {e}")
             raise
 
+    async def get_voice_state(self, agent_id: str):
+        """Get current voice state for an agent"""
+        if agent_id in self.chatbot_states:
+            chatbot = self.chatbot_states[agent_id]["chatbot"]
+            return {
+                "tts_enabled": chatbot.TTS_FLAG,
+                "current_voice": {
+                    "type": chatbot.voice_type,
+                    "name": chatbot.voice_name
+                }
+            }
+        return None
+    
     async def process_audio(self, websocket: WebSocket, agent_id: str, audio_data: np.ndarray):
         """Process audio data and handle transcription/response"""
         state = self.chatbot_states[agent_id]
@@ -2617,8 +2892,75 @@ async def websocket_endpoint(websocket: WebSocket, agent_id: str):
                 # Validate message format
                 if "type" not in data or "content" not in data:
                     raise ValueError("Invalid message format - missing type or content")
-                    
-                await manager.process_message(websocket, agent_id, data)
+
+                elif data["type"] == "command":
+                    # Use existing chatbot instance to process command
+                    if agent_id in manager.chatbot_states:
+                        chatbot = manager.chatbot_states[agent_id]["chatbot"]
+                        command = data["content"]
+                        success = await asyncio.get_event_loop().run_in_executor(
+                            None, chatbot.command_select, command
+                        )
+                        await websocket.send_json({
+                            "type": "command_result",
+                            "content": {
+                                "success": success,
+                                "command": command
+                            }
+                        })
+                    else:
+                        await websocket.send_json({
+                            "type": "error",
+                            "content": "No active chatbot instance found"
+                        })
+                elif data["type"] == "get_voices":
+                    # Get available voices from existing chatbot instance
+                    if agent_id in manager.chatbot_states:
+                        chatbot = manager.chatbot_states[agent_id]["chatbot"]
+                        fine_tuned_voices, reference_voices = await asyncio.get_event_loop().run_in_executor(
+                            None, chatbot.get_available_voices
+                        )
+                        await websocket.send_json({
+                            "type": "voices",
+                            "content": {
+                                "fine_tuned": fine_tuned_voices,
+                                "reference": reference_voices
+                            }
+                        })
+                    else:
+                        await websocket.send_json({
+                            "type": "error",
+                            "content": "No active chatbot instance found"
+                        })
+                elif data["type"] == "set_voice":
+                    # Set voice for existing chatbot instance
+                    if agent_id in manager.chatbot_states:
+                        chatbot = manager.chatbot_states[agent_id]["chatbot"]
+                        voice_type = data["content"].get("type")
+                        voice_name = data["content"].get("name")
+                        
+                        if voice_type and voice_name:
+                            await asyncio.get_event_loop().run_in_executor(
+                                None, 
+                                chatbot.set_voice,
+                                voice_type,
+                                voice_name
+                            )
+                            await websocket.send_json({
+                                "type": "voice_set",
+                                "content": {
+                                    "type": voice_type,
+                                    "name": voice_name
+                                }
+                            })
+                        else:
+                            await websocket.send_json({
+                                "type": "error",
+                                "content": "Voice type and name required"
+                            })
+                else:
+                    # Process other message types (chat, etc.)
+                    await manager.process_message(websocket, agent_id, data)
                 
             except WebSocketDisconnect:
                 logger.info(f"WebSocket disconnected for agent {agent_id}")
@@ -2700,18 +3042,6 @@ async def get_models():
         return {"models": models}
     except Exception as e:
         logger.error(f"Error getting models: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/command_library")
-async def get_commands():
-    """Get available commands endpoint"""
-    try:
-        chatbot = ollama_chatbot_base()
-        await manager.initialize_chatbot(chatbot)
-        commands = list(chatbot.command_library.keys())
-        return {"commands": commands}
-    except Exception as e:
-        logger.error(f"Error getting commands: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/toggle_whisper/{agent_id}")

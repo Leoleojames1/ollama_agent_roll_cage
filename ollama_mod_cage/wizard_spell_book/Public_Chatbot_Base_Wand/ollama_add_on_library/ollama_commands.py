@@ -92,9 +92,10 @@ class ollama_commands:
             if not isinstance(result, dict) or 'models' not in result:
                 logging.warning("Unexpected response format from ollama.list()")
                 return []
-            
-            models = [model.get('name', '') for model in result['models']]
-            return [m for m in models if m]  # Filter out empty names
+                
+            # Extract and format model names
+            models = [model['name'] for model in result['models'] if 'name' in model]
+            return models
             
         except Exception as e:
             logging.error(f"Error listing models: {str(e)}")
