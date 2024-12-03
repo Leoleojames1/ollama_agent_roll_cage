@@ -2740,7 +2740,7 @@ class ConnectionManager:
             # Set default flags and model
             chatbot.AGENT_FLAG = False
             chatbot.MEMORY_CLEAR_FLAG = False
-            chatbot.user_input_model_select = "llama3.2:3b"
+            chatbot.user_input_model_select = None
             chatbot.TTS_FLAG = False
             
             # Initialize TTS processor if needed

@@ -1,6 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
+:: Use the environment variable OARC_API to access the correct folder
+cd /d %OARC_API%\ollama_mod_cage
+
 :: Start LLaMA server
 start cmd.exe /c "ollama serve"
 
@@ -17,3 +20,5 @@ set OLLAMA_FLASH_ATTENTION=1
 
 :: Run Python script
 start cmd.exe /k "python ollama_chatbot_wizard.py"
+
+endlocal
