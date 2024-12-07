@@ -62,8 +62,9 @@ After installing ollama in the users directory automatically it will be in:
   C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama
 ```
 
-(During installation you can choose the install location or you can move the model files directory to ollama_agent_roll_cage/AgentFiles/IgnoredModels where blobs dir is transported by hand from C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama dir)
-
+```ruby
+( During installation you can choose the install location or you can move the model files directory to ollama_agent_roll_cage/AgentFiles/IgnoredModels where blobs dir is transported by hand from C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama DIR )
+```
 Now open a new cmd, and type
 ```
   ollama
