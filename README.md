@@ -64,15 +64,15 @@ After installing ollama in the users directory automatically it will be in:
 (During installation you can choose the install location or you can move the model files directory to ollama_agent_roll_cage/AgentFiles/IgnoredModels where blobs dir is transported by hand from Programs\Ollama dir)
 
 Now open a new cmd, and type
-```python
+```txt
   ollama
 ```
 this will provide you with a list of commands, of these you want
-```python
+```txt
   ollama pull llama3:8b or ollama pull llama3
 ```
 to see all downloaded models you can type
-```python
+```txt
   ollama list
 ```
 pulling down the 70b model is possible and I was able to run it on my NVIDIA GTX Titan XP however it was HORRIFICLY slow. I would not recommend it unless you have a lot of processing power.
@@ -81,7 +81,7 @@ Now you can choose to run the model, or run a **local server** (REQUIRED FOR oll
 ## Running the model in cmd
 In cmd, now type
 
-```python
+```txt
   ollama run llama3
 ```
 
@@ -90,7 +90,7 @@ you will be taken to a local chatbot in your command line to make sure you set i
 ## Running the server in cmd and accessing the local server from secondary cmd
 Now open a new cmd, type
 
-```python
+```txt
   ollama serve
 ```
 
