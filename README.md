@@ -58,21 +58,21 @@ Also Please Follow these tutorials for understanding and installing Ollama:
 ***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)*** | ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
 
 After installing ollama in the users directory automatically it will be in:
-```
+```bash
   C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama
 ```
 (During installation you can choose the install location or you can move the model files directory to ollama_agent_roll_cage/AgentFiles/IgnoredModels where blobs dir is transported by hand from Programs\Ollama dir)
 
 Now open a new cmd, and type
-```
+```python
   ollama
 ```
 this will provide you with a list of commands, of these you want
-```
+```python
   ollama pull llama3:8b or ollama pull llama3
 ```
 to see all downloaded models you can type
-```
+```python
   ollama list
 ```
 pulling down the 70b model is possible and I was able to run it on my NVIDIA GTX Titan XP however it was HORRIFICLY slow. I would not recommend it unless you have a lot of processing power.
@@ -80,27 +80,35 @@ Now you can choose to run the model, or run a **local server** (REQUIRED FOR oll
 
 ## Running the model in cmd
 In cmd, now type
-```
+
+```python
   ollama run llama3
 ```
+
 you will be taken to a local chatbot in your command line to make sure you set it up correctly. From here you can have fun and chat away :). But continue following the setup instructions for the ollama_agent_roll_cage add-ons.
 
 ## Running the server in cmd and accessing the local server from secondary cmd
 Now open a new cmd, type
-```
+
+```python
   ollama serve
 ```
+
 now again without closing the first, open a new cmd, and type
-```  
+
+```python
   ollama run llama3
 ```
+
 You are now conversing with the local ai through an api accessing cmd seperated from the local server. This is what ollama_serve_llama3_base_py.cmd automates and is the main start point for the program, it starts the server, and runs the chatbot in a new command window.
 
 ## Installing ollama_agent_roll_cage:
 Next pull down the ollama_agent_roll_cage repository using the following command:
-```
+
+```bash
 git clone https://github.com/Leoleojames1/ollama_agent_roll_cage.git
 ```
+
 After pulling down ollama_agent_roll_cage from github using gitbash (download gitbash), navigate in the folders to ollama_agent_roll_cage/ollama_mod_cage directory,
 here you will find the following files:
 
