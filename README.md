@@ -103,24 +103,23 @@ git clone https://github.com/Leoleojames1/ollama_agent_roll_cage.git
 After pulling down ollama_agent_roll_cage from github using gitbash (download gitbash), navigate in the folders to ollama_agent_roll_cage/ollama_mod_cage directory,
 here you will find the following files:
 
-```json
-ollama_chatbot_wizard.py {
+```ruby
+ollama_chatbot_wizard.py
   { a python class and api for managing the ollama api communication, coqui & whisper TTS/STT Methods, chatbot conversation memory & more. }
-}
-oarc_api_START.cmd {
+oarc_api_START.cmd
   { main program run point, for oarc api on Windows }
-}
-oarc_api_START.sh {
+oarc_api_START.sh
   { main program run point, for oarc api on Linux }
-}
 ```
 
 ```python
-""" Now in the terminal navigate:
+"""
+Now in the terminal navigate:
 cd ollama_agent_roll_cage/ollama_mod_cage
 
 Now execute the following command:
-pip install -r requirements.txt """
+pip install -r requirements.txt
+"""
 ```
 
 You can now access your local ollama_agent_roll_cage api, by running oarc_api_START.cmd on windows or oarc_api_START.sh
