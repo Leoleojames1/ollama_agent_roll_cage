@@ -58,34 +58,39 @@ Also Please Follow these tutorials for understanding and installing Ollama:
 ***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)*** | ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
 
 After installing ollama in the users directory automatically it will be in:
-```bash
+```
   C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama
 ```
+
 (During installation you can choose the install location or you can move the model files directory to ollama_agent_roll_cage/AgentFiles/IgnoredModels where blobs dir is transported by hand from Programs\Ollama dir)
 
 Now open a new cmd, and type
-```txt
+```
   ollama
 ```
+
 this will provide you with a list of commands, of these you want
-```txt
+```
   ollama pull llama3:8b or ollama pull llama3
 ```
+
 to see all downloaded models you can type
-```txt
+```
   ollama list
 ```
+
 pulling down the 70b model is possible and I was able to run it on my NVIDIA GTX Titan XP however it was HORRIFICLY slow. I would not recommend it unless you have a lot of processing power.
 Now you can choose to run the model, or run a **local server** (REQUIRED FOR ollama_agent_roll_cage) and then make requests from the **local api** **server** set up with **ollama**.
 
-## Running the model in cmd
-In cmd, now type
-
-```txt
+## Run Ollama in the terminal
+In cmd or gnome terminal on linux, now type
+```
   ollama run llama3
 ```
 
-you will be taken to a local chatbot in your command line to make sure you set it up correctly. From here you can have fun and chat away :). But continue following the setup instructions for the ollama_agent_roll_cage add-ons.
+you will be taken to a local chatbot in your command line. This is the basic Ollama API interface. From here you can have fun and chat away through the direct ollama API. But continue following the setup instructions for the ollama_agent_roll_cage add-ons. OARC utilizes the python package pip install ollama. This wonderful package was created by Ollama Maintainor, Jeffrey Morgan:
+
+[ollama python package](https://pypi.org/project/ollama/)
 
 ## Running the server in cmd and accessing the local server from secondary cmd
 Now open a new cmd, type
