@@ -106,22 +106,12 @@ here you will find the following files:
 ollama_chatbot_class.py - a python class and api for managing the ollama api communication, coqui & whisper TTS/STT Methods, chatbot conversation memory & more.
 oarc_api_START.cmd - main program run point, for oarc api on Windows
 oarc_api_START.sh - main program run point, for oarc api on Linux
+
+run the following command
+pip install -r requirements.txt
 ```
+
 You can now access your local ollama_agent_roll_cage api, by running oarc_api_START.cmd on windows or oarc_api_START.sh
-
-Once you have a conda env setup & have installed miniconda3, navigate to ollama_agent_roll_cage/ollama_mod_cage, activate py311_ollama in cmd at this location, and run either of the following in cmd:
-```
-cd ollama_agent_roll_cage/ollama_mod_cage
-
-activate py311_ollama
-
-either:
-windows_install.bat
-or
-bash linux_install.sh
-```
-Once you have run the installer, if you have not installed CUDA or CUDNN it will install those.  It will also setup the necessary python requirements and c++ build tools. If you have issues running
-OARC after installation it may be an issue with the install process, you may be missing files or may not have set up your ollama env variables correctly. If Cuda & Cudnn fail to install follow the tutorial below.
 
 ## Installing Cuda for NVIDIA GPU
 *Im using an NVIDIA GTX Titan Xp for all of my demo videos, faster card, faster code. When removing the limit from audio generation speed you eventually you need to manage generation if its too fast this will be a fundamental problem in your system that requires future solutions. Rightnow the chatbot is just told to wait.*
