@@ -54,7 +54,8 @@ Now download and install **ollama** with **llama3 8b Instruct** from the followi
 
 Also Please Follow these tutorials for understanding and installing Ollama:
 
-***[Matt Williams: Getting Started on Ollama Guide](https://www.youtube.com/watch?v=90ozfdsQOKo&t=28s)*** | ***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)*** | ***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)*** | ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
+***[Matt Williams: Getting Started on Ollama Guide](https://www.youtube.com/watch?v=90ozfdsQOKo&t=28s)*** | ***[Matt Williams: Installing Ollama is Easy Everywhere](https://www.youtube.com/watch?v=oI7VoTM9NKQ)*** 
+***[Matt Williams: Sync Ollama Models with Other Tools](https://www.youtube.com/watch?v=UfhXbwA5thQ)*** | ***[Matt Williams: Concurrency With Ollama and Tmux](https://www.youtube.com/watch?v=MDbdb-W4x4w&t=291s)***
 
 After installing ollama in the users directory automatically it will be in:
 ```
