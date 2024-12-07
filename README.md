@@ -106,7 +106,7 @@ here you will find the following files:
 ```ruby
 ollama_chatbot_wizard.py
   { a python class and api for managing the ollama api communication, coqui & whisper TTS/STT Methods,
-chatbot conversation memory & more. }
+  chatbot conversation memory & more. }
 oarc_api_START.cmd
   { main program run point, for oarc api on Windows }
 oarc_api_START.sh
