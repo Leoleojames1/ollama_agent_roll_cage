@@ -12,13 +12,11 @@
 ## About
 **ollama_agent_roll_cage** (OARC) is a local python agent fusing **ollama** llm's with **Coqui-TTS** speech models, **Keras** classifiers, **LlaVA** vision, **Whisper** speech recognition, ***YoloV8*** object detection, and more to create a unified chatbot agent api for local, custom automation. This program manages, and automates the creation of **chatbots** through **conversation history**, **model management**, **function calling**, ***document database*** with ***embedding model*** retrieval, and ultimately by structuring a **base reality** for your agent to build its world view via an **interaction space** for windows **software**, local files via ChromaDB, and callable screenshots giving the user more control over the likely output of the agent through **multimodal** agentic **chain of thought**, & ***retrieval augmented generation*** and a mixture of exterior software tools.
   
-OARC, provides tools & spaces to implement security and protection systems for your agentic tool project. Limiting the output of the model to what your training data reflect. In order to implement your own fine tuned models, you must understand the complexities of AI training Data, and how our biases are reflected in it. Ultimately we want to investigate our Agent at every level, and define logical/ontological frameworks if possible. More tools are coming soon, and as such new models to match! I hope you have a good install, & I hope to see you in the Ollama Discord & the OARC Discord. Reach out for more help, to learn, to build, to contribute to OARC, Agent Chef, integrate OARC with your systems, and ultimately thrive in the wonderful world of AI and Programming we have before us.
+OARC, provides tools & spaces to implement security and protection systems for your agentic tool project. Limiting the output of the model to what your training data reflects. In order to implement your own fine tuned models, you must understand the complexities of AI training Data, and how our biases are reflected in it. Ultimately we want to investigate our Agent at every level, and define logical/ontological frameworks if possible. More tools are coming soon, and as such new models to match! I hope you have a good install, & I hope to see you in the Ollama Discord & the OARC Discord. Reach out for more help, to learn, to build, to contribute to OARC, Agent Chef, integrate OARC with your systems, and ultimately thrive in the wonderful world of AI and Programming we have before us.
 
 <img
 src="docs/assets/posters/rollcage.jpg"
   style="display: inline-block; margin: 0 auto; max-width: 50px">
-
-Its also important to note the non-commerical license agreement for meta's llama3, coqui-tts's XTTS model, as well as any other non-commerical use models. These models have license protection for experimental, and personal use, for non-commerical gain. Each model has its own license with considerations to take, so do your research, and read your licenses.
 
 ***[MADE WITH META LLAMA3](https://huggingface.co/cognitivecomputations/dolphin-2.9-llama3-8b/blob/main/LICENSE)*** | ***[Coqui Public Model License 1.0.0](https://huggingface.co/Borcherding/XTTS-v2_C3PO/blob/main/LICENSE.txt)***
 
@@ -63,8 +61,11 @@ After installing ollama in the users directory automatically it will be in:
 ```
 
 ```ruby
-( During installation you can choose the install location or you can move the model files directory to ollama_agent_roll_cage/AgentFiles/IgnoredModels where blobs dir is transported by hand from C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama DIR )
+( During installation you can choose the install location or you can move the model files directory to
+ollama_agent_roll_cage/AgentFiles/IgnoredModels where blobs dir is transported by hand from
+C:\Users\{USER_NAME}\AppData\Local\Programs\Ollama DIR )
 ```
+
 Now open a new cmd, and type
 ```
   ollama
@@ -148,11 +149,11 @@ Download and install cuda for NVidia graphics cards for better results, or else 
 ***[CUDA INSTALLER](https://developer.nvidia.com/cuda-downloads)*** | ***[CUDNN INSTALLER](https://developer.nvidia.com/cudnn)*** | ***[CUDA & CUDNN FUSE INSTALL GUIDE](https://www.youtube.com/watch?v=OEFKlRSd8Ic)***
 
 ## Download Coqui Fine-tuned Voice Models:
-During the Install.bat/sh file you should have had XTTS-v2 Cloned into:  ollama_agent_roll_cage\AgentFiles\Ignored_TTS
+During the requirements.txt file you should have had TTS installed. Now you can clone my XTTS-v2 C3PO model into:  ollama_agent_roll_cage\AgentFiles\Ignored_TTS
 
 https://huggingface.co/coqui/XTTS-v2
 
-Now you can clone the finetune voices into the same folder:
+Here are some other voices as well:
 
 ***[Borcherding/XTTS-v2_C3PO voice model](https://huggingface.co/Borcherding/XTTS-v2_C3PO)*** | ***[Borcherding/XTTS-v2_CarliG voice model](https://huggingface.co/Borcherding/XTTS-v2_CarliG)*** | ***[KoljaB/XTTS_S_Dogg voice model](https://huggingface.co/KoljaB/XTTS_S_Dogg)*** | ***[kodoqmc/XTTS-v2_PeterDrury voice model](https://huggingface.co/kodoqmc/XTTS-v2_PeterDrury)***
 
