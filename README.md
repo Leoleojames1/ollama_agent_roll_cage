@@ -31,8 +31,9 @@ The full video guide for installing and setting up ollama_agent_roll_cage can be
 ## Installing Miniconda & Setting Up Python Virtual Environment
 1. Install Miniconda for modular python virtual environments:
 ***[Miniconda Intaller](https://docs.anaconda.com/free/miniconda/miniconda-install/)***
+***[Old Versions](https://repo.anaconda.com/miniconda/)***
 
-2. Make sure to utilize a conda virtual environment for all of your python dependecy management. Once you have conda installed open the command line and name your new conda env preferably py311_ollama, but if you want to change it go ahead, with python version 3.11 as 3.12 has dependency issues:
+3. Make sure to utilize a conda virtual environment for all of your python dependecy management. Once you have conda installed open the command line and name your new conda env preferably py311_ollama, but if you want to change it go ahead, with python version 3.11 as 3.12 has dependency issues:
 ```
 conda create -n py311_ollama python=3.11
 ```
