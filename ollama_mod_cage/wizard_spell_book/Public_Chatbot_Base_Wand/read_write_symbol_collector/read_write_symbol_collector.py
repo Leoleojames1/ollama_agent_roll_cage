@@ -22,6 +22,15 @@ class read_write_symbol_collector:
     def __init__(self):
         """
         Default Constructor
+        
+        #TODO upgrade regex read write for the following config files and apply chromadb where 
+        necessary, conect to other chromadb class
+        
+        embeddings: agentEmbeddings, knowledgebase embeddings
+        agents: agentCore, agentPromptSets
+        models: ollama modelfiles
+        datasets: agentchef, dataset construction
+        
         """
 
         self.url = "http://localhost:11434/api/chat"

@@ -8,7 +8,7 @@ class search_api_manager:
     def select_search_api(self):
         """a function for 
         """
-        #TODO From list get search api's 
+        #TODO From list get ALL search api's and manage different resources 
         # calculate remaining total searchs
         # decide what is being searched for
         # img, data, video, text, code, etc.
